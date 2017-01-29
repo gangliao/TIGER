@@ -1,0 +1,18 @@
+    assign, Y, 100, 10
+    assign, X, 100, 10
+    assign, sum, 0,
+    assign, 0i, 0,
+main:
+    assign, 0i, 0,
+loop_label0:
+    brgt, 0i, 100, loop_label1
+    array_load, $t0, X, 0i
+    array_load, $t1, Y, 0i
+    mult, $t0, $t1, $t2
+    add, 0sum, $t2, $t3
+    assign, 0sum, $t3,
+    add, 0i, 1, 0i
+    goto, loop_label0, ,
+loop_label1:
+    call, printi, sum
+    return, , ,

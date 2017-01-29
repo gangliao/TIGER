@@ -1,0 +1,12 @@
+build:
+	To build scanner use
+	make scanner
+	
+	To build parser use
+	make parser
+	
+run:
+	bin/parser <filename>
+	or
+	bin/parser <filename> -d
+	"-d to implement a verbose mode" 
