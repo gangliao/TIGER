@@ -12,6 +12,6 @@
   hooks:
     - id: clang-format
       name: clang-format
-      entry: clang-format -i
+      entry: clang-format -i -style=Google
       language: system
       files: \.(h|hpp|cc|c|cpp)
