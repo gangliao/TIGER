@@ -1,11 +1,8 @@
 
-//Complete the Level definition and other methods required if any
+// Complete the Level definition and other methods required if any
 struct Level {
-
-private :
+ private:
   Level *upperLevel;
- std::set<Level*> lowerLevels;
-    //...
-
-    
+  std::set<Level *> lowerLevels;
+  //...
 };

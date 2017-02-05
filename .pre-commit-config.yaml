@@ -1,0 +1,17 @@
+- repo: git://github.com/pre-commit/pre-commit-hooks
+  sha: 8e0d7bab601ce6a8775ea98082938e60fc80eb7f
+  hooks:
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+- repo: git://github.com/dnephin/pre-commit-golang
+  sha: 9777e14eafc8fadf3429c66d2e0b7e85613bdc6e
+  hooks:
+    - id: go-fmt
+    - id: go-vet
+- repo: local
+  hooks:
+    - id: clang-format
+      name: clang-format
+      entry: clang-format -i -style=Google
+      language: system
+      files: \.(h|hpp|cc|c|cpp)
