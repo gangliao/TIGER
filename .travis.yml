@@ -1,12 +1,16 @@
 language: cpp
+sudo: required
+dist: trusty
 
 os:
-  - linux
-  - osx
-
+    - linux
+    - osx
+    
 addons:
   apt:
     packages:
+      - gcc-4.8
+      - g++-4.8
       - clang-format-3.8
       - build-essential
       - automake
