@@ -1,0 +1,28 @@
+language: cpp
+sudo: required
+dist: trusty
+
+os:
+    - linux
+    - osx
+
+addons:
+  apt:
+    packages:
+      - gcc-4.8
+      - g++-4.8
+      - clang-format-3.8
+      - build-essential
+      - automake
+      - libtool
+      - ccache
+
+script:
+    - mkdir -p bin
+    - make scanner
+    - make parser
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
