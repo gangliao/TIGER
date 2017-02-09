@@ -3,15 +3,10 @@
   hooks:
     - id: end-of-file-fixer
     - id: trailing-whitespace
-- repo: git://github.com/dnephin/pre-commit-golang
-  sha: 9777e14eafc8fadf3429c66d2e0b7e85613bdc6e
-  hooks:
-    - id: go-fmt
-    - id: go-vet
 - repo: local
   hooks:
     - id: clang-format
       name: clang-format
-      entry: clang-format -i -style=Google
+      entry: clang-format -i
       language: system
       files: \.(h|hpp|cc|c|cpp)

@@ -17,7 +17,7 @@
 enum Entry { Variables, Constants, Types, Functions, Temporaries };
 
 class Symbol {
- public:
+public:
   enum Terminal {
     // Keyword tokens
     ARRAY = 0,
@@ -108,6 +108,6 @@ class Symbol {
 
   int getValue() { return value; }
 
- private:
+private:
   int value;
 };

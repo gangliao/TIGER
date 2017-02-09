@@ -1,11 +1,11 @@
 //#include "../common/Symbol.hpp"
 
 class SymbolTablePair {
- private:
+private:
   Entry entry;
   std::string name;
 
- public:
+public:
   SymbolTablePair(Entry entry, std::string name) {
     this->entry = entry;
     this->name = name;

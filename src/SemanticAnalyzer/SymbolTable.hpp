@@ -2,13 +2,13 @@
 #include "Record.hpp"
 // Implement the scoping and symbol table details in this file
 class SymbolTable {
- private:
+private:
   Level topLevel;
   Level currLevel;
 
   int scopeLevel;
 
- public:
+public:
   SymbolTable() {
     Record intRecord(scopeLevel);
     Record floatRecord(scopeLevel);
