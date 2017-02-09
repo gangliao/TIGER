@@ -8,7 +8,7 @@
 #include "../SemanticAnalyzer/SymbolTable.hpp"
 #include "../SemanticAnalyzer/SymbolTerminalPair.hpp"
 class Parser {
- private:
+private:
   Scanner scanner;
   int numErrors;
   std::string globalFileName;
@@ -16,7 +16,7 @@ class Parser {
   std::map<int, std::string> terminalMapped;
   std::map<SymbolTerminalPair, std::vector<int>> parseTable;
 
- public:
+public:
   std::ofstream outFile;
   bool printDebug;
   Parser(std::string fileName) : scanner(fileName) {
@@ -66,7 +66,7 @@ class Parser {
     //}
   }
 
- private:
+private:
   void initializeTerminalMapped() {
     terminalMapped.insert(std::make_pair(Symbol::Terminal::COMMA, ","));
     // Map the other terminals accordingly

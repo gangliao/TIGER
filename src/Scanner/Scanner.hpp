@@ -7,7 +7,7 @@
 #include <vector>
 #include "../common/TokenPair.hpp"
 class Scanner {
- private:
+private:
   std::set<std::string> keywords;
   int currLine;
   std::string oldPrefix;
@@ -17,21 +17,21 @@ class Scanner {
   std::ifstream file;
   std::vector<std::string> keywordsVector;
 
- public:
+public:
   int getNumErrors() { return numErrors; }
 
   int getCurrLine() { return currLine; }
 
   std::string getPrefix() { return prefix; }
 
- private:
+private:
   void error(std::string message) {
     numErrors++;
     std::cout << globalFileName << ":" << currLine
               << ": Lexical error: " << message << "\n";
   }
 
- public:
+public:
   Scanner(std::string fileName) {
     currLine = 1;
     oldPrefix = "";
@@ -51,7 +51,7 @@ class Scanner {
         std::vector<std::string>(std::begin(tmparr), std::end(tmparr));
   }
 
- private:
+private:
   /**
    * Call reader's read
    * Return the read character as an int
@@ -125,7 +125,7 @@ class Scanner {
     return word;
   }
 
- public:
+public:
   TokenPair *getToken() {
     while (true) {
       int currChar = read();
