@@ -1,3 +1,9 @@
+
+#pragma once
+
+#include <string>
+#include <vector>
+
 class Record {
 public:
   int scopeLevel = 0;

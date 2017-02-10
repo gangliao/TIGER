@@ -3,7 +3,11 @@
  *
  * @author:  gatech Buzz
  */
-//#include "../common/Symbol.hpp"
+
+#pragma once
+
+#include "../common/Symbol.hpp"
+
 class SymbolTerminalPair {
 private:
   Symbol a;
