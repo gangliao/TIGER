@@ -1,5 +1,15 @@
 ## Hand-modified Tiger grammer in appropriate LL(k) grammar form
 
+Approach:
+
+```
+naive grammar
+-> operator precedences and left associate
+-> remove left recursion and perform left factoring
+-> parse table
+-> write parse code
+```
+
 ### Grammar
 
 ```bash
