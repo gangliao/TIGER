@@ -58,15 +58,18 @@ naive grammar
 <stat-seq-tail> -> NULL
 
 # stat
-<stat> -> <lvalue> := <expr>;
-<stat> -> if <expr> then <stat-seq> endif;
-<stat> -> if <expr> then <stat-seq> else <stat-seq> endif;
+<stat> -> if <expr> then <stat-seq> <stat-seq-tail>
+<stat-seq-tail> -> else <stat-seq> endif;
+<stat-if-tail> -> endif;
+
+<stat> -> id <stat-funct-or-assign>
+<stat-funct-or-assign> -> <lvalue-tail> := <stat-assign>;
+<stat-funct-or-assign> -> (<expr-list>);
+
 <stat> -> while <expr> do <stat-seq> enddo;
 <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
-<stat> -> <opt-prefix> id(<expr-list>);
 
-<opt-prefix> -> <lvalue> :=
-<opt-prefix> -> NULL
+
 <stat> -> break;
 <stat> -> return <expr>;
 
