@@ -36,9 +36,11 @@ naive grammar
 
 # var-declaration
 <var-declaration> -> var <id-list> : <type> <optional-init>;
-<id-list> -> id, <id-list> | id
-<optional-list> -> := <const>
-<optional-list> -> NULL
+<id-list> -> id <id-list-tail>
+<id-list-tail> -> , id <id-list-tail>
+<id-list-tail> -> NULL
+<optional-init> -> := <const>
+<optional-init> -> NULL
 
 # funct-declaration
 <funct-declaration> -> function id (<param-list>) <ret-type> begin <stat-seq> end;
