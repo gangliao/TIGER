@@ -85,7 +85,19 @@ naive grammar
 <const> -> INTLIT
 <const> -> FLOATLIT
 
-<binary-operator> -> + | - | * | / | = | <> | < | > | <= | >= | & | |
+# binary-operator
+<orop> -> |
+<andop> -> &
+<compareop> -> <=
+<compareop> -> >=
+<compareop> -> <
+<compareop> -> >
+<compareop> -> <>
+<compareop> -> =
+<addop> -> -
+<addop> -> +
+<mulop> -> /
+<mulop> -> *
 
 <expr-list> -> NULL
 <expr-list> -> <expr> <expr-list-tail>
