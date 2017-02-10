@@ -66,6 +66,19 @@ naive grammar
 <stat-funct-or-assign> -> <lvalue-tail> := <stat-assign>;
 <stat-funct-or-assign> -> (<expr-list>);
 
+<stat-assign> -> id <stat-assign-stuff>
+<stat-assign> -> (<expr>) <stat-assign-tail>
+<stat-assign> -> <const> <stat-assign-tail>
+
+<stat-assign-stuff> -> (<expr-list>)
+<stat-assign-stuff> -> <lvalue-tail> <stat-assign-tail>
+
+<stat-assign-tail> -> <expr-tail>
+<stat-assign-tail> -> <OR-tail>
+<stat-assign-tail> -> <AND-tail>
+<stat-assign-tail> -> <compare-tail>
+<stat-assign-tail> -> <term-tail>
+
 <stat> -> while <expr> do <stat-seq> enddo;
 <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
 
@@ -76,6 +89,30 @@ naive grammar
 <stat> -> let <declaration-segment> in <stat-seq> end
 
 # expr
+<expr> -> <OR-expr> <expr-tail>
+<expr-tail> -> <OR-op> <OR-expr> <expr-tail>
+<expr-tail> -> NULL
+
+<OR-expr> -> <AND-expr> <OR-expr-tail>
+<OR-expr-tail> -> <AND-op> <AND-expr> <OR-expr-tail>
+<OR-expr-tail> -> NULL
+
+<AND-expr> -> <compare-expr> <AND-expr-tail>
+<AND-expr-tail> -> <compare-op> <compare> <AND-expr-tail>
+<AND-expr-tail> -> NULL
+
+<compare> -> <term> <compare-tail>
+<compare-tail> -> <add-op> <term> <compare-tail>
+<compare-tail> -> NULL
+
+<term> -> <factor> <term-tail>
+<term-tail> -> <mul-op> <factor> <term-tail>
+<term-tail> -> NULL
+
+<factor> -> (<expr>)
+<factor> -> <const>
+<factor> -> <lvalue>
+
 <expr> -> <const>
 <expr> -> <lvalue>
 <expr> -> <expr> <binary-operator> <expr>
@@ -86,8 +123,8 @@ naive grammar
 <const> -> FLOATLIT
 
 # binary-operator
-<or-op> -> |
-<and-op> -> &
+<OR-op> -> |
+<AND-op> -> &
 <compare-op> -> <=
 <compare-op> -> >=
 <compare-op> -> <
