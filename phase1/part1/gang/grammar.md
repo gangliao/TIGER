@@ -113,11 +113,6 @@ naive grammar
 <factor> -> <const>
 <factor> -> <lvalue>
 
-<expr> -> <const>
-<expr> -> <lvalue>
-<expr> -> <expr> <binary-operator> <expr>
-<expr> -> (<expr>)
-
 # const
 <const> -> INTLIT
 <const> -> FLOATLIT
