@@ -19,9 +19,12 @@ naive grammar
 # declaration-segment
 <declaration-segment> -> <type-declaration-list> <var-declaration-list> <funct-declaration-list>
 
-<type-declaration-list> -> <type-declaration> <type-declaration-list> | NULL
-<var-declaration-list> -> <var-declaration> <var-declaration-list> | NULL
-<funct-declaration-list> -> <funct-declaration> <funct-declaration-list> | NULL
+<type-declaration-list> -> <type-declaration> <type-declaration-list>
+<type-declaration-list> -> NULL
+<var-declaration-list> -> <var-declaration> <var-declaration-list>
+<var-declaration-list> -> NULL
+<funct-declaration-list> -> <funct-declaration> <funct-declaration-list>
+<funct-declaration-list> -> NULL 
 
 # type-declaration
 <type-declaration> -> type <id> = <type>;
@@ -34,13 +37,17 @@ naive grammar
 # var-declaration
 <var-declaration> -> var <id-list> : <type> <optional-init>;
 <id-list> -> id, <id-list> | id
-<optional-list> -> := <const> | NULL
+<optional-list> -> := <const>
+<optional-list> -> NULL
 
 # funct-declaration
 <funct-declaration> -> function id (<param-list>) <ret-type> begin <stat-seq> end;
-<param-list> -> <param> <param-list-tail> | NULL
-<param-list-tail> -> , <param> <param-list-tail> | NULL
-<ret-type> -> : <type> | NULL
+<param-list> -> <param> <param-list-tail>
+<param-list> -> NULL
+<param-list-tail> -> , <param> <param-list-tail>
+<param-list-tail> -> NULL
+<ret-type> -> : <type>
+<ret-type> -> : NULL
 <param> -> id : <type>
 
 # stat-seq
