@@ -1,3 +1,6 @@
+
+#pragma once
+
 #include "Level.hpp"
 #include "Record.hpp"
 // Implement the scoping and symbol table details in this file

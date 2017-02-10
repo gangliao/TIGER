@@ -3,9 +3,12 @@
  *
  * @author: Gatech Buzz
  */
-//#include "../common/Symbol.hpp"
+
+#pragma once
+
 #include <vector>
 #include "../common/TokenPair.hpp"
+
 class Scanner {
 private:
   std::set<std::string> keywords;

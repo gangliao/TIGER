@@ -3,6 +3,9 @@
  *
  * @author:  gatech Buzz
  */
+
+#pragma once
+
 #include "Symbol.hpp"
 class TokenPair {
 private:

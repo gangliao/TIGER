@@ -3,6 +3,9 @@
  *
  * @author:  Gatech Buzz
  */
+
+#pragma once
+
 #include <ctype.h>
 #include <cstdio>
 #include <fstream>

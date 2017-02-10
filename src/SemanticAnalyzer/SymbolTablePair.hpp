@@ -1,4 +1,7 @@
-//#include "../common/Symbol.hpp"
+
+#pragma once
+
+#include "../common/Symbol.hpp"
 
 class SymbolTablePair {
 private:
