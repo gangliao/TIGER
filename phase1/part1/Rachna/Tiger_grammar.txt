@@ -1,0 +1,84 @@
+tiger-program let declaration-segment in stat-seq end
+declaration-segment type-declaration-list var-declaration-list funct-declaration-list
+type-declaration-list epsilon
+type-declaration-list type-declaration type-declaration-list
+var-declaration-list epsilon
+var-declaration-list var-declaration var-declaration-list
+funct-declaration-list epsilon
+funct-declaration-list funct-declaration funct-declaration-list
+type-declaration type id = type
+type type-id
+type array intlit of type-id
+type is
+type-id int
+type-id float
+var-declaration var id-list type optional-init
+id-list id
+id-list id id-list
+optinal-init epsilon
+optinal-init := const
+funct-declaration fundtion id ( param-list ) ret-type begin stat-seq end
+param-list param param-list-tail
+param-list-tail epsilon
+param-list-tail param param-list-tail
+ret-type epsilon
+ret-type type
+param id type
+stat-seq stat
+stat-seq stat stat-seq
+stat lvalue := expr
+stat matched-stat
+stat unmatched-stat
+matched-stat if expr then matched-stat else matched-stat endif
+unmatched-stat if expr then stat-seq endif
+unmatched-stat if expr then matched-stmt else unmatched-stat endif
+stat while expr do stat-seq enddo
+stat for id := expr to expr do stat-seq enddo
+stat opt-prefix id  ( expr-list )
+opt-prefix lvalue :=
+opt-prefix epsilon
+stat break
+stat return expr
+stat let declaration-segment in stat-seq end
+expr const
+expr lvalue
+expr ( expr )
+const intlit
+const floatlit
+expr-list epsilon
+expr-list expr expr-list-tail
+expr-list-tail expr expr-list-tail
+expr-list-tail epsilon
+lvalue id lvalue-tail
+lvalue-tail [ expr ]
+lvalue-tail epsilon
+expr1 term1 t_tail1
+t_tail1 boolop term1 t_tail1
+t_tail1 epsilon
+term1 term2 t_tail2
+t_tail2 compareop term2 t_tail2
+t_tail2 epsilon
+term2 term3 t_tail3
+t_tail3 addsubop term3 t_tail3
+t_tail3 epsilon
+term3 factor t_tail4
+t_tail4 muldivop factor t_tail4
+t_tail4 epsilon
+boolop &
+boolop |
+compareop <>
+compareop =
+compareop >
+compareop <
+compareop >=
+compareop <=
+addsubop +
+addsubop -
+muldivop *
+muldivop \
+factor type
+factor const
+expr const
+expr lvalue
+expr expr1
+expr ( expr1 )
