@@ -58,8 +58,8 @@ naive grammar
 <stat-seq-tail> -> NULL
 
 # stat
-<stat> -> if <expr> then <stat-seq> <stat-seq-tail>
-<stat-seq-tail> -> else <stat-seq> endif;
+<stat> -> if <expr> then <stat-seq> <stat-if-tail>
+<stat-if-tail> -> else <stat-seq> endif;
 <stat-if-tail> -> endif;
 
 <stat> -> id <stat-funct-or-assign>
