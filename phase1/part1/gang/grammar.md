@@ -199,7 +199,7 @@ Follow(<tiger-program>) = {$}
 Follow(<declaration-segment>) = {in}
 Follow(<type-declaration-list>) = {var function in}
 Follow(<var-declaration-list>) = {function in}
-Follow(<funct-declaration-list>) = {function in}
+Follow(<funct-declaration-list>) = {in}
 Follow(<type-declaration>) = {var function in}
 Follow(<type>) = {; := begin , )}
 Follow(<type-id>) = {; := begin , )}
