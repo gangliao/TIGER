@@ -133,7 +133,7 @@ naive grammar
 
 <expr-list> -> NULL
 <expr-list> -> <expr> <expr-list-tail>
-<expr-list-tail> -> , <expr><expr-list-tail>
+<expr-list-tail> -> , <expr> <expr-list-tail>
 <expr-list-tail> -> NULL
 
 <lvalue> -> id <lvalue-tail>
@@ -190,4 +190,54 @@ First(<expr-list>) = {( INTLIT FLOATLIT id NULL}
 First(<expr-list-tail>) = {, NULL}
 First(<lvalue>) = {id}
 First(<lvalue-tail>) = {[ NULL}
+```
+
+## Follow Sets
+
+Follow(<tiger-program>) = {$}
+Follow(<declaration-segment>) = {in}
+Follow(<type-declaration-list>) = {type var function in}
+Follow(<var-declaration-list>) = {var function in}
+Follow(<funct-declaration-list>) = {function in}
+Follow(<type-declaration>) = {type var function in}
+Follow(<type>) = {; := begin , )}
+Follow(<type-id>) = {; := begin , )}
+Follow(<var-declaration>) = {var function in}
+Follow(<id-list>) = {:}
+Follow(<id-list-tail>) = {:}
+Follow(<optional-init>) = {;}
+Follow(<funct-declaration>) = {function in}
+Follow(<param-list>) = {)}
+Follow(<param-list-tail>) = {)}
+Follow(<ret-type>) = {begin}
+Follow(<param>) = {,}
+Follow(<stat-seq>) = {end endif else enddo}
+Follow(<stat-seq-tail>) = {end endif else enddo}
+Follow(<stat>) = {if id while for break return let}
+Follow(<stat-if-tail>) = {if id while for break return let}
+Follow(<stat-funct-or-assign>) = {if id while for break return let}
+Follow(<stat-assign>) = {;}
+Follow(<stat-assign-stuff>) = {;}
+Follow(<stat-assign-tail>) = {;}
+Follow(<expr>) = {then ) do to ; ] ,}
+Follow(<expr-tail>) = {then ) do to ; ] ,}
+Follow(<OR-expr>) = {| then ) do to ; ] ,}
+Follow(<OR-expr-tail>) = {| then ) do to ; ] ,}
+Follow(<AND-expr>) = {& | then ) do to ; ] ,}
+Follow(<AND-expr-tail>) = {& | then ) do to ; ] ,}
+Follow(<compare>) = {<= >= < > <> = & | then ) do to ; ] ,}
+Follow(<compare-tail>) = {<= >= < > <> = & | then ) do to ; ] ,}
+Follow(<term>) = {- + <= >= < > <> = & | then ) do to ; ] ,}
+Follow(<term-tail>) = {- + <= >= < > <> = & | then ) do to ; ] ,}
+Follow(<factor>) = {/ * - + <= >= < > <> = & | then ) do to ; ] ,}
+Follow(<const>) = {; | & <= >= < > <> = + / *}
+Follow(<OR-op>) = {( INTLIT FLOATLIT id}
+Follow(<AND-op>) = {( INTLIT FLOATLIT id}
+Follow(<compare-op>) = {( INTLIT FLOATLIT id}
+Follow(<add-op>) = {( INTLIT FLOATLIT id}
+Follow(<mul-op>) = {( INTLIT FLOATLIT id}
+Follow(<expr-list>) = {)}
+Follow(<expr-list-tail>) = {)}
+Follow(<lvalue>) = {/ * - + <= >= < > <> = & | then ) do to ; ] ,}
+Follow(<lvalue-tail>) = {:= / * - + <= >= < > <> = & | then ) do to ; ] ,}
 ```
