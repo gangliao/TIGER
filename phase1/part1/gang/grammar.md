@@ -197,17 +197,17 @@ First(<lvalue-tail>) = {[ NULL}
 ```bash
 Follow(<tiger-program>) = {$}
 Follow(<declaration-segment>) = {in}
-Follow(<type-declaration-list>) = {type var function in}
-Follow(<var-declaration-list>) = {var function in}
+Follow(<type-declaration-list>) = {var function in}
+Follow(<var-declaration-list>) = {function in}
 Follow(<funct-declaration-list>) = {function in}
-Follow(<type-declaration>) = {type var function in}
+Follow(<type-declaration>) = {var function in}
 Follow(<type>) = {; := begin , )}
 Follow(<type-id>) = {; := begin , )}
-Follow(<var-declaration>) = {var function in}
+Follow(<var-declaration>) = {in}
 Follow(<id-list>) = {:}
 Follow(<id-list-tail>) = {:}
 Follow(<optional-init>) = {;}
-Follow(<funct-declaration>) = {function in}
+Follow(<funct-declaration>) = {in}
 Follow(<param-list>) = {)}
 Follow(<param-list-tail>) = {)}
 Follow(<ret-type>) = {begin}
