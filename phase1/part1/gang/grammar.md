@@ -49,7 +49,7 @@ naive grammar
 <param-list-tail> -> , <param> <param-list-tail>
 <param-list-tail> -> NULL
 <ret-type> -> : <type>
-<ret-type> -> : NULL
+<ret-type> -> NULL
 <param> -> id : <type>
 
 # stat-seq
@@ -74,8 +74,8 @@ naive grammar
 <stat-assign-stuff> -> <lvalue-tail> <stat-assign-tail>
 
 <stat-assign-tail> -> <expr-tail>
-<stat-assign-tail> -> <OR-tail>
-<stat-assign-tail> -> <AND-tail>
+<stat-assign-tail> -> <OR-expr-tail>
+<stat-assign-tail> -> <AND-expr-tail>
 <stat-assign-tail> -> <compare-tail>
 <stat-assign-tail> -> <term-tail>
 
@@ -167,8 +167,8 @@ First(<stat>) = {if id while for break return let}
 First(<stat-if-tail>) = {else endif}
 First(<stat-funct-or-assign>) = {[ ( NULL}
 First(<stat-assign>) = {id ( INTLIT FLOATLIT}
-First(<stat-assign-stuff>) = {( [ | & <= >= < > <> = + / * NULL}
-First(<stat-assign-tail>) = {| & <= >= < > <> = + / * NULL}
+First(<stat-assign-stuff>) = {( [ | & <= >= < > <> - = + / * NULL}
+First(<stat-assign-tail>) = {| & <= >= < > <> = - + / * NULL}
 First(<expr>) = {( INTLIT FLOATLIT id}
 First(<expr-tail>) = {| NULL}
 First(<OR-expr>) = {( INTLIT FLOATLIT id}
