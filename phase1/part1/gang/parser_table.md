@@ -65,8 +65,8 @@
 42: <stat-assign-stuff> -> <lvalue-tail> <stat-assign-tail>
 
 43: <stat-assign-tail> -> <expr-tail>
-44: <stat-assign-tail> -> <OR-tail>
-45: <stat-assign-tail> -> <AND-tail>
+44: <stat-assign-tail> -> <OR-expr-tail>
+45: <stat-assign-tail> -> <AND-expr-tail>
 46: <stat-assign-tail> -> <compare-tail>
 47: <stat-assign-tail> -> <term-tail>
 
