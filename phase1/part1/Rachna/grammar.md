@@ -1,7 +1,8 @@
+## This is a markdown file
 #Operator precedence
 
 <expr1> -> <expr1> <boolop> <Term1> | <Term1>
-boolop ->&||
+boolop -> &||
 
 <Term1>-><Term1> <compareop> <Term2> | <Term2>
 compareop  -> <> | = | > |< |>=|<=
