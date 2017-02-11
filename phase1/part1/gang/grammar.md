@@ -27,7 +27,7 @@ naive grammar
 <funct-declaration-list> -> NULL 
 
 # type-declaration
-<type-declaration> -> type id = <type>;
+<type-declaration> -> type id := <type>;
 <type> -> <type-id>
 <type> -> array [INTLIT] of <type-id>
 <type> -> id

@@ -17,7 +17,7 @@
 8: <funct-declaration-list> -> NULL 
 
 # type-declaration
-9: <type-declaration> -> type id = <type>;
+9: <type-declaration> -> type id := <type>;
 10: <type> -> <type-id>
 11: <type> -> array [INTLIT] of <type-id>
 12: <type> -> id
@@ -134,8 +134,8 @@
 
 ```bash
 
-|   M[N][T]             |    |
-|-----------------------|----|
-| <tiger-program>       |    |
+|   M[N][T]             |array|break| do | else | end | for |function| if | in | let | nil | of | then | to | type | int |float| var |while|endif|begin| end | enddo |return| , | : | ; | ( | ) | [ | ] | { | } | + | - | * | / | = | < | > | < | > | <= | >= | & | | | := | 
+|-----------------------|-----|-----|----|------|-----|-----|--------|----|----|-----|-----|----|------|----|------|-----|-----|-----|-----|-----|-----|-----|-------|------|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|----|----|---|---|----| 
+| <tiger-program>       |     |
 
 ```
