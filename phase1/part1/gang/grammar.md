@@ -97,7 +97,7 @@ naive grammar
 <OR-expr-tail> -> <AND-op> <AND-expr> <OR-expr-tail>
 <OR-expr-tail> -> NULL
 
-<AND-expr> -> <compare-expr> <AND-expr-tail>
+<AND-expr> -> <compare> <AND-expr-tail>
 <AND-expr-tail> -> <compare-op> <compare> <AND-expr-tail>
 <AND-expr-tail> -> NULL
 
@@ -139,4 +139,55 @@ naive grammar
 <lvalue> -> id <lvalue-tail>
 <lvalue-tail> -> [<expr>]
 <lvalue-tail> -> NULL
+```
+
+## First Sets
+
+```bash
+First(<tiger-program>) = {let}
+First(<declaration-segment>) = {let type var function NULL}
+First(<type-declaration-list>) = {type NULL}
+First(<var-declaration-list>) = {var NULL}
+First(<funct-declaration-list>) = {function NULL}
+First(<type-declaration>) = {type}
+First(<type>) = {int float array id}
+First(<type-id>) = {int float}
+First(<var-declaration>) = {var}
+First(<id-list>) = {id}
+First(<id-list-tail>) = {, NULL}
+First(<optional-init>) = {:= NULL}
+First(<funct-declaration>) = {function}
+First(<param-list>) = {id NULL}
+First(<param-list-tail>) = {, NULL}
+First(<ret-type>) = {:}
+First(<param>) = {id}
+First(<stat-seq>) = {if id while for break return let}
+First(<stat-seq-tail>) = {if id while for break return let NULL}
+First(<stat>) = {if id while for break return let}
+First(<stat-if-tail>) = {else endif}
+First(<stat-funct-or-assign>) = {[ ( NULL}
+First(<stat-assign>) = {id ( INTLIT FLOATLIT}
+First(<stat-assign-stuff>) = {( [ | & <= >= < > <> = + / * NULL}
+First(<stat-assign-tail>) = {| & <= >= < > <> = + / * NULL}
+First(<expr>) = {( INTLIT FLOATLIT id}
+First(<expr-tail>) = {| NULL}
+First(<OR-expr>) = {( INTLIT FLOATLIT id}
+First(<OR-expr-tail>) = {& NULL}
+First(<AND-expr>) = {( INTLIT FLOATLIT id}
+First(<AND-expr-tail>) = {<= >= < > <> = NULL}
+First(<compare>) = {( INTLIT FLOATLIT id}
+First(<compare-tail>) = {- + NULL}
+First(<term>) = {( INTLIT FLOATLIT id}
+First(<term-tail>) = {/ * NULL}
+First(<factor>) = {( INTLIT FLOATLIT id}
+First(<const>) = {INTLIT FLOATLIT}
+First(<OR-op>) = {|}
+First(<AND-op>) = {&}
+First(<compare-op>) = {<= >= < > <> =}
+First(<add-op>) = {- +}
+First(<mul-op>) = {/ *}
+First(<expr-list>) = {( INTLIT FLOATLIT id NULL}
+First(<expr-list-tail>) = {, NULL}
+First(<lvalue>) = {id}
+First(<lvalue-tail>) = {[ NULL}
 ```
