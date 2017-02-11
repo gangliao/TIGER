@@ -17,7 +17,7 @@
 8: <funct-declaration-list> -> NULL 
 
 # type-declaration
-9: <type-declaration> -> type id := <type>;
+9: <type-declaration> -> type id = <type>;
 10: <type> -> <type-id>
 11: <type> -> array [INTLIT] of <type-id>
 12: <type> -> id
