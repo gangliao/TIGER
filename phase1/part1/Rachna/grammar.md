@@ -1,5 +1,3 @@
-## This is a markdown file
-
 #Operator precedence
 
 <expr1> -> <expr1> <boolop> <Term1> | <Term1>
