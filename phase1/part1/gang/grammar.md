@@ -140,4 +140,3 @@ naive grammar
 <lvalue-tail> -> [<expr>]
 <lvalue-tail> -> NULL
 ```
-
