@@ -194,6 +194,7 @@ First(<lvalue-tail>) = {[ NULL}
 
 ## Follow Sets
 
+```
 Follow(<tiger-program>) = {$}
 Follow(<declaration-segment>) = {in}
 Follow(<type-declaration-list>) = {type var function in}
