@@ -95,6 +95,7 @@ First  ('tiger-program', ['let'])
 
 
 
+
 Follow  tiger-program ['$']
 Follow  declaration-segment ['in']
 Follow  stat-seq ['end', 'else', 'endif', 'enddo']
@@ -104,12 +105,12 @@ Follow  funct-declaration-list ['in']
 Follow  type-declaration ['type-', 'var-', 'function-', 'in']
 Follow  var-declaration ['var-', 'function-', 'in']
 Follow  funct-declaration ['function-', 'in']
-Follow  type [';', ':=']
-Follow  type-id [';', ':=']
+Follow  type [';', ':=', 'begin', ',', ')']
+Follow  type-id [';', ':=', 'begin', ',', ')']
 Follow  id-list [':']
 Follow  optional-init [';']
 Follow  id-list-tail [':']
-Follow  const [';', '|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/']
+Follow  const [';', '|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/', 'then', 'do', 'to', ')', ']', ',']
 Follow  param-list [')']
 Follow  ret-type ['begin']
 Follow  param [',', ')']
