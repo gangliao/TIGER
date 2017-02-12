@@ -131,6 +131,22 @@ def find_first_set(element):
     #first_set_list.append((element,[]))
     #print first_set_list
 
+def check_if_nullable(element):
+
+    got_epsilon = 0
+    t = [(r1.lhs,r1.rhs) for r1 in rule_list]
+    for i in range(0,len(t)):
+        list_rhs = t[i][1]
+        lhs = t[i][0]
+        if(lhs[0] == element):
+            for j in range(0,len(list_rhs)):
+                for k in range(0,len(list_rhs[j])):
+                    if(list_rhs[j][k] == 'epsilon'):
+                        got_epsilon = 1
+                        break
+
+    return  got_epsilon
+
 def find_follow_set(element):
     #print "input is ---------------", element
 
@@ -150,25 +166,28 @@ def find_follow_set(element):
         for j in range(0,len(list_rhs)):
             #print "RHS here ",list_rhs[j], len(list_rhs[j])
             for k in range(0,len(list_rhs[j])):
-                #print "rhs",list_rhs[j][k], element
                 if(list_rhs[j][k] == element):
+                    #print "rhs",list_rhs[j][k], element
                     got_epsilon = 0
-                    n = k+1
-                    while(n < (len(list_rhs[j]))):
-                        first_set = find_first_set(list_rhs[j][n])
-                        #print "first set ..........",first_set,len(first_set[1])
-                        got_epsilon = 0
-                        for m in range(0,len(first_set[1])):
-                            if(first_set[1][m]!="epsilon"):
-                                if(first_set[1][m] not in list_to_return):
-                                    list_to_return.append(first_set[1][m])
-                            else:
-                                got_epsilon = 1
-                        if(got_epsilon==0):
-                            break
-                        n= n + 1
+                    if(k == (len(list_rhs[j]) -1)):
+                        if(list_rhs[j][k] != lhs[0]):
+                            got_epsilon = check_if_nullable(list_rhs[j][k])
+                    else:
+                        n = k+1
+                        while(n < (len(list_rhs[j]))):
+                            first_set = find_first_set(list_rhs[j][n])
+                            #print "first set ..........",first_set,len(first_set[1])
+                            got_epsilon = 0
+                            for m in range(0,len(first_set[1])):
+                                if(first_set[1][m]!="epsilon"):
+                                    if(first_set[1][m] not in list_to_return):
+                                        list_to_return.append(first_set[1][m])
+                                else:
+                                    got_epsilon = 1
+                            if(got_epsilon==0):
+                                break
+                            n= n + 1
 
-                    #print "num of epsilons......", lhs[0], len(first_set)
                     if(got_epsilon or(len(list_to_return) == 0)):
                         #print "calling follow set again...",lhs[0]
                         e,l=find_follow_set(lhs[0])
