@@ -160,7 +160,7 @@ First(<optional-init>) = {:= NULL}
 First(<funct-declaration>) = {function}
 First(<param-list>) = {id NULL}
 First(<param-list-tail>) = {, NULL}
-First(<ret-type>) = {:}
+First(<ret-type>) = {: NULL}
 First(<param>) = {id}
 First(<stat-seq>) = {if id while for break return let}
 First(<stat-seq-tail>) = {if id while for break return let NULL}
