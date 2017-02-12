@@ -1,139 +1,283 @@
 C:\Python27\python.exe C:/Users/rachna.s/PycharmProjects/compilers/compilers.py
-terminal list is:  ['let', 'in', 'end', 'epsilon', 'id', '=', 'array', 'intlit', 'of', 'is', 'int', 'float', 'var', 'optional-init', ':=', 'fundtion', '(', ')', 'begin', 'while', 'do', 'enddo', 'for', 'to', '', 'break', 'return', 'if', 'then', 'else', 'endif', 'matched-stmt', 'floatlit', '[', ']', '&', '|', '<>', '>', '<', '>=', '<=', '+', '-', '*', '\\']
-non-terminal list is:  ['tiger-program', 'declaration-segment', 'stat-seq', 'type-declaration-list', 'var-declaration-list', 'funct-declaration-list', 'type-declaration', 'var-declaration', 'funct-declaration', 'type', 'type-id', 'id-list', 'const', 'param-list', 'ret-type', 'param', 'param-list-tail', 'stat', 'lvalue', 'expr', 'matched-stat', 'unmatched-stat', 'opt-prefix', 'expr-list', 'expr1', 'expr-list-tail', 'lvalue-tail', 'term1', 't_tail1', 'boolop', 'term2', 't_tail2', 'compareop', 'term3', 't_tail3', 'addsubop', 'factor', 't_tail4', 'muldivop']
-First set is:  [('let', ['let']), ('in', ['in']), ('end', ['end']), ('epsilon', ['epsilon']), ('id', ['id']), ('=', ['=']), ('array', ['array']), ('intlit', ['intlit']), ('of', ['of']), ('is', ['is']), ('int', ['int']), ('float', ['float']), ('var', ['var']), ('optional-init', ['optional-init']), (':=', [':=']), ('fundtion', ['fundtion']), ('(', ['(']), (')', [')']), ('begin', ['begin']), ('while', ['while']), ('do', ['do']), ('enddo', ['enddo']), ('for', ['for']), ('to', ['to']), ('', ['']), ('break', ['break']), ('return', ['return']), ('if', ['if']), ('then', ['then']), ('else', ['else']), ('endif', ['endif']), ('matched-stmt', ['matched-stmt']), ('floatlit', ['floatlit']), ('[', ['[']), (']', [']']), ('&', ['&']), ('|', ['|']), ('<>', ['<>']), ('>', ['>']), ('<', ['<']), ('>=', ['>=']), ('<=', ['<=']), ('+', ['+']), ('-', ['-']), ('*', ['*']), ('\\', ['\\']), ('muldivop', ['*', '\\']), ('t_tail4', ['*', '\\', 'epsilon']), ('factor', ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), ('addsubop', ['+', '-']), ('t_tail3', ['+', '-', 'epsilon']), ('term3', ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), ('compareop', ['<>', '=', '>', '<', '>=', '<=']), ('t_tail2', ['<>', '=', '>', '<', '>=', '<=', 'epsilon']), ('term2', ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), ('boolop', ['&', '|']), ('t_tail1', ['&', '|', 'epsilon']), ('term1', ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), ('lvalue-tail', ['[', 'epsilon']), ('expr-list-tail', ['intlit', 'floatlit', 'id', '(', 'intlit', 'floatlit', 'id', 'int', 'float', 'array', 'is', 'intlit', 'floatlit', '(', 'epsilon']), ('expr1', ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), ('expr-list', ['epsilon', 'intlit', 'floatlit', 'id', '(', 'intlit', 'floatlit', 'id', 'int', 'float', 'array', 'is', 'intlit', 'floatlit', '(']), ('opt-prefix', ['id', 'epsilon']), ('unmatched-stat', ['if', 'if']), ('matched-stat', ['if']), ('expr', ['intlit', 'floatlit', 'id', '(', 'intlit', 'floatlit', 'id', 'int', 'float', 'array', 'is', 'intlit', 'floatlit', '(']), ('lvalue', ['id']), ('stat', ['id', 'if', 'if', 'if', 'while', 'for', 'id', 'id', 'break', 'return', 'let']), ('param-list-tail', ['epsilon', 'id']), ('param', ['id']), ('ret-type', ['epsilon', 'int', 'float', 'array', 'is']), ('param-list', ['id']), ('const', ['intlit', 'floatlit']), ('id-list', ['id', 'id']), ('type-id', ['int', 'float']), ('type', ['int', 'float', 'array', 'is']), ('funct-declaration', ['fundtion']), ('var-declaration', ['var']), ('type-declaration', ['int', 'float', 'array', 'is']), ('funct-declaration-list', ['epsilon', 'fundtion']), ('var-declaration-list', ['epsilon', 'var']), ('type-declaration-list', ['epsilon', 'int', 'float', 'array', 'is']), ('stat-seq', ['id', 'if', 'if', 'if', 'while', 'for', 'id', 'id', 'break', 'return', 'let', 'id', 'if', 'if', 'if', 'while', 'for', 'id', 'id', 'break', 'return', 'let']), ('declaration-segment', ['epsilon', 'int', 'float', 'array', 'is']), ('tiger-program', ['let'])]
-Follow set is:  [('tiger-program', ['$']), ('declaration-segment', ['in']), ('stat-seq', ['end', 'enddo', 'endif']), ('type-declaration-list', ['var', 'fundtion', 'in']), ('var-declaration-list', ['fundtion', 'in']), ('funct-declaration-list', ['in']), ('type-declaration', ['int', 'float', 'array', 'is', 'var', 'fundtion', 'in']), ('var-declaration', ['var', 'fundtion', 'in']), ('funct-declaration', ['fundtion', 'in']), ('type', ['id', 'optional-init']), ('type-id', ['id', 'optional-init']), ('id-list', ['int', 'float', 'array', 'is']), ('const', ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), ('param-list', [')']), ('ret-type', ['begin']), ('param', ['id', ')']), ('param-list-tail', [')']), ('stat', ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let']), ('lvalue', [':=']), ('expr', ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), ('matched-stat', ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'else']), ('unmatched-stat', ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let']), ('opt-prefix', ['id']), ('expr-list', ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let']), ('expr1', ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), ('expr-list-tail', ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let']), ('lvalue-tail', [':=']), ('term1', ['&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), ('t_tail1', ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), ('boolop', ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), ('term2', ['<>', '=', '>', '<', '>=', '<=', '&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), ('t_tail2', ['&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), ('compareop', ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), ('term3', ['+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), ('t_tail3', ['<>', '=', '>', '<', '>=', '<=', '&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), ('addsubop', ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), ('factor', ['*', '\\', '+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), ('t_tail4', ['+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), ('muldivop', ['int', 'float', 'array', 'is', 'intlit', 'floatlit'])]
-######################################################33
-Predicted set is :
-[(['tiger-program', 'let', 'declaration-segment', 'in', 'stat-seq', 'end'], ['let']), (['declaration-segment', 'type-declaration-list', 'var-declaration-list', 'funct-declaration-list'], ['int', 'float', 'array', 'is', 'in']), (['type-declaration-list', 'epsilon'], ['var', 'fundtion', 'in']), (['type-declaration-list', 'type-declaration', 'type-declaration-list'], ['int', 'float', 'array', 'is']), (['var-declaration-list', 'epsilon'], ['fundtion', 'in']), (['var-declaration-list', 'var-declaration', 'var-declaration-list'], ['var']), (['funct-declaration-list', 'epsilon'], ['in']), (['funct-declaration-list', 'funct-declaration', 'funct-declaration-list'], ['fundtion']), (['type-declaration', 'type', 'id', '=', 'type'], ['int', 'float', 'array', 'is']), (['type', 'type-id'], ['int', 'float']), (['type', 'array', 'intlit', 'of', 'type-id'], ['array']), (['type', 'is'], ['is']), (['type-id', 'int'], ['int']), (['type-id', 'float'], ['float']), (['var-declaration', 'var', 'id-list', 'type', 'optional-init'], ['var']), (['id-list', 'id'], ['id']), (['id-list', 'id', 'id-list'], ['id']), (['optinal-init', 'epsilon'], []), (['optinal-init', ':=', 'const'], [':=']), (['funct-declaration', 'fundtion', 'id', '(', 'param-list', ')', 'ret-type', 'begin', 'stat-seq', 'end'], ['fundtion']), (['param-list', 'param', 'param-list-tail'], ['id']), (['param-list-tail', 'epsilon'], [')']), (['param-list-tail', 'param', 'param-list-tail'], ['id']), (['ret-type', 'epsilon'], ['begin']), (['ret-type', 'type'], ['int', 'float', 'array', 'is']), (['param', 'id', 'type'], ['id']), (['stat-seq', 'stat'], ['id', 'if', 'if', 'if', 'while', 'for', 'id', 'id', 'break', 'return', 'let']), (['stat-seq', 'stat', 'stat-seq'], ['id', 'if', 'if', 'if', 'while', 'for', 'id', 'id', 'break', 'return', 'let']), (['stat', 'lvalue', ':=', 'expr'], ['id']), (['stat', 'matched-stat'], ['if']), (['stat', 'unmatched-stat'], ['if', 'if']), (['stat', 'while', 'expr', 'do', 'stat-seq', 'enddo'], ['while']), (['stat', 'for', 'id', ':=', 'expr', 'to', 'expr', 'do', 'stat-seq', 'enddo'], ['for']), (['stat', 'opt-prefix', 'id', '', '(', 'expr-list'], ['id', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let']), (['stat', 'break'], ['break']), (['stat', 'return', 'expr'], ['return']), (['stat', 'let', 'declaration-segment', 'in', 'stat-seq', 'end'], ['let']), (['matched-stat', 'if', 'expr', 'then', 'matched-stat', 'else', 'matched-stat', 'endif'], ['if']), (['unmatched-stat', 'if', 'expr', 'then', 'stat-seq', 'endif'], ['if']), (['unmatched-stat', 'if', 'expr', 'then', 'matched-stmt', 'else', 'unmatched-stat', 'endif'], ['if']), (['opt-prefix', 'lvalue', ':='], ['id']), (['opt-prefix', 'epsilon'], ['id']), (['expr', 'const'], ['intlit', 'floatlit']), (['expr', 'lvalue'], ['id']), (['expr', '(', 'expr', ')'], ['(']), (['expr', 'const'], ['intlit', 'floatlit']), (['expr', 'lvalue'], ['id']), (['expr', 'expr1'], ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), (['expr', '(', 'expr1', ')'], ['(']), (['const', 'intlit'], ['intlit']), (['const', 'floatlit'], ['floatlit']), (['expr-list', 'epsilon'], ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let']), (['expr-list', 'expr', 'expr-list-tail'], ['intlit', 'floatlit', 'id', '(', 'intlit', 'floatlit', 'id', 'int', 'float', 'array', 'is', 'intlit', 'floatlit', '(']), (['expr-list-tail', 'expr', 'expr-list-tail'], ['intlit', 'floatlit', 'id', '(', 'intlit', 'floatlit', 'id', 'int', 'float', 'array', 'is', 'intlit', 'floatlit', '(']), (['expr-list-tail', 'epsilon'], ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let']), (['lvalue', 'id', 'lvalue-tail'], ['id']), (['lvalue-tail', '[', 'expr', ']'], ['[']), (['lvalue-tail', 'epsilon'], [':=']), (['expr1', 'term1', 't_tail1'], ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), (['t_tail1', 'boolop', 'term1', 't_tail1'], ['&', '|']), (['t_tail1', 'epsilon'], ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), (['term1', 'term2', 't_tail2'], ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), (['t_tail2', 'compareop', 'term2', 't_tail2'], ['<>', '=', '>', '<', '>=', '<=']), (['t_tail2', 'epsilon'], ['&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), (['term2', 'term3', 't_tail3'], ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), (['t_tail3', 'addsubop', 'term3', 't_tail3'], ['+', '-']), (['t_tail3', 'epsilon'], ['<>', '=', '>', '<', '>=', '<=', '&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), (['term3', 'factor', 't_tail4'], ['int', 'float', 'array', 'is', 'intlit', 'floatlit']), (['t_tail4', 'muldivop', 'factor', 't_tail4'], ['*', '\\']), (['t_tail4', 'epsilon'], ['+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']), (['boolop', '&'], ['&']), (['boolop', '|'], ['|']), (['compareop', '<>'], ['<>']), (['compareop', '='], ['=']), (['compareop', '>'], ['>']), (['compareop', '<'], ['<']), (['compareop', '>='], ['>=']), (['compareop', '<='], ['<=']), (['addsubop', '+'], ['+']), (['addsubop', '-'], ['-']), (['muldivop', '*'], ['*']), (['muldivop', '\\'], ['\\']), (['factor', 'type'], ['int', 'float', 'array', 'is']), (['factor', 'const'], ['intlit', 'floatlit'])]
+First  ('let', ['let'])
+First  ('in', ['in'])
+First  ('end', ['end'])
+First  ('epsilon', ['epsilon'])
+First  ('id', ['id'])
+First  ('=', ['='])
+First  ('array', ['array'])
+First  ('[', ['['])
+First  ('intlit', ['intlit'])
+First  (']', [']'])
+First  ('of', ['of'])
+First  ('int', ['int'])
+First  ('float', ['float'])
+First  ('var', ['var'])
+First  ('optional-init', ['optional-init'])
+First  (',', [','])
+First  (':=', [':='])
+First  ('function', ['function'])
+First  ('(', ['('])
+First  (')', [')'])
+First  ('begin', ['begin'])
+First  (';', [';'])
+First  (':', [':'])
+First  ('if', ['if'])
+First  ('then', ['then'])
+First  ('while', ['while'])
+First  ('do', ['do'])
+First  ('enddo', ['enddo'])
+First  ('for', ['for'])
+First  ('to', ['to'])
+First  ('break', ['break'])
+First  ('return', ['return'])
+First  ('else', ['else'])
+First  ('endif', ['endif'])
+First  ('&', ['&'])
+First  ('|', ['|'])
+First  ('<>', ['<>'])
+First  ('>', ['>'])
+First  ('<', ['<'])
+First  ('>=', ['>='])
+First  ('<=', ['<='])
+First  ('+', ['+'])
+First  ('-', ['-'])
+First  ('*', ['*'])
+First  ('/', ['/'])
+First  ('floatlit', ['floatlit'])
+First  ('expr-list-tail', [',', 'epsilon'])
+First  ('mul-op', ['*', '/'])
+First  ('factor', ['int', 'float', 'array', 'id', 'intlit', 'floatlit'])
+First  ('add-op', ['+', '-'])
+First  ('term', ['int', 'float', 'array', 'id', 'intlit', 'floatlit'])
+First  ('compare-op', ['<>', '=', '>', '<', '>=', '<='])
+First  ('compare', ['int', 'float', 'array', 'id', 'intlit', 'floatlit'])
+First  ('AND-op', ['&'])
+First  ('AND-expr', ['int', 'float', 'array', 'id', 'intlit', 'floatlit'])
+First  ('OR-op', ['|'])
+First  ('lvalue', ['id'])
+First  ('OR-expr', ['int', 'float', 'array', 'id', 'intlit', 'floatlit'])
+First  ('term-tail', ['*', '/', 'epsilon'])
+First  ('compare-tail', ['+', '-', 'epsilon'])
+First  ('AND-expr-tail', ['<>', '=', '>', '<', '>=', '<=', 'epsilon'])
+First  ('OR-expr-tail', ['&', 'epsilon'])
+First  ('expr-tail', ['|', 'epsilon'])
+First  ('stat-assign-tail', ['|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/'])
+First  ('stat-assign-stuff', ['(', '[', '|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/'])
+First  ('expr-list', ['epsilon', 'int', 'float', 'array', 'id', 'intlit', 'floatlit', 'intlit', 'floatlit', 'id', '('])
+First  ('stat-assign', ['id', '(', 'intlit', 'floatlit'])
+First  ('lvalue-tail', ['[', 'epsilon'])
+First  ('stat-funct-or-assign', ['[', ':=', '('])
+First  ('stat-if-tail', ['else', 'endif'])
+First  ('expr', ['int', 'float', 'array', 'id', 'intlit', 'floatlit', 'intlit', 'floatlit', 'id', '('])
+First  ('stat-seq-tail', ['if', 'id', 'while', 'for', 'break', 'return', 'let', 'epsilon'])
+First  ('stat', ['if', 'id', 'while', 'for', 'break', 'return', 'let'])
+First  ('param-list-tail', [',', 'epsilon'])
+First  ('param', ['id'])
+First  ('ret-type', [':', 'epsilon'])
+First  ('param-list', ['id', 'epsilon'])
+First  ('const', ['intlit', 'floatlit'])
+First  ('id-list-tail', [',', 'epsilon'])
+First  ('id-list', ['id'])
+First  ('type-id', ['int', 'float'])
+First  ('type', ['int', 'float', 'array', 'id'])
+First  ('funct-declaration', ['function'])
+First  ('var-declaration', ['var'])
+First  ('type-declaration', ['int', 'float', 'array', 'id'])
+First  ('funct-declaration-list', ['function', 'epsilon'])
+First  ('var-declaration-list', ['var', 'epsilon'])
+First  ('type-declaration-list', ['int', 'float', 'array', 'id', 'epsilon'])
+First  ('stat-seq', ['if', 'id', 'while', 'for', 'break', 'return', 'let'])
+First  ('declaration-segment', ['int', 'float', 'array', 'id', 'var', 'function'])
+First  ('tiger-program', ['let'])
+Follow  tiger-program ['$']
+Follow  declaration-segment ['in']
+Follow  stat-seq ['end', 'else', 'endif', 'enddo']
+Follow  type-declaration-list ['var', 'function', 'in']
+Follow  var-declaration-list ['function', 'in']
+Follow  funct-declaration-list ['in']
+Follow  type-declaration ['int', 'float', 'array', 'id', 'var', 'function', 'in']
+Follow  var-declaration ['var', 'function', 'in']
+Follow  funct-declaration ['function', 'in']
+Follow  type ['id', 'optional-init']
+Follow  type-id ['id', 'optional-init']
+Follow  id-list ['int', 'float', 'array', 'id']
+Follow  id-list-tail ['int', 'float', 'array', 'id']
+Follow  const ['|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/']
+Follow  param-list [')']
+Follow  ret-type ['begin']
+Follow  param [',', ')']
+Follow  param-list-tail [')']
+Follow  stat ['if', 'id', 'while', 'for', 'break', 'return', 'let', 'end', 'else', 'endif', 'enddo']
+Follow  stat-seq-tail ['end', 'else', 'endif', 'enddo']
+Follow  expr ['then', 'do', 'to', ';', ')', ']', ',']
+Follow  stat-if-tail ['if', 'id', 'while', 'for', 'break', 'return', 'let', 'end', 'else', 'endif', 'enddo']
+Follow  stat-funct-or-assign ['if', 'id', 'while', 'for', 'break', 'return', 'let', 'end', 'else', 'endif', 'enddo']
+Follow  lvalue-tail [':=', '|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/']
+Follow  stat-assign [';']
+Follow  expr-list [')']
+Follow  stat-assign-stuff [';']
+Follow  stat-assign-tail [';']
+Follow  expr-tail [';']
+Follow  OR-expr-tail [';']
+Follow  AND-expr-tail [';']
+Follow  compare-tail [';']
+Follow  term-tail [';']
+Follow  OR-expr ['|', 'then', 'do', 'to', ';', ')', ']', ',']
+Follow  lvalue ['then', 'do', 'to', ';', ')', ']', ',']
+Follow  OR-op ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+Follow  AND-expr ['&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
+Follow  AND-op ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+Follow  compare ['<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
+Follow  compare-op ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+Follow  term ['+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
+Follow  add-op ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+Follow  factor ['*', '/', '+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
+Follow  mul-op ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+Follow  expr-list-tail [')']
 ############################################
-terminal list =  ['let', 'in', 'end', 'epsilon', 'id', '=', 'array', 'intlit', 'of', 'is', 'int', 'float', 'var', 'optional-init', ':=', 'fundtion', '(', ')', 'begin', 'while', 'do', 'enddo', 'for', 'to', '', 'break', 'return', 'if', 'then', 'else', 'endif', 'matched-stmt', 'floatlit', '[', ']', '&', '|', '<>', '>', '<', '>=', '<=', '+', '-', '*', '\\']
-modified terminal list is  ['let', 'in', 'end', 'id', '=', 'array', 'intlit', 'of', 'is', 'int', 'float', 'var', 'optional-init', ':=', 'fundtion', '(', ')', 'begin', 'while', 'do', 'enddo', 'for', 'to', '', 'break', 'return', 'if', 'then', 'else', 'endif', 'matched-stmt', 'floatlit', '[', ']', '&', '|', '<>', '>', '<', '>=', '<=', '+', '-', '*', '\\', '$']
-non-terminal list =  ['tiger-program', 'declaration-segment', 'stat-seq', 'type-declaration-list', 'var-declaration-list', 'funct-declaration-list', 'type-declaration', 'var-declaration', 'funct-declaration', 'type', 'type-id', 'id-list', 'const', 'param-list', 'ret-type', 'param', 'param-list-tail', 'stat', 'lvalue', 'expr', 'matched-stat', 'unmatched-stat', 'opt-prefix', 'expr-list', 'expr1', 'expr-list-tail', 'lvalue-tail', 'term1', 't_tail1', 'boolop', 'term2', 't_tail2', 'compareop', 'term3', 't_tail3', 'addsubop', 'factor', 't_tail4', 'muldivop']
+terminal list =  ['let', 'in', 'end', 'epsilon', 'id', '=', 'array', '[', 'intlit', ']', 'of', 'int', 'float', 'var', 'optional-init', ',', ':=', 'function', '(', ')', 'begin', ';', ':', 'if', 'then', 'while', 'do', 'enddo', 'for', 'to', 'break', 'return', 'else', 'endif', '&', '|', '<>', '>', '<', '>=', '<=', '+', '-', '*', '/', 'floatlit'] 46
+modified terminal list is  ['let', 'in', 'end', 'id', '=', 'array', '[', 'intlit', ']', 'of', 'int', 'float', 'var', 'optional-init', ',', ':=', 'function', '(', ')', 'begin', ';', ':', 'if', 'then', 'while', 'do', 'enddo', 'for', 'to', 'break', 'return', 'else', 'endif', '&', '|', '<>', '>', '<', '>=', '<=', '+', '-', '*', '/', 'floatlit', '$'] 46
+non-terminal list =  ['tiger-program', 'declaration-segment', 'stat-seq', 'type-declaration-list', 'var-declaration-list', 'funct-declaration-list', 'type-declaration', 'var-declaration', 'funct-declaration', 'type', 'type-id', 'id-list', 'id-list-tail', 'const', 'param-list', 'ret-type', 'param', 'param-list-tail', 'stat', 'stat-seq-tail', 'expr', 'stat-if-tail', 'stat-funct-or-assign', 'lvalue-tail', 'stat-assign', 'expr-list', 'stat-assign-stuff', 'stat-assign-tail', 'expr-tail', 'OR-expr-tail', 'AND-expr-tail', 'compare-tail', 'term-tail', 'OR-expr', 'lvalue', 'OR-op', 'AND-expr', 'AND-op', 'compare', 'compare-op', 'term', 'add-op', 'factor', 'mul-op', 'expr-list-tail'] 45
 Rule list is: 
 0 ['tiger-program', 'let', 'declaration-segment', 'in', 'stat-seq', 'end'] ['let']
-1 ['declaration-segment', 'type-declaration-list', 'var-declaration-list', 'funct-declaration-list'] ['int', 'float', 'array', 'is', 'in']
-2 ['type-declaration-list', 'epsilon'] ['var', 'fundtion', 'in']
-3 ['type-declaration-list', 'type-declaration', 'type-declaration-list'] ['int', 'float', 'array', 'is']
-4 ['var-declaration-list', 'epsilon'] ['fundtion', 'in']
-5 ['var-declaration-list', 'var-declaration', 'var-declaration-list'] ['var']
-6 ['funct-declaration-list', 'epsilon'] ['in']
-7 ['funct-declaration-list', 'funct-declaration', 'funct-declaration-list'] ['fundtion']
-8 ['type-declaration', 'type', 'id', '=', 'type'] ['int', 'float', 'array', 'is']
+1 ['declaration-segment', 'type-declaration-list', 'var-declaration-list', 'funct-declaration-list'] ['int', 'float', 'array', 'id', 'in']
+2 ['type-declaration-list', 'type-declaration', 'type-declaration-list'] ['int', 'float', 'array', 'id']
+3 ['type-declaration-list', 'epsilon'] ['var', 'function', 'in']
+4 ['var-declaration-list', 'var-declaration', 'var-declaration-list'] ['var']
+5 ['var-declaration-list', 'epsilon'] ['function', 'in']
+6 ['funct-declaration-list', 'funct-declaration', 'funct-declaration-list'] ['function']
+7 ['funct-declaration-list', 'epsilon'] ['in']
+8 ['type-declaration', 'type', 'id', '=', 'type'] ['int', 'float', 'array', 'id']
 9 ['type', 'type-id'] ['int', 'float']
-10 ['type', 'array', 'intlit', 'of', 'type-id'] ['array']
-11 ['type', 'is'] ['is']
+10 ['type', 'array', '[', 'intlit', ']', 'of', 'type-id'] ['array']
+11 ['type', 'id'] ['id']
 12 ['type-id', 'int'] ['int']
 13 ['type-id', 'float'] ['float']
 14 ['var-declaration', 'var', 'id-list', 'type', 'optional-init'] ['var']
-15 ['id-list', 'id'] ['id']
-16 ['id-list', 'id', 'id-list'] ['id']
-17 ['optinal-init', 'epsilon'] []
+15 ['id-list', 'id', 'id-list-tail'] ['id']
+16 ['id-list-tail', ',', 'id', 'id-list-tail'] [',']
+17 ['id-list-tail', 'epsilon'] ['int', 'float', 'array', 'id']
 18 ['optinal-init', ':=', 'const'] [':=']
-19 ['funct-declaration', 'fundtion', 'id', '(', 'param-list', ')', 'ret-type', 'begin', 'stat-seq', 'end'] ['fundtion']
-20 ['param-list', 'param', 'param-list-tail'] ['id']
-21 ['param-list-tail', 'epsilon'] [')']
-22 ['param-list-tail', 'param', 'param-list-tail'] ['id']
-23 ['ret-type', 'epsilon'] ['begin']
-24 ['ret-type', 'type'] ['int', 'float', 'array', 'is']
-25 ['param', 'id', 'type'] ['id']
-26 ['stat-seq', 'stat'] ['id', 'if', 'if', 'if', 'while', 'for', 'id', 'id', 'break', 'return', 'let']
-27 ['stat-seq', 'stat', 'stat-seq'] ['id', 'if', 'if', 'if', 'while', 'for', 'id', 'id', 'break', 'return', 'let']
-28 ['stat', 'lvalue', ':=', 'expr'] ['id']
-29 ['stat', 'matched-stat'] ['if']
-30 ['stat', 'unmatched-stat'] ['if', 'if']
-31 ['stat', 'while', 'expr', 'do', 'stat-seq', 'enddo'] ['while']
-32 ['stat', 'for', 'id', ':=', 'expr', 'to', 'expr', 'do', 'stat-seq', 'enddo'] ['for']
-33 ['stat', 'opt-prefix', 'id', '', '(', 'expr-list'] ['id', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let']
-34 ['stat', 'break'] ['break']
-35 ['stat', 'return', 'expr'] ['return']
-36 ['stat', 'let', 'declaration-segment', 'in', 'stat-seq', 'end'] ['let']
-37 ['matched-stat', 'if', 'expr', 'then', 'matched-stat', 'else', 'matched-stat', 'endif'] ['if']
-38 ['unmatched-stat', 'if', 'expr', 'then', 'stat-seq', 'endif'] ['if']
-39 ['unmatched-stat', 'if', 'expr', 'then', 'matched-stmt', 'else', 'unmatched-stat', 'endif'] ['if']
-40 ['opt-prefix', 'lvalue', ':='] ['id']
-41 ['opt-prefix', 'epsilon'] ['id']
-42 ['expr', 'const'] ['intlit', 'floatlit']
-43 ['expr', 'lvalue'] ['id']
-44 ['expr', '(', 'expr', ')'] ['(']
-45 ['expr', 'const'] ['intlit', 'floatlit']
-46 ['expr', 'lvalue'] ['id']
-47 ['expr', 'expr1'] ['int', 'float', 'array', 'is', 'intlit', 'floatlit']
-48 ['expr', '(', 'expr1', ')'] ['(']
-49 ['const', 'intlit'] ['intlit']
-50 ['const', 'floatlit'] ['floatlit']
-51 ['expr-list', 'epsilon'] ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let']
-52 ['expr-list', 'expr', 'expr-list-tail'] ['intlit', 'floatlit', 'id', '(', 'intlit', 'floatlit', 'id', 'int', 'float', 'array', 'is', 'intlit', 'floatlit', '(']
-53 ['expr-list-tail', 'expr', 'expr-list-tail'] ['intlit', 'floatlit', 'id', '(', 'intlit', 'floatlit', 'id', 'int', 'float', 'array', 'is', 'intlit', 'floatlit', '(']
-54 ['expr-list-tail', 'epsilon'] ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let']
-55 ['lvalue', 'id', 'lvalue-tail'] ['id']
-56 ['lvalue-tail', '[', 'expr', ']'] ['[']
-57 ['lvalue-tail', 'epsilon'] [':=']
-58 ['expr1', 'term1', 't_tail1'] ['int', 'float', 'array', 'is', 'intlit', 'floatlit']
-59 ['t_tail1', 'boolop', 'term1', 't_tail1'] ['&', '|']
-60 ['t_tail1', 'epsilon'] ['end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']
-61 ['term1', 'term2', 't_tail2'] ['int', 'float', 'array', 'is', 'intlit', 'floatlit']
-62 ['t_tail2', 'compareop', 'term2', 't_tail2'] ['<>', '=', '>', '<', '>=', '<=']
-63 ['t_tail2', 'epsilon'] ['&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']
-64 ['term2', 'term3', 't_tail3'] ['int', 'float', 'array', 'is', 'intlit', 'floatlit']
-65 ['t_tail3', 'addsubop', 'term3', 't_tail3'] ['+', '-']
-66 ['t_tail3', 'epsilon'] ['<>', '=', '>', '<', '>=', '<=', '&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']
-67 ['term3', 'factor', 't_tail4'] ['int', 'float', 'array', 'is', 'intlit', 'floatlit']
-68 ['t_tail4', 'muldivop', 'factor', 't_tail4'] ['*', '\\']
-69 ['t_tail4', 'epsilon'] ['+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'end', 'enddo', 'endif', 'id', 'if', 'while', 'for', 'break', 'return', 'let', 'do', 'to', 'then', ')', 'intlit', 'floatlit', '(', 'int', 'float', 'array', 'is', ']']
-70 ['boolop', '&'] ['&']
-71 ['boolop', '|'] ['|']
-72 ['compareop', '<>'] ['<>']
-73 ['compareop', '='] ['=']
-74 ['compareop', '>'] ['>']
-75 ['compareop', '<'] ['<']
-76 ['compareop', '>='] ['>=']
-77 ['compareop', '<='] ['<=']
-78 ['addsubop', '+'] ['+']
-79 ['addsubop', '-'] ['-']
-80 ['muldivop', '*'] ['*']
-81 ['muldivop', '\\'] ['\\']
-82 ['factor', 'type'] ['int', 'float', 'array', 'is']
-83 ['factor', 'const'] ['intlit', 'floatlit']
+19 ['optinal-init', 'epsilon'] []
+20 ['funct-declaration', 'function', 'id', '(', 'param-list', ')', 'ret-type', 'begin', 'stat-seq', 'end', ';'] ['function']
+21 ['param-list', 'param', 'param-list-tail'] ['id']
+22 ['param-list', 'epsilon'] [')']
+23 ['param-list-tail', ',', 'param', 'param-list-tail'] [',']
+24 ['param-list-tail', 'epsilon'] [')']
+25 ['ret-type', ':', 'type'] [':']
+26 ['ret-type', 'epsilon'] ['begin']
+27 ['param', 'id', ':', 'type'] ['id']
+28 ['stat-seq', 'stat', 'stat-seq-tail'] ['if', 'id', 'while', 'for', 'break', 'return', 'let']
+29 ['stat-seq-tail', 'stat', 'stat-seq-tail'] ['if', 'id', 'while', 'for', 'break', 'return', 'let']
+30 ['stat-seq-tail', 'epsilon'] ['end', 'else', 'endif', 'enddo']
+31 ['stat', 'if', 'expr', 'then', 'stat-seq', 'stat-if-tail'] ['if']
+32 ['stat', 'id', 'stat-funct-or-assign'] ['id']
+33 ['stat', 'while', 'expr', 'do', 'stat-seq', 'enddo', ';'] ['while']
+34 ['stat', 'for', 'id', ':=', 'expr', 'to', 'expr', 'do', 'stat-seq', 'enddo', ';'] ['for']
+35 ['stat', 'break', ';'] ['break']
+36 ['stat', 'return', 'expr', ';'] ['return']
+37 ['stat', 'let', 'declaration-segment', 'in', 'stat-seq', 'end'] ['let']
+38 ['stat-if-tail', 'else', 'stat-seq', 'endif', ';'] ['else']
+39 ['stat-if-tail', 'endif', ';'] ['endif']
+40 ['stat-funct-or-assign', 'lvalue-tail', ':=', 'stat-assign', ';'] ['[', 'if', 'id', 'while', 'for', 'break', 'return', 'let', 'end', 'else', 'endif', 'enddo']
+41 ['stat-funct-or-assign', '(', 'expr-list', ')', ';'] ['(']
+42 ['stat-assign', 'id', 'stat-assign-stuff'] ['id']
+43 ['stat-assign', '(', 'expr', ')', 'stat-assign-tail'] ['(']
+44 ['stat-assign', 'const', 'stat-assign-tail'] ['intlit', 'floatlit']
+45 ['stat-assign-stuff', '(', 'expr-list', ')'] ['(']
+46 ['stat-assign-stuff', 'lvalue-tail', 'stat-assign-tail'] ['[', ';']
+47 ['stat-assign-tail', 'expr-tail'] ['|', ';']
+48 ['stat-assign-tail', 'OR-expr-tail'] ['&', ';']
+49 ['stat-assign-tail', 'AND-expr-tail'] ['<>', '=', '>', '<', '>=', '<=', ';']
+50 ['stat-assign-tail', 'compare-tail'] ['+', '-', ';']
+51 ['stat-assign-tail', 'term-tail'] ['*', '/', ';']
+52 ['lvalue', 'id', 'lvalue-tail'] ['id']
+53 ['lvalue-tail', '[', 'expr', ']'] ['[']
+54 ['lvalue-tail', 'epsilon'] [':=', '|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/']
+55 ['expr', 'OR-expr', 'expr-tail'] ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+56 ['expr', 'const'] ['intlit', 'floatlit']
+57 ['expr', 'lvalue'] ['id']
+58 ['expr', '(', 'expr', ')'] ['(']
+59 ['expr-tail', 'OR-op', 'OR-expr', 'expr-tail'] ['|']
+60 ['expr-tail', 'epsilon'] [';']
+61 ['OR-expr', 'AND-expr', 'OR-expr-tail'] ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+62 ['OR-expr-tail', 'AND-op', 'AND-expr', 'OR-expr-tail'] ['&']
+63 ['OR-expr-tail', 'epsilon'] [';']
+64 ['AND-expr', 'compare', 'AND-expr-tail'] ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+65 ['AND-expr-tail', 'compare-op', 'compare', 'AND-expr-tail'] ['<>', '=', '>', '<', '>=', '<=']
+66 ['AND-expr-tail', 'epsilon'] [';']
+67 ['compare', 'term', 'compare-tail'] ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+68 ['compare-tail', 'add-op', 'term', 'compare-tail'] ['+', '-']
+69 ['compare-tail', 'epsilon'] [';']
+70 ['term', 'factor', 'term-tail'] ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+71 ['term-tail', 'mul-op', 'factor', 'term-tail'] ['*', '/']
+72 ['term-tail', 'epsilon'] [';']
+73 ['AND-op', '&'] ['&']
+74 ['OR-op', '|'] ['|']
+75 ['compare-op', '<>'] ['<>']
+76 ['compare-op', '='] ['=']
+77 ['compare-op', '>'] ['>']
+78 ['compare-op', '<'] ['<']
+79 ['compare-op', '>='] ['>=']
+80 ['compare-op', '<='] ['<=']
+81 ['add-op', '+'] ['+']
+82 ['add-op', '-'] ['-']
+83 ['mul-op', '*'] ['*']
+84 ['mul-op', '/'] ['/']
+85 ['factor', 'type'] ['int', 'float', 'array', 'id']
+86 ['factor', 'const'] ['intlit', 'floatlit']
+87 ['const', 'intlit'] ['intlit']
+88 ['const', 'floatlit'] ['floatlit']
+89 ['expr-list', 'epsilon'] [')']
+90 ['expr-list', 'expr', 'expr-list-tail'] ['int', 'float', 'array', 'id', 'intlit', 'floatlit', 'intlit', 'floatlit', 'id', '(']
+91 ['expr-list-tail', ',', 'expr', 'expr-list-tail'] [',']
+92 ['expr-list-tail', 'epsilon'] [')']
 Final parser table: rows->non-terminal, col->modified terminals. index starts with 0. Integer represents rule index in rule list
      0.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     1.0     nan     nan     nan     1.0     nan     nan     1.0     1.0     1.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-    27.0     nan     nan    27.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    27.0     nan     nan    27.0     nan     nan    27.0    27.0    27.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     2.0     nan     nan     nan     3.0     nan     nan     3.0     3.0     3.0     2.0     nan     nan     2.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     4.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     5.0     nan     nan     4.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     6.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     7.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     8.0     nan     nan     8.0     8.0     8.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    14.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    19.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan    10.0     nan     nan    11.0     9.0     9.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan    12.0    13.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan    16.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan    49.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    50.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan    20.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan    24.0     nan     nan    24.0    24.0    24.0     nan     nan     nan     nan     nan     nan    23.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan    25.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan    22.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    21.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-    36.0     nan    33.0    33.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    33.0     nan    33.0    33.0     nan     nan    34.0    35.0    33.0     nan     nan    33.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan    55.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan    46.0     nan    47.0    47.0     nan    47.0    47.0    47.0     nan     nan     nan     nan    48.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    47.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    37.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    39.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan    41.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-    51.0     nan    51.0    52.0     nan    52.0    52.0     nan    52.0    52.0    52.0     nan     nan     nan     nan    52.0     nan     nan    51.0     nan    51.0    51.0     nan     nan    51.0    51.0    51.0     nan     nan    51.0     nan    52.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan    58.0    58.0     nan    58.0    58.0    58.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    58.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-    54.0     nan    54.0    54.0     nan    53.0    53.0     nan    53.0    53.0    53.0     nan     nan     nan     nan    53.0     nan     nan    54.0     nan    54.0    54.0     nan     nan    54.0    54.0    54.0     nan     nan    54.0     nan    53.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    57.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    56.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan    61.0    61.0     nan    61.0    61.0    61.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    61.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-    60.0     nan    60.0    60.0     nan    60.0    60.0     nan    60.0    60.0    60.0     nan     nan     nan     nan    60.0    60.0     nan    60.0    60.0    60.0    60.0    60.0     nan    60.0    60.0    60.0    60.0     nan    60.0     nan    60.0     nan    60.0    59.0    59.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    70.0    71.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan    64.0    64.0     nan    64.0    64.0    64.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    64.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-    63.0     nan    63.0    63.0    62.0    63.0    63.0     nan    63.0    63.0    63.0     nan     nan     nan     nan    63.0    63.0     nan    63.0    63.0    63.0    63.0    63.0     nan    63.0    63.0    63.0    63.0     nan    63.0     nan    63.0     nan    63.0    63.0    63.0    62.0    62.0    62.0    62.0    62.0     nan     nan     nan     nan     nan
-     nan     nan     nan     nan    73.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    72.0    74.0    75.0    76.0    77.0     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan    67.0    67.0     nan    67.0    67.0    67.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    67.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-    66.0     nan    66.0    66.0    66.0    66.0    66.0     nan    66.0    66.0    66.0     nan     nan     nan     nan    66.0    66.0     nan    66.0    66.0    66.0    66.0    66.0     nan    66.0    66.0    66.0    66.0     nan    66.0     nan    66.0     nan    66.0    66.0    66.0    66.0    66.0    66.0    66.0    66.0    65.0    65.0     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    78.0    79.0     nan     nan     nan
-     nan     nan     nan     nan     nan    82.0    83.0     nan    82.0    82.0    82.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    83.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-    69.0     nan    69.0    69.0    69.0    69.0    69.0     nan    69.0    69.0    69.0     nan     nan     nan     nan    69.0    69.0     nan    69.0    69.0    69.0    69.0    69.0     nan    69.0    69.0    69.0    69.0     nan    69.0     nan    69.0     nan    69.0    69.0    69.0    69.0    69.0    69.0    69.0    69.0    69.0    69.0    68.0    68.0     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    80.0    81.0     nan
+     nan     1.0     nan     1.0     nan     1.0     nan     nan     nan     nan     1.0     1.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+    28.0     nan     nan    28.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    28.0     nan    28.0     nan     nan    28.0     nan    28.0    28.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     3.0     nan     2.0     nan     2.0     nan     nan     nan     nan     2.0     2.0     3.0     nan     nan     nan     3.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     5.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     4.0     nan     nan     nan     5.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     7.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     6.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     8.0     nan     8.0     nan     nan     nan     nan     8.0     8.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    14.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    20.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan    11.0     nan    10.0     nan     nan     nan     nan     9.0     9.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    12.0    13.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan    15.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan    17.0     nan    17.0     nan     nan     nan     nan    17.0    17.0     nan     nan    16.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan    87.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    88.0     nan
+     nan     nan     nan    21.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    22.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    26.0     nan    25.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan    27.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    23.0     nan     nan     nan    24.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+    37.0     nan     nan    32.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    31.0     nan    33.0     nan     nan    34.0     nan    35.0    36.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+    29.0     nan    30.0    29.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    29.0     nan    29.0     nan    30.0    29.0     nan    29.0    29.0    30.0    30.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan    57.0     nan    55.0     nan    56.0     nan     nan    55.0    55.0     nan     nan     nan     nan     nan    58.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    56.0     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    38.0    39.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+    40.0     nan    40.0    40.0     nan     nan    40.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    41.0     nan     nan     nan     nan    40.0     nan    40.0     nan    40.0    40.0     nan    40.0    40.0    40.0    40.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan    54.0     nan    53.0     nan     nan     nan     nan     nan     nan     nan     nan    54.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    54.0    54.0    54.0    54.0    54.0    54.0    54.0    54.0    54.0    54.0    54.0     nan     nan
+     nan     nan     nan    42.0     nan     nan     nan    44.0     nan     nan     nan     nan     nan     nan     nan     nan     nan    43.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    44.0     nan
+     nan     nan     nan    90.0     nan    90.0     nan    90.0     nan     nan    90.0    90.0     nan     nan     nan     nan     nan    90.0    89.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    90.0     nan
+     nan     nan     nan     nan     nan     nan    46.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    45.0     nan     nan    46.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan    49.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    51.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    48.0    47.0    49.0    49.0    49.0    49.0    49.0    50.0    50.0    51.0    51.0     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    60.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    59.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    63.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    62.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan    65.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    66.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    65.0    65.0    65.0    65.0    65.0     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    69.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    68.0    68.0     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    72.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    71.0    71.0     nan     nan
+     nan     nan     nan    61.0     nan    61.0     nan    61.0     nan     nan    61.0    61.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    61.0     nan
+     nan     nan     nan    52.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    74.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan    64.0     nan    64.0     nan    64.0     nan     nan    64.0    64.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    64.0     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    73.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan    67.0     nan    67.0     nan    67.0     nan     nan    67.0    67.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    67.0     nan
+     nan     nan     nan     nan    76.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    75.0    77.0    78.0    79.0    80.0     nan     nan     nan     nan     nan     nan
+     nan     nan     nan    70.0     nan    70.0     nan    70.0     nan     nan    70.0    70.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    70.0     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    81.0    82.0     nan     nan     nan     nan
+     nan     nan     nan    85.0     nan    85.0     nan    86.0     nan     nan    85.0    85.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    86.0     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    83.0    84.0     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    91.0     nan     nan     nan    92.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
 
 Process finished with exit code 0
