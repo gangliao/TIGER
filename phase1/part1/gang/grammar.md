@@ -14,131 +14,132 @@ naive grammar
 
 ```bash
 # tiger-program
-<tiger-program> -> let <declaration-segment> in <stat-seq> end
+1: <tiger-program> -> let <declaration-segment> in <stat-seq> end
 
 # declaration-segment
-<declaration-segment> -> <type-declaration-list> <var-declaration-list> <funct-declaration-list>
+2: <declaration-segment> -> <type-declaration-list> <var-declaration-list> <funct-declaration-list>
 
-<type-declaration-list> -> <type-declaration> <type-declaration-list>
-<type-declaration-list> -> NULL
-<var-declaration-list> -> <var-declaration> <var-declaration-list>
-<var-declaration-list> -> NULL
-<funct-declaration-list> -> <funct-declaration> <funct-declaration-list>
-<funct-declaration-list> -> NULL 
+3: <type-declaration-list> -> <type-declaration> <type-declaration-list>
+4: <type-declaration-list> -> NULL
+5: <var-declaration-list> -> <var-declaration> <var-declaration-list>
+6: <var-declaration-list> -> NULL
+7: <funct-declaration-list> -> <funct-declaration> <funct-declaration-list>
+8: <funct-declaration-list> -> NULL 
 
 # type-declaration
-<type-declaration> -> type id = <type>;
-<type> -> <type-id>
-<type> -> array [INTLIT] of <type-id>
-<type> -> id
+9: <type-declaration> -> type id = <type>;
+10: <type> -> <type-id>
+11: <type> -> array [INTLIT] of <type-id>
+12: <type> -> id
 
-<type-id> -> int | float
+13: <type-id> -> int
+14: <type-id> -> float
 
 # var-declaration
-<var-declaration> -> var <id-list> : <type> <optional-init>;
-<id-list> -> id <id-list-tail>
-<id-list-tail> -> , id <id-list-tail>
-<id-list-tail> -> NULL
-<optional-init> -> := <const>
-<optional-init> -> NULL
+15: <var-declaration> -> var <id-list> : <type> <optional-init>;
+16: <id-list> -> id <id-list-tail>
+17: <id-list-tail> -> , id <id-list-tail>
+18: <id-list-tail> -> NULL
+19: <optional-init> -> := <const>
+20: <optional-init> -> NULL
 
 # funct-declaration
-<funct-declaration> -> function id (<param-list>) <ret-type> begin <stat-seq> end;
-<param-list> -> <param> <param-list-tail>
-<param-list> -> NULL
-<param-list-tail> -> , <param> <param-list-tail>
-<param-list-tail> -> NULL
-<ret-type> -> : <type>
-<ret-type> -> NULL
-<param> -> id : <type>
+21: <funct-declaration> -> function id (<param-list>) <ret-type> begin <stat-seq> end;
+22: <param-list> -> <param> <param-list-tail>
+23: <param-list> -> NULL
+24: <param-list-tail> -> , <param> <param-list-tail>
+25: <param-list-tail> -> NULL
+26: <ret-type> -> : <type>
+27: <ret-type> -> NULL
+28: <param> -> id : <type>
 
 # stat-seq
-<stat-seq> -> <stat> <stat-seq-tail>
-<stat-seq-tail> -> <stat> <stat-seq-tail>
-<stat-seq-tail> -> NULL
+29: <stat-seq> -> <stat> <stat-seq-tail>
+30: <stat-seq-tail> -> <stat> <stat-seq-tail>
+31: <stat-seq-tail> -> NULL
 
 # stat
-<stat> -> if <expr> then <stat-seq> <stat-if-tail>
-<stat-if-tail> -> else <stat-seq> endif;
-<stat-if-tail> -> endif;
+32: <stat> -> if <expr> then <stat-seq> <stat-if-tail>
+33: <stat-if-tail> -> else <stat-seq> endif;
+34: <stat-if-tail> -> endif;
 
-<stat> -> id <stat-funct-or-assign>
-<stat-funct-or-assign> -> <lvalue-tail> := <stat-assign>;
-<stat-funct-or-assign> -> (<expr-list>);
+35: <stat> -> id <stat-funct-or-assign>
+36: <stat-funct-or-assign> -> <lvalue-tail> := <stat-assign>;
+37: <stat-funct-or-assign> -> (<expr-list>);
 
-<stat-assign> -> id <stat-assign-stuff>
-<stat-assign> -> (<expr>) <stat-assign-tail>
-<stat-assign> -> <const> <stat-assign-tail>
+38: <stat-assign> -> id <stat-assign-stuff>
+39: <stat-assign> -> (<expr>) <stat-assign-tail>
+40: <stat-assign> -> <const> <stat-assign-tail>
 
-<stat-assign-stuff> -> (<expr-list>)
-<stat-assign-stuff> -> <lvalue-tail> <stat-assign-tail>
+41: <stat-assign-stuff> -> (<expr-list>)
+42: <stat-assign-stuff> -> <lvalue-tail> <stat-assign-tail>
 
-<stat-assign-tail> -> <expr-tail>
-<stat-assign-tail> -> <OR-expr-tail>
-<stat-assign-tail> -> <AND-expr-tail>
-<stat-assign-tail> -> <compare-tail>
-<stat-assign-tail> -> <term-tail>
+43: <stat-assign-tail> -> <expr-tail>
+44: <stat-assign-tail> -> <OR-expr-tail>
+45: <stat-assign-tail> -> <AND-expr-tail>
+46: <stat-assign-tail> -> <compare-tail>
+47: <stat-assign-tail> -> <term-tail>
 
-<stat> -> while <expr> do <stat-seq> enddo;
-<stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
+48: <stat> -> while <expr> do <stat-seq> enddo;
+49: <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
 
 
-<stat> -> break;
-<stat> -> return <expr>;
+50: <stat> -> break;
+51: <stat> -> return <expr>;
 
-<stat> -> let <declaration-segment> in <stat-seq> end
+52: <stat> -> let <declaration-segment> in <stat-seq> end
 
 # expr
-<expr> -> <OR-expr> <expr-tail>
-<expr-tail> -> <OR-op> <OR-expr> <expr-tail>
-<expr-tail> -> NULL
+53: <expr> -> <OR-expr> <expr-tail>
+54: <expr-tail> -> <OR-op> <OR-expr> <expr-tail>
+55: <expr-tail> -> NULL
 
-<OR-expr> -> <AND-expr> <OR-expr-tail>
-<OR-expr-tail> -> <AND-op> <AND-expr> <OR-expr-tail>
-<OR-expr-tail> -> NULL
+56: <OR-expr> -> <AND-expr> <OR-expr-tail>
+57: <OR-expr-tail> -> <AND-op> <AND-expr> <OR-expr-tail>
+58: <OR-expr-tail> -> NULL
 
-<AND-expr> -> <compare> <AND-expr-tail>
-<AND-expr-tail> -> <compare-op> <compare> <AND-expr-tail>
-<AND-expr-tail> -> NULL
+59: <AND-expr> -> <compare> <AND-expr-tail>
+60: <AND-expr-tail> -> <compare-op> <compare> <AND-expr-tail>
+61: <AND-expr-tail> -> NULL
 
-<compare> -> <term> <compare-tail>
-<compare-tail> -> <add-op> <term> <compare-tail>
-<compare-tail> -> NULL
+62: <compare> -> <term> <compare-tail>
+63: <compare-tail> -> <add-op> <term> <compare-tail>
+64: <compare-tail> -> NULL
 
-<term> -> <factor> <term-tail>
-<term-tail> -> <mul-op> <factor> <term-tail>
-<term-tail> -> NULL
+65: <term> -> <factor> <term-tail>
+66: <term-tail> -> <mul-op> <factor> <term-tail>
+67: <term-tail> -> NULL
 
-<factor> -> (<expr>)
-<factor> -> <const>
-<factor> -> <lvalue>
+68: <factor> -> (<expr>)
+69: <factor> -> <const>
+70: <factor> -> <lvalue>
 
 # const
-<const> -> INTLIT
-<const> -> FLOATLIT
+71: <const> -> INTLIT
+72: <const> -> FLOATLIT
 
 # binary-operator
-<OR-op> -> |
-<AND-op> -> &
-<compare-op> -> <=
-<compare-op> -> >=
-<compare-op> -> <
-<compare-op> -> >
-<compare-op> -> <>
-<compare-op> -> =
-<add-op> -> -
-<add-op> -> +
-<mul-op> -> /
-<mul-op> -> *
+73: <OR-op> -> |
+74: <AND-op> -> &
+75: <compare-op> -> <=
+76: <compare-op> -> >=
+77: <compare-op> -> <
+78: <compare-op> -> >
+79: <compare-op> -> <>
+80: <compare-op> -> =
+81: <add-op> -> -
+82: <add-op> -> +
+83: <mul-op> -> /
+84: <mul-op> -> *
 
-<expr-list> -> NULL
-<expr-list> -> <expr> <expr-list-tail>
-<expr-list-tail> -> , <expr> <expr-list-tail>
-<expr-list-tail> -> NULL
+85: <expr-list> -> NULL
+86: <expr-list> -> <expr> <expr-list-tail>
+87: <expr-list-tail> -> , <expr> <expr-list-tail>
+88: <expr-list-tail> -> NULL
 
-<lvalue> -> id <lvalue-tail>
-<lvalue-tail> -> [<expr>]
-<lvalue-tail> -> NULL
+89: <lvalue> -> id <lvalue-tail>
+90: <lvalue-tail> -> [<expr>]
+91: <lvalue-tail> -> NULL
 ```
 
 ## First Sets
