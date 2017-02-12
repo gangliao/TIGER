@@ -46,17 +46,17 @@ First  ('*', ['*'])
 First  ('/', ['/'])
 First  ('floatlit', ['floatlit'])
 First  ('expr-list-tail', [',', 'epsilon'])
-First  ('mul-op', ['*', '/'])
-First  ('factor', ['int', 'float', 'array', 'id', 'intlit', 'floatlit'])
-First  ('add-op', ['+', '-'])
-First  ('term', ['int', 'float', 'array', 'id', 'intlit', 'floatlit'])
-First  ('compare-op', ['<>', '=', '>', '<', '>=', '<='])
-First  ('compare', ['int', 'float', 'array', 'id', 'intlit', 'floatlit'])
-First  ('AND-op', ['&'])
-First  ('AND-expr', ['int', 'float', 'array', 'id', 'intlit', 'floatlit'])
-First  ('OR-op', ['|'])
 First  ('lvalue', ['id'])
-First  ('OR-expr', ['int', 'float', 'array', 'id', 'intlit', 'floatlit'])
+First  ('mul-op', ['*', '/'])
+First  ('factor', ['(', 'intlit', 'floatlit', 'id'])
+First  ('add-op', ['+', '-'])
+First  ('term', ['(', 'intlit', 'floatlit', 'id'])
+First  ('compare-op', ['<>', '=', '>', '<', '>=', '<='])
+First  ('compare', ['(', 'intlit', 'floatlit', 'id'])
+First  ('AND-op', ['&'])
+First  ('AND-expr', ['(', 'intlit', 'floatlit', 'id'])
+First  ('OR-op', ['|'])
+First  ('OR-expr', ['(', 'intlit', 'floatlit', 'id'])
 First  ('term-tail', ['*', '/', 'epsilon'])
 First  ('compare-tail', ['+', '-', 'epsilon'])
 First  ('AND-expr-tail', ['<>', '=', '>', '<', '>=', '<=', 'epsilon'])
@@ -64,12 +64,12 @@ First  ('OR-expr-tail', ['&', 'epsilon'])
 First  ('expr-tail', ['|', 'epsilon'])
 First  ('stat-assign-tail', ['|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/'])
 First  ('stat-assign-stuff', ['(', '[', '|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/'])
-First  ('expr-list', ['epsilon', 'int', 'float', 'array', 'id', 'intlit', 'floatlit', 'intlit', 'floatlit', 'id', '('])
+First  ('expr-list', ['epsilon', '(', 'intlit', 'floatlit', 'id'])
 First  ('stat-assign', ['id', '(', 'intlit', 'floatlit'])
 First  ('lvalue-tail', ['[', 'epsilon'])
 First  ('stat-funct-or-assign', ['[', ':=', '('])
 First  ('stat-if-tail', ['else', 'endif'])
-First  ('expr', ['int', 'float', 'array', 'id', 'intlit', 'floatlit', 'intlit', 'floatlit', 'id', '('])
+First  ('expr', ['(', 'intlit', 'floatlit', 'id'])
 First  ('stat-seq-tail', ['if', 'id', 'while', 'for', 'break', 'return', 'let', 'epsilon'])
 First  ('stat', ['if', 'id', 'while', 'for', 'break', 'return', 'let'])
 First  ('param-list-tail', [',', 'epsilon'])
@@ -124,21 +124,21 @@ Follow  AND-expr-tail [';']
 Follow  compare-tail [';']
 Follow  term-tail [';']
 Follow  OR-expr ['|', 'then', 'do', 'to', ';', ')', ']', ',']
-Follow  lvalue ['then', 'do', 'to', ';', ')', ']', ',']
-Follow  OR-op ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+Follow  OR-op ['(', 'intlit', 'floatlit', 'id']
 Follow  AND-expr ['&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
-Follow  AND-op ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+Follow  AND-op ['(', 'intlit', 'floatlit', 'id']
 Follow  compare ['<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
-Follow  compare-op ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+Follow  compare-op ['(', 'intlit', 'floatlit', 'id']
 Follow  term ['+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
-Follow  add-op ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+Follow  add-op ['(', 'intlit', 'floatlit', 'id']
 Follow  factor ['*', '/', '+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
-Follow  mul-op ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
+Follow  mul-op ['(', 'intlit', 'floatlit', 'id']
+Follow  lvalue ['*', '/', '+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
 Follow  expr-list-tail [')']
 ############################################
 terminal list =  ['let', 'in', 'end', 'epsilon', 'id', '=', 'array', '[', 'intlit', ']', 'of', 'int', 'float', 'var', 'optional-init', ',', ':=', 'function', '(', ')', 'begin', ';', ':', 'if', 'then', 'while', 'do', 'enddo', 'for', 'to', 'break', 'return', 'else', 'endif', '&', '|', '<>', '>', '<', '>=', '<=', '+', '-', '*', '/', 'floatlit'] 46
 modified terminal list is  ['let', 'in', 'end', 'id', '=', 'array', '[', 'intlit', ']', 'of', 'int', 'float', 'var', 'optional-init', ',', ':=', 'function', '(', ')', 'begin', ';', ':', 'if', 'then', 'while', 'do', 'enddo', 'for', 'to', 'break', 'return', 'else', 'endif', '&', '|', '<>', '>', '<', '>=', '<=', '+', '-', '*', '/', 'floatlit', '$'] 46
-non-terminal list =  ['tiger-program', 'declaration-segment', 'stat-seq', 'type-declaration-list', 'var-declaration-list', 'funct-declaration-list', 'type-declaration', 'var-declaration', 'funct-declaration', 'type', 'type-id', 'id-list', 'id-list-tail', 'const', 'param-list', 'ret-type', 'param', 'param-list-tail', 'stat', 'stat-seq-tail', 'expr', 'stat-if-tail', 'stat-funct-or-assign', 'lvalue-tail', 'stat-assign', 'expr-list', 'stat-assign-stuff', 'stat-assign-tail', 'expr-tail', 'OR-expr-tail', 'AND-expr-tail', 'compare-tail', 'term-tail', 'OR-expr', 'lvalue', 'OR-op', 'AND-expr', 'AND-op', 'compare', 'compare-op', 'term', 'add-op', 'factor', 'mul-op', 'expr-list-tail'] 45
+non-terminal list =  ['tiger-program', 'declaration-segment', 'stat-seq', 'type-declaration-list', 'var-declaration-list', 'funct-declaration-list', 'type-declaration', 'var-declaration', 'funct-declaration', 'type', 'type-id', 'id-list', 'id-list-tail', 'const', 'param-list', 'ret-type', 'param', 'param-list-tail', 'stat', 'stat-seq-tail', 'expr', 'stat-if-tail', 'stat-funct-or-assign', 'lvalue-tail', 'stat-assign', 'expr-list', 'stat-assign-stuff', 'stat-assign-tail', 'expr-tail', 'OR-expr-tail', 'AND-expr-tail', 'compare-tail', 'term-tail', 'OR-expr', 'OR-op', 'AND-expr', 'AND-op', 'compare', 'compare-op', 'term', 'add-op', 'factor', 'mul-op', 'lvalue', 'expr-list-tail'] 45
 Rule list is: 
 0 ['tiger-program', 'let', 'declaration-segment', 'in', 'stat-seq', 'end'] ['let']
 1 ['declaration-segment', 'type-declaration-list', 'var-declaration-list', 'funct-declaration-list'] ['int', 'float', 'array', 'id', 'in']
@@ -195,44 +195,42 @@ Rule list is:
 52 ['lvalue', 'id', 'lvalue-tail'] ['id']
 53 ['lvalue-tail', '[', 'expr', ']'] ['[']
 54 ['lvalue-tail', 'epsilon'] [':=', '|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/']
-55 ['expr', 'OR-expr', 'expr-tail'] ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
-56 ['expr', 'const'] ['intlit', 'floatlit']
-57 ['expr', 'lvalue'] ['id']
-58 ['expr', '(', 'expr', ')'] ['(']
-59 ['expr-tail', 'OR-op', 'OR-expr', 'expr-tail'] ['|']
-60 ['expr-tail', 'epsilon'] [';']
-61 ['OR-expr', 'AND-expr', 'OR-expr-tail'] ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
-62 ['OR-expr-tail', 'AND-op', 'AND-expr', 'OR-expr-tail'] ['&']
-63 ['OR-expr-tail', 'epsilon'] [';']
-64 ['AND-expr', 'compare', 'AND-expr-tail'] ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
-65 ['AND-expr-tail', 'compare-op', 'compare', 'AND-expr-tail'] ['<>', '=', '>', '<', '>=', '<=']
-66 ['AND-expr-tail', 'epsilon'] [';']
-67 ['compare', 'term', 'compare-tail'] ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
-68 ['compare-tail', 'add-op', 'term', 'compare-tail'] ['+', '-']
-69 ['compare-tail', 'epsilon'] [';']
-70 ['term', 'factor', 'term-tail'] ['int', 'float', 'array', 'id', 'intlit', 'floatlit']
-71 ['term-tail', 'mul-op', 'factor', 'term-tail'] ['*', '/']
-72 ['term-tail', 'epsilon'] [';']
-73 ['AND-op', '&'] ['&']
-74 ['OR-op', '|'] ['|']
-75 ['compare-op', '<>'] ['<>']
-76 ['compare-op', '='] ['=']
-77 ['compare-op', '>'] ['>']
-78 ['compare-op', '<'] ['<']
-79 ['compare-op', '>='] ['>=']
-80 ['compare-op', '<='] ['<=']
-81 ['add-op', '+'] ['+']
-82 ['add-op', '-'] ['-']
-83 ['mul-op', '*'] ['*']
-84 ['mul-op', '/'] ['/']
-85 ['factor', 'type'] ['int', 'float', 'array', 'id']
-86 ['factor', 'const'] ['intlit', 'floatlit']
-87 ['const', 'intlit'] ['intlit']
-88 ['const', 'floatlit'] ['floatlit']
-89 ['expr-list', 'epsilon'] [')']
-90 ['expr-list', 'expr', 'expr-list-tail'] ['int', 'float', 'array', 'id', 'intlit', 'floatlit', 'intlit', 'floatlit', 'id', '(']
-91 ['expr-list-tail', ',', 'expr', 'expr-list-tail'] [',']
-92 ['expr-list-tail', 'epsilon'] [')']
+55 ['expr', 'OR-expr', 'expr-tail'] ['(', 'intlit', 'floatlit', 'id']
+56 ['expr-tail', 'OR-op', 'OR-expr', 'expr-tail'] ['|']
+57 ['expr-tail', 'epsilon'] [';']
+58 ['OR-expr', 'AND-expr', 'OR-expr-tail'] ['(', 'intlit', 'floatlit', 'id']
+59 ['OR-expr-tail', 'AND-op', 'AND-expr', 'OR-expr-tail'] ['&']
+60 ['OR-expr-tail', 'epsilon'] [';']
+61 ['AND-expr', 'compare', 'AND-expr-tail'] ['(', 'intlit', 'floatlit', 'id']
+62 ['AND-expr-tail', 'compare-op', 'compare', 'AND-expr-tail'] ['<>', '=', '>', '<', '>=', '<=']
+63 ['AND-expr-tail', 'epsilon'] [';']
+64 ['compare', 'term', 'compare-tail'] ['(', 'intlit', 'floatlit', 'id']
+65 ['compare-tail', 'add-op', 'term', 'compare-tail'] ['+', '-']
+66 ['compare-tail', 'epsilon'] [';']
+67 ['term', 'factor', 'term-tail'] ['(', 'intlit', 'floatlit', 'id']
+68 ['term-tail', 'mul-op', 'factor', 'term-tail'] ['*', '/']
+69 ['term-tail', 'epsilon'] [';']
+70 ['AND-op', '&'] ['&']
+71 ['OR-op', '|'] ['|']
+72 ['compare-op', '<>'] ['<>']
+73 ['compare-op', '='] ['=']
+74 ['compare-op', '>'] ['>']
+75 ['compare-op', '<'] ['<']
+76 ['compare-op', '>='] ['>=']
+77 ['compare-op', '<='] ['<=']
+78 ['add-op', '+'] ['+']
+79 ['add-op', '-'] ['-']
+80 ['mul-op', '*'] ['*']
+81 ['mul-op', '/'] ['/']
+82 ['factor', '(', 'expr', ')'] ['(']
+83 ['factor', 'const'] ['intlit', 'floatlit']
+84 ['factor', 'lvalue'] ['id']
+85 ['const', 'intlit'] ['intlit']
+86 ['const', 'floatlit'] ['floatlit']
+87 ['expr-list', 'epsilon'] [')']
+88 ['expr-list', 'expr', 'expr-list-tail'] ['(', 'intlit', 'floatlit', 'id']
+89 ['expr-list-tail', ',', 'expr', 'expr-list-tail'] [',']
+90 ['expr-list-tail', 'epsilon'] [')']
 Final parser table: rows->non-terminal, col->modified terminals. index starts with 0. Integer represents rule index in rule list
      0.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
      nan     1.0     nan     1.0     nan     1.0     nan     nan     nan     nan     1.0     1.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
@@ -247,37 +245,38 @@ Final parser table: rows->non-terminal, col->modified terminals. index starts wi
      nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    12.0    13.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
      nan     nan     nan    15.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
      nan     nan     nan    17.0     nan    17.0     nan     nan     nan     nan    17.0    17.0     nan     nan    16.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan    87.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    88.0     nan
+     nan     nan     nan     nan     nan     nan     nan    85.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    86.0     nan
      nan     nan     nan    21.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    22.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
      nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    26.0     nan    25.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
      nan     nan     nan    27.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
      nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    23.0     nan     nan     nan    24.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
     37.0     nan     nan    32.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    31.0     nan    33.0     nan     nan    34.0     nan    35.0    36.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
     29.0     nan    30.0    29.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    29.0     nan    29.0     nan    30.0    29.0     nan    29.0    29.0    30.0    30.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan    57.0     nan    55.0     nan    56.0     nan     nan    55.0    55.0     nan     nan     nan     nan     nan    58.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    56.0     nan
+     nan     nan     nan    55.0     nan     nan     nan    55.0     nan     nan     nan     nan     nan     nan     nan     nan     nan    55.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    55.0     nan
      nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    38.0    39.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
     40.0     nan    40.0    40.0     nan     nan    40.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    41.0     nan     nan     nan     nan    40.0     nan    40.0     nan    40.0    40.0     nan    40.0    40.0    40.0    40.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
      nan     nan     nan     nan    54.0     nan    53.0     nan     nan     nan     nan     nan     nan     nan     nan    54.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    54.0    54.0    54.0    54.0    54.0    54.0    54.0    54.0    54.0    54.0    54.0     nan     nan
      nan     nan     nan    42.0     nan     nan     nan    44.0     nan     nan     nan     nan     nan     nan     nan     nan     nan    43.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    44.0     nan
-     nan     nan     nan    90.0     nan    90.0     nan    90.0     nan     nan    90.0    90.0     nan     nan     nan     nan     nan    90.0    89.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    90.0     nan
+     nan     nan     nan    88.0     nan     nan     nan    88.0     nan     nan     nan     nan     nan     nan     nan     nan     nan    88.0    87.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    88.0     nan
      nan     nan     nan     nan     nan     nan    46.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    45.0     nan     nan    46.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
      nan     nan     nan     nan    49.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    51.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    48.0    47.0    49.0    49.0    49.0    49.0    49.0    50.0    50.0    51.0    51.0     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    60.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    59.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    63.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    62.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan    65.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    66.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    65.0    65.0    65.0    65.0    65.0     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    69.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    68.0    68.0     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    72.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    71.0    71.0     nan     nan
-     nan     nan     nan    61.0     nan    61.0     nan    61.0     nan     nan    61.0    61.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    61.0     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    57.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    56.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    60.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    59.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan    62.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    63.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    62.0    62.0    62.0    62.0    62.0     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    66.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    65.0    65.0     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    69.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    68.0    68.0     nan     nan
+     nan     nan     nan    58.0     nan     nan     nan    58.0     nan     nan     nan     nan     nan     nan     nan     nan     nan    58.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    58.0     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    71.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan    61.0     nan     nan     nan    61.0     nan     nan     nan     nan     nan     nan     nan     nan     nan    61.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    61.0     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    70.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan    64.0     nan     nan     nan    64.0     nan     nan     nan     nan     nan     nan     nan     nan     nan    64.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    64.0     nan
+     nan     nan     nan     nan    73.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    72.0    74.0    75.0    76.0    77.0     nan     nan     nan     nan     nan     nan
+     nan     nan     nan    67.0     nan     nan     nan    67.0     nan     nan     nan     nan     nan     nan     nan     nan     nan    67.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    67.0     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    78.0    79.0     nan     nan     nan     nan
+     nan     nan     nan    84.0     nan     nan     nan    83.0     nan     nan     nan     nan     nan     nan     nan     nan     nan    82.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    83.0     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    80.0    81.0     nan     nan
      nan     nan     nan    52.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    74.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan    64.0     nan    64.0     nan    64.0     nan     nan    64.0    64.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    64.0     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    73.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan     nan     nan    67.0     nan    67.0     nan    67.0     nan     nan    67.0    67.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    67.0     nan
-     nan     nan     nan     nan    76.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    75.0    77.0    78.0    79.0    80.0     nan     nan     nan     nan     nan     nan
-     nan     nan     nan    70.0     nan    70.0     nan    70.0     nan     nan    70.0    70.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    70.0     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    81.0    82.0     nan     nan     nan     nan
-     nan     nan     nan    85.0     nan    85.0     nan    86.0     nan     nan    85.0    85.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    86.0     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    83.0    84.0     nan     nan
-     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    91.0     nan     nan     nan    92.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    89.0     nan     nan     nan    90.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
 
 Process finished with exit code 0
+
