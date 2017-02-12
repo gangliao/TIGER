@@ -146,7 +146,7 @@ naive grammar
 
 ```bash
 First(<tiger-program>) = {let}
-First(<declaration-segment>) = {let type var function NULL}
+First(<declaration-segment>) = {type var function NULL}
 First(<type-declaration-list>) = {type NULL}
 First(<var-declaration-list>) = {var NULL}
 First(<funct-declaration-list>) = {function NULL}
@@ -168,7 +168,7 @@ First(<stat>) = {if id while for break return let}
 First(<stat-if-tail>) = {else endif}
 First(<stat-funct-or-assign>) = {[ ( :=}
 First(<stat-assign>) = {id ( INTLIT FLOATLIT}
-First(<stat-assign-stuff>) = {( [ | & <= >= < > <> - = + / * NULL}
+First(<stat-assign-stuff>) = {( [ | & <= >= < > <> = - + / * NULL}
 First(<stat-assign-tail>) = {| & <= >= < > <> = - + / * NULL}
 First(<expr>) = {( INTLIT FLOATLIT id}
 First(<expr-tail>) = {| NULL}
