@@ -80,11 +80,9 @@ add-op +
 add-op -
 mul-op *
 mul-op /
-factor type
+factor ( expr )
 factor const
-expr const
-expr lvalue
-expr ( expr )
+factor lvalue
 const intlit
 const floatlit
 expr-list epsilon
