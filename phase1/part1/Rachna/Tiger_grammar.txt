@@ -1,45 +1,87 @@
 tiger-program let declaration-segment in stat-seq end
 declaration-segment type-declaration-list var-declaration-list funct-declaration-list
-type-declaration-list epsilon
 type-declaration-list type-declaration type-declaration-list
-var-declaration-list epsilon
+type-declaration-list epsilon
 var-declaration-list var-declaration var-declaration-list
-funct-declaration-list epsilon
+var-declaration-list epsilon
 funct-declaration-list funct-declaration funct-declaration-list
+funct-declaration-list epsilon
 type-declaration type id = type
 type type-id
-type array intlit of type-id
-type is
+type array [ intlit ] of type-id
+type id
 type-id int
 type-id float
 var-declaration var id-list type optional-init
-id-list id
-id-list id id-list
-optinal-init epsilon
+id-list id id-list-tail
+id-list-tail , id id-list-tail
+id-list-tail epsilon
 optinal-init := const
-funct-declaration fundtion id ( param-list ) ret-type begin stat-seq end
+optinal-init epsilon
+funct-declaration function id ( param-list ) ret-type begin stat-seq end ;
 param-list param param-list-tail
+param-list epsilon
+param-list-tail , param param-list-tail
 param-list-tail epsilon
-param-list-tail param param-list-tail
+ret-type : type
 ret-type epsilon
-ret-type type
-param id type
-stat-seq stat
-stat-seq stat stat-seq
-stat lvalue := expr
-stat matched-stat
-stat unmatched-stat
-matched-stat if expr then matched-stat else matched-stat endif
-unmatched-stat if expr then stat-seq endif
-unmatched-stat if expr then matched-stmt else unmatched-stat endif
-stat while expr do stat-seq enddo
-stat for id := expr to expr do stat-seq enddo
-stat opt-prefix id  ( expr-list )
-opt-prefix lvalue :=
-opt-prefix epsilon
-stat break
-stat return expr
+param id : type
+stat-seq stat stat-seq-tail
+stat-seq-tail stat stat-seq-tail
+stat-seq-tail epsilon
+stat if expr then stat-seq stat-if-tail
+stat-if-tail else stat-seq endif ;
+stat-if-tail endif ;
+stat id stat-funct-or-assign
+stat-funct-or-assign lvalue-tail := stat-assign ;
+stat-funct-or-assign ( expr-list ) ;
+stat-assign id stat-assign-stuff
+stat-assign ( expr ) stat-assign-tail
+stat-assign const stat-assign-tail
+stat-assign-stuff ( expr-list )
+stat-assign-stuff lvalue-tail stat-assign-tail
+stat-assign-tail expr-tail
+stat-assign-tail OR-expr-tail
+stat-assign-tail AND-expr-tail
+stat-assign-tail compare-tail
+stat-assign-tail term-tail
+stat while expr do stat-seq enddo ;
+stat for id := expr to expr do stat-seq enddo ;
+stat break ;
+stat return expr ;
 stat let declaration-segment in stat-seq end
+lvalue id lvalue-tail
+lvalue-tail [ expr ]
+lvalue-tail epsilon
+expr OR-expr expr-tail
+expr-tail OR-op OR-expr expr-tail
+expr-tail epsilon
+OR-expr AND-expr OR-expr-tail
+OR-expr-tail AND-op AND-expr OR-expr-tail
+OR-expr-tail epsilon
+AND-expr compare AND-expr-tail
+AND-expr-tail compare-op compare AND-expr-tail
+AND-expr-tail epsilon
+compare term compare-tail
+compare-tail add-op term compare-tail
+compare-tail epsilon
+term factor term-tail
+term-tail mul-op factor term-tail
+term-tail epsilon
+AND-op &
+OR-op |
+compare-op <>
+compare-op =
+compare-op >
+compare-op <
+compare-op >=
+compare-op <=
+add-op +
+add-op -
+mul-op *
+mul-op /
+factor type
+factor const
 expr const
 expr lvalue
 expr ( expr )
@@ -47,38 +89,5 @@ const intlit
 const floatlit
 expr-list epsilon
 expr-list expr expr-list-tail
-expr-list-tail expr expr-list-tail
+expr-list-tail , expr expr-list-tail
 expr-list-tail epsilon
-lvalue id lvalue-tail
-lvalue-tail [ expr ]
-lvalue-tail epsilon
-expr1 term1 t_tail1
-t_tail1 boolop term1 t_tail1
-t_tail1 epsilon
-term1 term2 t_tail2
-t_tail2 compareop term2 t_tail2
-t_tail2 epsilon
-term2 term3 t_tail3
-t_tail3 addsubop term3 t_tail3
-t_tail3 epsilon
-term3 factor t_tail4
-t_tail4 muldivop factor t_tail4
-t_tail4 epsilon
-boolop &
-boolop |
-compareop <>
-compareop =
-compareop >
-compareop <
-compareop >=
-compareop <=
-addsubop +
-addsubop -
-muldivop *
-muldivop \
-factor type
-factor const
-expr const
-expr lvalue
-expr expr1
-expr ( expr1 )
