@@ -269,9 +269,8 @@ def generate_parser_table():
       for row in parser_table]))
 
 if __name__ == '__main__':
-    
-    #read_input_file("grammer4.txt")
-    read_input_file("Tiger_grammer.txt")
+
+    read_input_file("Tiger_grammar.txt")
     create_terminal_list()
     ntl = non_terminal_list[:]
     ntl.reverse()
