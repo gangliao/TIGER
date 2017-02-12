@@ -201,23 +201,23 @@ Follow(<declaration-segment>) = {in}
 Follow(<type-declaration-list>) = {var function in}
 Follow(<var-declaration-list>) = {function in}
 Follow(<funct-declaration-list>) = {in}
-Follow(<type-declaration>) = {var function in}
+Follow(<type-declaration>) = {type var function in}
 Follow(<type>) = {; := begin , )}
 Follow(<type-id>) = {; := begin , )}
-Follow(<var-declaration>) = {in}
+Follow(<var-declaration>) = {var function in}
 Follow(<id-list>) = {:}
 Follow(<id-list-tail>) = {:}
 Follow(<optional-init>) = {;}
-Follow(<funct-declaration>) = {in}
+Follow(<funct-declaration>) = {function in}
 Follow(<param-list>) = {)}
 Follow(<param-list-tail>) = {)}
 Follow(<ret-type>) = {begin}
-Follow(<param>) = {,}
+Follow(<param>) = {, )}
 Follow(<stat-seq>) = {end endif else enddo}
 Follow(<stat-seq-tail>) = {end endif else enddo}
-Follow(<stat>) = {if id while for break return let}
-Follow(<stat-if-tail>) = {if id while for break return let}
-Follow(<stat-funct-or-assign>) = {if id while for break return let}
+Follow(<stat>) = {if id while for break return let end endif else enddo}
+Follow(<stat-if-tail>) = {if id while for break return let end endif else enddo}
+Follow(<stat-funct-or-assign>) = {if id while for break return let end endif else enddo}
 Follow(<stat-assign>) = {;}
 Follow(<stat-assign-stuff>) = {;}
 Follow(<stat-assign-tail>) = {;}
@@ -232,7 +232,7 @@ Follow(<compare-tail>) = {<= >= < > <> = & | then ) do to ; ] ,}
 Follow(<term>) = {- + <= >= < > <> = & | then ) do to ; ] ,}
 Follow(<term-tail>) = {- + <= >= < > <> = & | then ) do to ; ] ,}
 Follow(<factor>) = {/ * - + <= >= < > <> = & | then ) do to ; ] ,}
-Follow(<const>) = {; | & <= >= < > <> = + / *}
+Follow(<const>) = {; | & <= >= < > <> = - + / *}
 Follow(<OR-op>) = {( INTLIT FLOATLIT id}
 Follow(<AND-op>) = {( INTLIT FLOATLIT id}
 Follow(<compare-op>) = {( INTLIT FLOATLIT id}
