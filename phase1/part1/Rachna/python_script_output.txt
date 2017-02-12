@@ -14,11 +14,11 @@ First  (']', [']'])
 First  ('of', ['of'])
 First  ('int', ['int'])
 First  ('float', ['float'])
-First  ('var', ['var'])
+First  ('var-', ['var-'])
 First  (':', [':'])
 First  (',', [','])
 First  (':=', [':='])
-First  ('function', ['function'])
+First  ('function-', ['function-'])
 First  ('(', ['('])
 First  (')', [')'])
 First  ('begin', ['begin'])
@@ -82,30 +82,30 @@ First  ('optional-init', [':=', 'epsilon'])
 First  ('id-list', ['id'])
 First  ('type-id', ['int', 'float'])
 First  ('type', ['int', 'float', 'array', 'id'])
-First  ('funct-declaration', ['function'])
-First  ('var-declaration', ['var'])
+First  ('funct-declaration', ['function-'])
+First  ('var-declaration', ['var-'])
 First  ('type-declaration', ['type-'])
-First  ('funct-declaration-list', ['function', 'epsilon'])
-First  ('var-declaration-list', ['var', 'epsilon'])
+First  ('funct-declaration-list', ['function-', 'epsilon'])
+First  ('var-declaration-list', ['var-', 'epsilon'])
 First  ('type-declaration-list', ['type-', 'epsilon'])
 First  ('stat-seq', ['if', 'id', 'while', 'for', 'break', 'return', 'let'])
-First  ('declaration-segment', ['type-', 'var', 'function'])
+First  ('declaration-segment', ['type-', 'var-', 'function-'])
 First  ('tiger-program', ['let'])
 Follow  tiger-program ['$']
 Follow  declaration-segment ['in']
 Follow  stat-seq ['end', 'else', 'endif', 'enddo']
-Follow  type-declaration-list ['var', 'function', 'in']
-Follow  var-declaration-list ['function', 'in']
+Follow  type-declaration-list ['var-', 'function-', 'in']
+Follow  var-declaration-list ['function-', 'in']
 Follow  funct-declaration-list ['in']
-Follow  type-declaration ['type-', 'var', 'function', 'in']
-Follow  var-declaration ['var', 'function', 'in']
-Follow  funct-declaration ['function', 'in']
-Follow  type [';', ':=', 'var', 'function', 'in']
-Follow  type-id [';', ':=', 'var', 'function', 'in']
+Follow  type-declaration ['type-', 'var-', 'function-', 'in']
+Follow  var-declaration ['var-', 'function-', 'in']
+Follow  funct-declaration ['function-', 'in']
+Follow  type [';', ':=']
+Follow  type-id [';', ':=']
 Follow  id-list [':']
-Follow  optional-init ['var', 'function', 'in']
+Follow  optional-init [';']
 Follow  id-list-tail [':']
-Follow  const ['var', 'function', 'in', '|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/']
+Follow  const [';', '|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/']
 Follow  param-list [')']
 Follow  ret-type ['begin']
 Follow  param [',', ')']
@@ -138,17 +138,17 @@ Follow  mul-op ['(', 'intlit', 'floatlit', 'id']
 Follow  lvalue ['*', '/', '+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
 Follow  expr-list-tail [')']
 ############################################
-terminal list =  ['let', 'in', 'end', 'epsilon', 'type-', 'id', '=', ';', 'array', '[', 'intlit', ']', 'of', 'int', 'float', 'var', ':', ',', ':=', 'function', '(', ')', 'begin', 'if', 'then', 'while', 'do', 'enddo', 'for', 'to', 'break', 'return', 'else', 'endif', '&', '|', '<>', '>', '<', '>=', '<=', '+', '-', '*', '/', 'floatlit'] 46
-modified terminal list is  ['let', 'in', 'end', 'type-', 'id', '=', ';', 'array', '[', 'intlit', ']', 'of', 'int', 'float', 'var', ':', ',', ':=', 'function', '(', ')', 'begin', 'if', 'then', 'while', 'do', 'enddo', 'for', 'to', 'break', 'return', 'else', 'endif', '&', '|', '<>', '>', '<', '>=', '<=', '+', '-', '*', '/', 'floatlit', '$'] 46
+terminal list =  ['let', 'in', 'end', 'epsilon', 'type-', 'id', '=', ';', 'array', '[', 'intlit', ']', 'of', 'int', 'float', 'var-', ':', ',', ':=', 'function-', '(', ')', 'begin', 'if', 'then', 'while', 'do', 'enddo', 'for', 'to', 'break', 'return', 'else', 'endif', '&', '|', '<>', '>', '<', '>=', '<=', '+', '-', '*', '/', 'floatlit'] 46
+modified terminal list is  ['let', 'in', 'end', 'type-', 'id', '=', ';', 'array', '[', 'intlit', ']', 'of', 'int', 'float', 'var-', ':', ',', ':=', 'function-', '(', ')', 'begin', 'if', 'then', 'while', 'do', 'enddo', 'for', 'to', 'break', 'return', 'else', 'endif', '&', '|', '<>', '>', '<', '>=', '<=', '+', '-', '*', '/', 'floatlit', '$'] 46
 non-terminal list =  ['tiger-program', 'declaration-segment', 'stat-seq', 'type-declaration-list', 'var-declaration-list', 'funct-declaration-list', 'type-declaration', 'var-declaration', 'funct-declaration', 'type', 'type-id', 'id-list', 'optional-init', 'id-list-tail', 'const', 'param-list', 'ret-type', 'param', 'param-list-tail', 'stat', 'stat-seq-tail', 'expr', 'stat-if-tail', 'stat-funct-or-assign', 'lvalue-tail', 'stat-assign', 'expr-list', 'stat-assign-stuff', 'stat-assign-tail', 'expr-tail', 'OR-expr-tail', 'AND-expr-tail', 'compare-tail', 'term-tail', 'OR-expr', 'OR-op', 'AND-expr', 'AND-op', 'compare', 'compare-op', 'term', 'add-op', 'factor', 'mul-op', 'lvalue', 'expr-list-tail'] 46
 Rule list is: 
 0 ['tiger-program', 'let', 'declaration-segment', 'in', 'stat-seq', 'end'] ['let']
 1 ['declaration-segment', 'type-declaration-list', 'var-declaration-list', 'funct-declaration-list'] ['type-', 'in']
 2 ['type-declaration-list', 'type-declaration', 'type-declaration-list'] ['type-']
-3 ['type-declaration-list', 'epsilon'] ['var', 'function', 'in']
-4 ['var-declaration-list', 'var-declaration', 'var-declaration-list'] ['var']
-5 ['var-declaration-list', 'epsilon'] ['function', 'in']
-6 ['funct-declaration-list', 'funct-declaration', 'funct-declaration-list'] ['function']
+3 ['type-declaration-list', 'epsilon'] ['var-', 'function-', 'in']
+4 ['var-declaration-list', 'var-declaration', 'var-declaration-list'] ['var-']
+5 ['var-declaration-list', 'epsilon'] ['function-', 'in']
+6 ['funct-declaration-list', 'funct-declaration', 'funct-declaration-list'] ['function-']
 7 ['funct-declaration-list', 'epsilon'] ['in']
 8 ['type-declaration', 'type-', 'id', '=', 'type', ';'] ['type-']
 9 ['type', 'type-id'] ['int', 'float']
@@ -156,13 +156,13 @@ Rule list is:
 11 ['type', 'id'] ['id']
 12 ['type-id', 'int'] ['int']
 13 ['type-id', 'float'] ['float']
-14 ['var-declaration', 'var', 'id-list', ':', 'type', 'optional-init'] ['var']
+14 ['var-declaration', 'var-', 'id-list', ':', 'type', 'optional-init', ';'] ['var-']
 15 ['id-list', 'id', 'id-list-tail'] ['id']
 16 ['id-list-tail', ',', 'id', 'id-list-tail'] [',']
 17 ['id-list-tail', 'epsilon'] [':']
 18 ['optional-init', ':=', 'const'] [':=']
-19 ['optional-init', 'epsilon'] ['var', 'function', 'in']
-20 ['funct-declaration', 'function', 'id', '(', 'param-list', ')', 'ret-type', 'begin', 'stat-seq', 'end', ';'] ['function']
+19 ['optional-init', 'epsilon'] [';']
+20 ['funct-declaration', 'function-', 'id', '(', 'param-list', ')', 'ret-type', 'begin', 'stat-seq', 'end', ';'] ['function-']
 21 ['param-list', 'param', 'param-list-tail'] ['id']
 22 ['param-list', 'epsilon'] [')']
 23 ['param-list-tail', ',', 'param', 'param-list-tail'] [',']
@@ -246,7 +246,7 @@ Final parser table: rows->non-terminal, col->modified terminals. index starts wi
      nan     nan     nan     nan    11.0     nan     nan    10.0     nan     nan     nan     nan     9.0     9.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
      nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    12.0    13.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
      nan     nan     nan     nan    15.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
-     nan    19.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    19.0     nan     nan    18.0    19.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
+     nan     nan     nan     nan     nan     nan    19.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    18.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
      nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    17.0    16.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
      nan     nan     nan     nan     nan     nan     nan     nan     nan    85.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    86.0     nan
      nan     nan     nan     nan    21.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan    22.0     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan     nan
