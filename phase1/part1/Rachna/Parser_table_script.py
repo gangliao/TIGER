@@ -53,8 +53,8 @@ def read_input_file(filename):
         line_num += 1
         #r.print_rule()
 
-    #t = [(r1.lhs,r1.rhs) for r1 in rule_list]
-    #print t, len(t)
+    t = [(r1.lhs,r1.rhs) for r1 in rule_list]
+    print t, len(t)
     f.close()
 
 def create_terminal_list():
@@ -164,14 +164,12 @@ def find_follow_set(element):
         list_rhs = t[i][1]
         lhs = t[i][0]
         for j in range(0,len(list_rhs)):
-            #print "RHS here ",list_rhs[j], len(list_rhs[j])
             for k in range(0,len(list_rhs[j])):
                 if(list_rhs[j][k] == element):
-                    #print "rhs",list_rhs[j][k], element
                     got_epsilon = 0
                     if(k == (len(list_rhs[j]) -1)):
                         if(list_rhs[j][k] != lhs[0]):
-                            got_epsilon = check_if_nullable(list_rhs[j][k])
+                            got_epsilon = 1#check_if_nullable(list_rhs[j][k])
                     else:
                         n = k+1
                         while(n < (len(list_rhs[j]))):
