@@ -166,7 +166,7 @@ First(<stat-seq>) = {if id while for break return let}
 First(<stat-seq-tail>) = {if id while for break return let NULL}
 First(<stat>) = {if id while for break return let}
 First(<stat-if-tail>) = {else endif}
-First(<stat-funct-or-assign>) = {[ ( NULL}
+First(<stat-funct-or-assign>) = {[ ( :=}
 First(<stat-assign>) = {id ( INTLIT FLOATLIT}
 First(<stat-assign-stuff>) = {( [ | & <= >= < > <> - = + / * NULL}
 First(<stat-assign-tail>) = {| & <= >= < > <> = - + / * NULL}
