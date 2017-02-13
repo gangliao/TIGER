@@ -232,7 +232,7 @@ Follow(<compare-tail>) = {<= >= < > <> = & | then ) do to ; ] ,}
 Follow(<term>) = {- + <= >= < > <> = & | then ) do to ; ] ,}
 Follow(<term-tail>) = {- + <= >= < > <> = & | then ) do to ; ] ,}
 Follow(<factor>) = {/ * - + <= >= < > <> = & | then ) do to ; ] ,}
-Follow(<const>) = {; | & <= >= < > <> = - + / *}
+Follow(<const>) = {; / * - + <= >= < > <> = & | then ) do to ; ] ,}
 Follow(<OR-op>) = {( INTLIT FLOATLIT id}
 Follow(<AND-op>) = {( INTLIT FLOATLIT id}
 Follow(<compare-op>) = {( INTLIT FLOATLIT id}
