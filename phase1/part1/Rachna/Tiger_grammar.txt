@@ -6,19 +6,19 @@ var-declaration-list var-declaration var-declaration-list
 var-declaration-list epsilon
 funct-declaration-list funct-declaration funct-declaration-list
 funct-declaration-list epsilon
-type-declaration type id = type
+type-declaration type- id = type ;
 type type-id
 type array [ intlit ] of type-id
 type id
 type-id int
 type-id float
-var-declaration var id-list type optional-init
+var-declaration var- id-list : type optional-init ;
 id-list id id-list-tail
 id-list-tail , id id-list-tail
 id-list-tail epsilon
-optinal-init := const
-optinal-init epsilon
-funct-declaration function id ( param-list ) ret-type begin stat-seq end ;
+optional-init := const
+optional-init epsilon
+funct-declaration function- id ( param-list ) ret-type begin stat-seq end ;
 param-list param param-list-tail
 param-list epsilon
 param-list-tail , param param-list-tail
