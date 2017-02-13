@@ -78,6 +78,14 @@ def create_terminal_list():
                     non_terminal_list.append(rhs[j][k])
     #print "terminal list is: ", terminal_list
     #print "non-terminal list is: ",non_terminal_list
+def check_has_epsilon(l):
+    got_epsilon = 0
+    ret_index = -1
+    for i in range(0,len(l[1])):
+        if(l[1][i] == 'epsilon'):
+            got_epsilon = 1
+            ret_index = i
+    return got_epsilon, ret_index
 
 def find_first_set(element):
 
@@ -96,34 +104,29 @@ def find_first_set(element):
         if(t[i][0][0] == element):
             local_list = []
             list_rhs = t[i][1]
-            non_terminal_Case = 0
-            #print "RHS list is ", list_rhs
             for j in range(0,len(list_rhs)):
-                #for k in range(0,len(list_rhs[j])):
                 k = 0
+                got_epsilon = 0
                 while(k < len(list_rhs[j])):
-                    #print list_rhs[j][k],j,k
                     if(list_rhs[j][k] in non_terminal_list):
                         t = find_first_set(list_rhs[j][k])
-                        if(t[1][-1] == "epsilon"):
-                            tt = t[1][:-1]
-                            #print "adding epsilon here.............",element,tt
+                        got_epsilon,ret_index = check_has_epsilon(t)
+                        if(got_epsilon):
+                            tt = t[1][:ret_index]
                             for t in range(0,len(tt)):
                                 local_list.append(tt[t])
-                            #non_terminal_Case = 1
                         else:
                             tt = t[1][:]
-                            #print "here tt is ", tt , len(tt)
                             for t in range(0,len(tt)):
                                 local_list.append(tt[t])
-                            break#return (element,local_list)
+                            break
                     else:
                         e, l = find_first_set(list_rhs[j][k])
                         local_list.append(e)
                         break
                     k = k+1
 
-            if(non_terminal_Case):
+            if((got_epsilon)and('epsilon' not in local_list)):
                 local_list.append('epsilon')
             #print "Returning...",element,local_list
             #print "First set returning....", element,local_list
@@ -290,7 +293,7 @@ if __name__ == '__main__':
     read_input_file("Tiger_grammar.txt")
     create_terminal_list()
     ntl = non_terminal_list[:]
-    ntl.reverse()
+    #ntl.reverse()
 
     #########################first set#######################
 
