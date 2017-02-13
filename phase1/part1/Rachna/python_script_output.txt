@@ -1,0 +1,141 @@
+First  ('let', ['let'])
+First  ('in', ['in'])
+First  ('end', ['end'])
+First  ('epsilon', ['epsilon'])
+First  ('id', ['id'])
+First  ('=', ['='])
+First  ('array', ['array'])
+First  ('[', ['['])
+First  ('intlit', ['intlit'])
+First  (']', [']'])
+First  ('of', ['of'])
+First  ('int', ['int'])
+First  ('float', ['float'])
+First  ('var', ['var'])
+First  ('optional-init', ['optional-init'])
+First  (',', [','])
+First  (':=', [':='])
+First  ('function', ['function'])
+First  ('(', ['('])
+First  (')', [')'])
+First  ('begin', ['begin'])
+First  (';', [';'])
+First  (':', [':'])
+First  ('if', ['if'])
+First  ('then', ['then'])
+First  ('while', ['while'])
+First  ('do', ['do'])
+First  ('enddo', ['enddo'])
+First  ('for', ['for'])
+First  ('to', ['to'])
+First  ('break', ['break'])
+First  ('return', ['return'])
+First  ('else', ['else'])
+First  ('endif', ['endif'])
+First  ('&', ['&'])
+First  ('|', ['|'])
+First  ('<>', ['<>'])
+First  ('>', ['>'])
+First  ('<', ['<'])
+First  ('>=', ['>='])
+First  ('<=', ['<='])
+First  ('+', ['+'])
+First  ('-', ['-'])
+First  ('*', ['*'])
+First  ('/', ['/'])
+First  ('floatlit', ['floatlit'])
+First  ('tiger-program', ['let'])
+First  ('declaration-segment', ['int', 'float', 'array', 'id', 'var', 'function', 'epsilon'])
+First  ('stat-seq', ['if', 'id', 'while', 'for', 'break', 'return', 'let'])
+First  ('type-declaration-list', ['int', 'float', 'array', 'id', 'epsilon'])
+First  ('var-declaration-list', ['var', 'epsilon'])
+First  ('funct-declaration-list', ['function', 'epsilon'])
+First  ('type-declaration', ['int', 'float', 'array', 'id'])
+First  ('var-declaration', ['var'])
+First  ('funct-declaration', ['function'])
+First  ('type', ['int', 'float', 'array', 'id'])
+First  ('type-id', ['int', 'float'])
+First  ('id-list', ['id'])
+First  ('id-list-tail', [',', 'epsilon'])
+First  ('const', ['intlit', 'floatlit'])
+First  ('param-list', ['id', 'epsilon'])
+First  ('ret-type', [':', 'epsilon'])
+First  ('param', ['id'])
+First  ('param-list-tail', [',', 'epsilon'])
+First  ('stat', ['if', 'id', 'while', 'for', 'break', 'return', 'let'])
+First  ('stat-seq-tail', ['if', 'id', 'while', 'for', 'break', 'return', 'let', 'epsilon'])
+First  ('expr', ['(', 'intlit', 'floatlit', 'id'])
+First  ('stat-if-tail', ['else', 'endif'])
+First  ('stat-funct-or-assign', ['[', ':=', '('])
+First  ('lvalue-tail', ['[', 'epsilon'])
+First  ('stat-assign', ['id', '(', 'intlit', 'floatlit'])
+First  ('expr-list', ['epsilon', '(', 'intlit', 'floatlit', 'id'])
+First  ('stat-assign-stuff', ['(', '[', '|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/', 'epsilon'])
+First  ('stat-assign-tail', ['|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/', 'epsilon'])
+First  ('expr-tail', ['|', 'epsilon'])
+First  ('OR-expr-tail', ['&', 'epsilon'])
+First  ('AND-expr-tail', ['<>', '=', '>', '<', '>=', '<=', 'epsilon'])
+First  ('compare-tail', ['+', '-', 'epsilon'])
+First  ('term-tail', ['*', '/', 'epsilon'])
+First  ('OR-expr', ['(', 'intlit', 'floatlit', 'id'])
+First  ('OR-op', ['|'])
+First  ('AND-expr', ['(', 'intlit', 'floatlit', 'id'])
+First  ('AND-op', ['&'])
+First  ('compare', ['(', 'intlit', 'floatlit', 'id'])
+First  ('compare-op', ['<>', '=', '>', '<', '>=', '<='])
+First  ('term', ['(', 'intlit', 'floatlit', 'id'])
+First  ('add-op', ['+', '-'])
+First  ('factor', ['(', 'intlit', 'floatlit', 'id'])
+First  ('mul-op', ['*', '/'])
+First  ('lvalue', ['id'])
+First  ('expr-list-tail', [',', 'epsilon'])
+
+
+
+
+
+Follow  tiger-program ['$']
+Follow  declaration-segment ['in']
+Follow  stat-seq ['end', 'else', 'endif', 'enddo']
+Follow  type-declaration-list ['var', 'function', 'in']
+Follow  var-declaration-list ['function', 'in']
+Follow  funct-declaration-list ['in']
+Follow  type-declaration ['int', 'float', 'array', 'id', 'var', 'function', 'in']
+Follow  var-declaration ['var', 'function', 'in']
+Follow  funct-declaration ['function', 'in']
+Follow  type ['id', 'int', 'float', 'array', 'var', 'function', 'in', 'optional-init', 'begin', ',', ')']
+Follow  type-id ['id', 'int', 'float', 'array', 'var', 'function', 'in', 'optional-init', 'begin', ',', ')']
+Follow  id-list ['int', 'float', 'array', 'id']
+Follow  id-list-tail ['int', 'float', 'array', 'id']
+Follow  const ['|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/', ';', 'then', 'do', 'to', ')', ']', ',']
+Follow  param-list [')']
+Follow  ret-type ['begin']
+Follow  param [',', ')']
+Follow  param-list-tail [')']
+Follow  stat ['if', 'id', 'while', 'for', 'break', 'return', 'let', 'end', 'else', 'endif', 'enddo']
+Follow  stat-seq-tail ['end', 'else', 'endif', 'enddo']
+Follow  expr ['then', 'do', 'to', ';', ')', ']', ',']
+Follow  stat-if-tail ['if', 'id', 'while', 'for', 'break', 'return', 'let', 'end', 'else', 'endif', 'enddo']
+Follow  stat-funct-or-assign ['if', 'id', 'while', 'for', 'break', 'return', 'let', 'end', 'else', 'endif', 'enddo']
+Follow  lvalue-tail [':=', '|', '&', '<>', '=', '>', '<', '>=', '<=', '+', '-', '*', '/', ';', 'then', 'do', 'to', ')', ']', ',']
+Follow  stat-assign [';']
+Follow  expr-list [')']
+Follow  stat-assign-stuff [';']
+Follow  stat-assign-tail [';']
+Follow  expr-tail [';', 'then', 'do', 'to', ')', ']', ',']
+Follow  OR-expr-tail [';', '|', 'then', 'do', 'to', ')', ']', ',']
+Follow  AND-expr-tail [';', '&', '|', 'then', 'do', 'to', ')', ']', ',']
+Follow  compare-tail [';', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ')', ']', ',']
+Follow  term-tail [';', '+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ')', ']', ',']
+Follow  OR-expr ['|', 'then', 'do', 'to', ';', ')', ']', ',']
+Follow  OR-op ['(', 'intlit', 'floatlit', 'id']
+Follow  AND-expr ['&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
+Follow  AND-op ['(', 'intlit', 'floatlit', 'id']
+Follow  compare ['<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
+Follow  compare-op ['(', 'intlit', 'floatlit', 'id']
+Follow  term ['+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
+Follow  add-op ['(', 'intlit', 'floatlit', 'id']
+Follow  factor ['*', '/', '+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
+Follow  mul-op ['(', 'intlit', 'floatlit', 'id']
+Follow  lvalue ['*', '/', '+', '-', '<>', '=', '>', '<', '>=', '<=', '&', '|', 'then', 'do', 'to', ';', ')', ']', ',']
+Follow  expr-list-tail [')']
