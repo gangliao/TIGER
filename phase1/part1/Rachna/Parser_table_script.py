@@ -236,9 +236,9 @@ def find_predict():
 
 
             t1 = t[i][0]+t[i][1][j]
-            print t[i][0], t[i][1][j], t1
+            #print t[i][0], t[i][1][j], t1
             predicted.append((t1,local_list))
-            print "At last--------------",(t1,local_list)
+            #print "At last--------------",(t1,local_list)
 
     print "Predicted set is :"
     print predicted
