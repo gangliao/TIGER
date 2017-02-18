@@ -3,114 +3,150 @@
  *
  * @author:  Gatech Buzz
  */
+#include<cstdio>
+#include<iostream>
+#include<fstream>
+#include<ctype.h>
 
-#pragma once
-
-#include <ctype.h>
-#include <cstdio>
-#include <fstream>
-#include <iostream>
-
-#include <algorithm>
-#include <map>
-#include <set>
+#include<algorithm>
+#include<string>
+#include<set>
 #include <stack>
-#include <string>
+#include <map>
 
-enum Entry { Variables, Constants, Types, Functions, Temporaries };
 
-class Symbol {
-public:
-  enum Terminal {
+enum Entry {Variables, Constants, Types, Functions, Temporaries
+};
+  
+class Symbol
+{
+    public:
+    enum Terminal{
     // Keyword tokens
-    ARRAY = 0,
-    BREAK,
-    DO,
-    ELSE,
-    END,
-    FOR,
-    FUNCTION,
-    IF,
-    IN,
-    LET,
-    OF,
-    THEN,
-    TO,
-    TYPE,
-    VAR,
-    WHILE,
-    ENDIF,
-    BEGIN,
-    ENDDO,
-    RETURN,
-    INT,
-    FLOAT,
+	LET=0,
+	IN,
+	END,
+	TYPE,
+	ID,
+	EQ,
+	SEMI,
+	ARRAY,
+	LBRACK,//[
+	INTLIT,
+	RBRACK, //]
+	OF,
+	INT,
+	FLOAT,
+	VAR,
+	COLON,
+	COMMA,
+	ASSIGN, //:=
+	FUNCTION,
+	LPAREN, //(
+	RPAREN, //)
+	BEGIN,
+	IF,
+	THEN,
+	WHILE,
+	DO,
+	ENDDO,
+	FOR,
+	TO,
+	BREAK,
+	RETURN, 
+	ELSE,
+	ENDIF,  
+	AND,
+	OR,
+	NEQ,
+	GREATER,
+	LESSER,
+	GREATEREQ,
+	LESSEREQ,
+	PLUS,
+	MINUS,
+	MULT,
+	DIV,
+	FLOATLIT,
+	// End of file token
+	EOFF, //$
+	LBRACE,
+	RBRACE,
+	PERIOD,
+	// NULL token
+	NULLL
+    };
 
-    // Regular tokens
-    COMMA,
-    COLON,
-    SEMI,
-    LPAREN,
-    RPAREN,
-    LBRACK,
-    RBRACK,
-    LBRACE,
-    RBRACE,
-    PERIOD,
-    PLUS,
-    MINUS,
-    MULT,
-    DIV,
-    EQ,
-    NEQ,
-    LESSER,
-    GREATER,
-    LESSEREQ,
-    GREATEREQ,
-    AND,
-    OR,
-    ASSIGN,
+     enum Nonterminal{
+	TIGER_PROGRAM=101, 
+	DECLARATION_SEGMENT,
+	STAT_SEQ,
+	TYPE_DECLARATION_LIST,
+	VAR_DECLARATION_LIST,
+	FUNCT_DECLARATION_LIST,
+	TYPE_DECLARATION,
+	VAR_DECLARATION,
+	FUNCT_DECLARATION,
+	TYPE_NONTER,
+	TYPE_ID,
+	ID_LIST,
+	OPTIONAL_INIT,
+	ID_LIST_TAIL,
+	CONST,
+	PARAM_LIST,
+	RET_TYPE,
+	PARAM,
+	PARAM_LIST_TAIL,
+	STAT,
+	STAT_SEQ_TAIL,
+	EXPR,
+	STAT_IF_TAIL,
+	STAT_FUNCT_OR_ASSIGN,
+	LVALUE_TAIL,
+	STAT_ASSIGN,
+	EXPR_LIST,
+	STAT_ASSIGN_STUFF,
+	STAT_ASSIGN_TAIL,
+	EXPR_TAIL,
+	OR_EXPR_TAIL,
+	AND_EXPR_TAIL,
+	COMPARE_TAIL,
+	TERM_TAIL,
+	OR_EXPR,
+	OR_OP,
+	AND_EXPR,
+	AND_OP,
+	COMPARE,
+	COMPARE_OP,
+	TERM,
+	ADD_OP,
+	FACTOR,
+	MUL_OP,
+	LVALUE,
+	EXPR_LIST_TAIL
+	//Fill in the required Non-Terminals
+    };
+
+    enum Action{
+
+	// Dealing with main
+	MakeMainLabel, MakeReturn,
     //
-    // Type tokens
-    ID,
-    INTLIT,
-    FLOATLIT,
 
-    // NULL token
-    NULLL,
+	// Scope
+	InitializeScope, FinalizeScope,
 
-    // End of file token
-    EOFF
-  };
+	//Fill in the required Actions
 
-  enum Nonterminal {
-    TIGER_PROGRAM,
-    DECLARATION_SEGMENT,
-    STAT_SEQ,
-    CONST,
-    EXPR,
-    // Fill in the required Non-Terminals
-  };
+    };
 
-  enum Action {
+  void operator=(int value){
+	this->value = value;
+  }
 
-    // Dealing with main
-    MakeMainLabel,
-    MakeReturn,
-    //
-
-    // Scope
-    InitializeScope,
-    FinalizeScope,
-
-    // Fill in the required Actions
-
-  };
-
-  void operator=(int value) { this->value = value; }
-
-  int getValue() { return value; }
-
+  int getValue(){
+    return value;
+  }
 private:
   int value;
 };
