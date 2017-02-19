@@ -64,14 +64,50 @@ void Parser::initParseTable() {
                    Symbol::Nonterminal::TYPE_DECLARATION_LIST});  // NOLINT
 
   // 4: <type-declaration-list> -> NULL
+  addToParseTable(Symbol::Nonterminal::TYPE_DECLARATION_LIST,  // NOLINT
+                  {Symbol::Terminal::FUNCTION,                 // NOLINT
+                   Symbol::Terminal::IN,                       // NOLINT
+                   Symbol::Terminal::VAR},                     // NOLINT
+                  {Symbol::Terminal::NULLL});                  // NOLINT
+
   // 5: <var-declaration-list> -> <var-declaration> <var-declaration-list>
+  addToParseTable(Symbol::Nonterminal::VAR_DECLARATION_LIST,     // NOLINT
+                  {Symbol::Nonterminal::VAR_DECLARATION},        // NOLINT
+                  {Symbol::Nonterminal::VAR_DECLARATION_LIST});  // NOLINT
+
   // 6: <var-declaration-list> -> NULL
+  addToParseTable(Symbol::Nonterminal::VAR_DECLARATION_LIST,  // NOLINT
+                  {Symbol::Terminal::FUNCTION,                // NOLINT
+                   Symbol::Terminal::IN},                     // NOLINT
+                  {Symbol::Terminal::NULLL});                 // NOLINT
+
   // 7: <funct-declaration-list> -> <funct-declaration> <funct-declaration-list>
+  addToParseTable(Symbol::Nonterminal::FUNCT_DECLARATION_LIST,     // NOLINT
+                  {Symbol::Terminal::FUNCTION},                    // NOLINT
+                  {Symbol::Nonterminal::FUNCT_DECLARATION,         // NOLINT
+                   Symbol::Nonterminal::FUNCT_DECLARATION_LIST});  // NOLINT
+
   // 8: <funct-declaration-list> -> NULL
+  addToParseTable(Symbol::Nonterminal::FUNCT_DECLARATION_LIST,  // NOLINT
+                  {Symbol::Terminal::IN},                       // NOLINT
+                  {Symbol::Terminal::NULLL});                   // NOLINT
 
   // # type-declaration
   // 9: <type-declaration> -> type id = <type>;
+  addToParseTable(Symbol::Nonterminal::TYPE_DECLARATION,  // NOLINT
+                  {Symbol::Terminal::IN},                 // NOLINT
+                  {Symbol::Terminal::TYPE,                // NOLINT
+                   Symbol::Terminal::ID,                  // NOLINT
+                   Symbol::Terminal::EQ,                  // NOLINT
+                   Symbol::Nonterminal::TYPE,             // NOLINT
+                   Symbol::Terminal::SEMI});              // NOLINT
+
   // 10: <type> -> <type-id>
+  addToParseTable(Symbol::Nonterminal::TYPE,        // NOLINT
+                  {Symbol::Terminal::INT,           // NOLINT
+                   Symbol::Terminal::FLOAT},        // NOLINT
+                  {Symbol::Nonterminal::TYPE_ID});  // NOLINT
+
   // 11: <type> -> array [INTLIT] of <type-id>
   // 12: <type> -> id
 
