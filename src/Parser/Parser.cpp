@@ -255,10 +255,18 @@ void Parser::initParseTable() {
                    Symbol::Terminal::ELSE,             // NOLINT
                    Symbol::Terminal::ENDDO,            // NOLINT
                    Symbol::Terminal::END},             // NOLINT
-                  {Symbol::Nonterminal::NULLL});       // NOLINT
+                  {Symbol::Terminal::NULLL});          // NOLINT
 
   // # stat
   // 32: <stat> -> if <expr> then <stat-seq> <stat-if-tail>
+  addToParseTable(Symbol::Nonterminal::STAT,             // NOLINT
+                  {Symbol::Terminal::IF},                // NOLINT
+                  {Symbol::Terminal::IF,                 // NOLINT
+                   Symbol::Nonterminal::EXPR,            // NOLINT
+                   Symbol::Terminal::THEN,               // NOLINT
+                   Symbol::Nonterminal::STAT_SEQ,        // NOLINT
+                   Symbol::Nonterminal::STAT_IF_TAIL});  // NOLINT
+
   // 33: <stat-if-tail> -> else <stat-seq> endif;
   // 34: <stat-if-tail> -> endif;
 
