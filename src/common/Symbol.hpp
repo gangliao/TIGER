@@ -84,7 +84,7 @@ public:
   };
 
   enum Nonterminal {
-    TIGER_PROGRAM,
+    TIGER_PROGRAM = 100,
     DECLARATION_SEGMENT,
     STAT_SEQ,
     TYPE_DECLARATION_LIST,
@@ -135,7 +135,7 @@ public:
   enum Action {
 
     // Dealing with main
-    MakeMainLabel,
+    MakeMainLabel = 200,
     MakeReturn,
     //
 
@@ -149,7 +149,7 @@ public:
 
   void operator=(int value) { this->value = value; }
 
-  int getValue() { return value; }
+  int getValue() const { return value; }
 
 private:
   int value;

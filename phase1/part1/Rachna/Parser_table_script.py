@@ -16,10 +16,10 @@ class rule:
     def __init__(self):
         self.lhs = []
         self.rhs = []
-        
+
     def print_rule(self):
         print self.lhs,self.rhs
-        
+
 def read_input_file(filename):
     f = open(filename, 'r')
     line_num = 0
@@ -34,7 +34,7 @@ def read_input_file(filename):
             len_lsplit -=1
             i +=1
         ll[-1]=ll[-1].rstrip() #remove \n from the last word
-        
+
         if(line_num > 0):
             list_of_lhs = [r1.lhs for r1 in rule_list]
             result = [element for element in list_of_lhs if element[0] == ll[0]]
