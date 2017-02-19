@@ -29,8 +29,6 @@ class Parser final {
   void parse();
   /// parse error info
   void error(std::string message);
-  /// create parse table for Tiger
-  void initParseTable();
   /// insert items into parse table
   void addToParseTable(const int nonterm, const std::vector<int> &terminals,
                        const std::vector<int> &expand_rule);
@@ -42,7 +40,8 @@ class Parser final {
  private:
   /// initialize terminal map data structure: terminalMapped
   void initializeTerminalMapped();
-
+  /// create parse table for Tiger
+  void initParseTable();
   Scanner scanner;
   int numErrors;
   std::string globalFileName;
