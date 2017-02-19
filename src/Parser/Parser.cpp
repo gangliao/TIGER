@@ -99,11 +99,11 @@ void Parser::initParseTable() {
                   {Symbol::Terminal::TYPE,                // NOLINT
                    Symbol::Terminal::ID,                  // NOLINT
                    Symbol::Terminal::EQ,                  // NOLINT
-                   Symbol::Nonterminal::TYPE,             // NOLINT
+                   Symbol::Nonterminal::TYPE_NOTER,       // NOLINT
                    Symbol::Terminal::SEMI});              // NOLINT
 
   // 10: <type> -> <type-id>
-  addToParseTable(Symbol::Nonterminal::TYPE,        // NOLINT
+  addToParseTable(Symbol::Nonterminal::TYPE_NOTER,  // NOLINT
                   {Symbol::Terminal::INT,           // NOLINT
                    Symbol::Terminal::FLOAT},        // NOLINT
                   {Symbol::Nonterminal::TYPE_ID});  // NOLINT

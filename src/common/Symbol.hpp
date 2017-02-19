@@ -93,7 +93,7 @@ class Symbol {
     TYPE_DECLARATION,
     VAR_DECLARATION,
     FUNCT_DECLARATION,
-    TYPE,
+    TYPE_NOTER,
     TYPE_ID,
     ID_LIST,
     OPTIONAL_INIT,
