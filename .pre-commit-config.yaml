@@ -7,6 +7,8 @@
   hooks:
     - id: clang-format
       name: clang-format
-      entry: clang-format -i
+      description: Format files with ClangFormat.
+      entry: clang-format
       language: system
-      files: \.(h|hpp|cc|c|cpp)
+      files: \.(c|cc|cxx|cpp|h|hpp|hxx|java|js|m|proto)$
+      args: ['-fallback-style=Google', '-i']
