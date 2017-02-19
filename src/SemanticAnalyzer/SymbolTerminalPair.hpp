@@ -9,11 +9,11 @@
 #include "../common/Symbol.hpp"
 
 class SymbolTerminalPair final {
-private:
+ private:
   Symbol a;
   Symbol w;
 
-public:
+ public:
   explicit SymbolTerminalPair(int a, int w) {
     this->a = a;
     this->w = w;

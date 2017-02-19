@@ -35,23 +35,34 @@ void Parser::addToParseTable(const int nonterm,
  * initialize Tiger's parse table by hand-coded.
  */
 void Parser::initParseTable() {
-// # tiger-program
-// 1: <tiger-program> -> let <declaration-segment> in <stat-seq> end
-#define INSERT_PARSE_TABLE(__no_term__, __terms__, __rule__)
-
-  addToParseTable(Symbol::Nonterminal::TIGER_PROGRAM,
-                  {Symbol::Terminal::LET},
-                  {Symbol::Terminal::LET,
-                   Symbol::Nonterminal::DECLARATION_SEGMENT,
-                   Symbol::Terminal::IN,
-                   Symbol::Nonterminal::STAT_SEQ,
-                   Symbol::Terminal::END});
+  // # tiger-program
+  // 1: <tiger-program> -> let <declaration-segment> in <stat-seq> end
+  addToParseTable(Symbol::Nonterminal::TIGER_PROGRAM,         // NOLINT
+                  {Symbol::Terminal::LET},                    // NOLINT
+                  {Symbol::Terminal::LET,                     // NOLINT
+                   Symbol::Nonterminal::DECLARATION_SEGMENT,  // NOLINT
+                   Symbol::Terminal::IN,                      // NOLINT
+                   Symbol::Nonterminal::STAT_SEQ,             // NOLINT
+                   Symbol::Terminal::END});                   // NOLINT
 
   // # declaration-segment
   // 2: <declaration-segment> -> <type-declaration-list> <var-declaration-list>
   // <funct-declaration-list>
+  addToParseTable(Symbol::Nonterminal::DECLARATION_SEGMENT,        // NOLINT
+                  {Symbol::Terminal::FUNCTION,                     // NOLINT
+                   Symbol::Terminal::IN,                           // NOLINT
+                   Symbol::Terminal::TYPE,                         // NOLINT
+                   Symbol::Terminal::VAR},                         // NOLINT
+                  {Symbol::Nonterminal::TYPE_DECLARATION_LIST,     // NOLINT
+                   Symbol::Nonterminal::VAR_DECLARATION_LIST,      // NOLINT
+                   Symbol::Nonterminal::FUNCT_DECLARATION_LIST});  // NOLINT
 
   // 3: <type-declaration-list> -> <type-declaration> <type-declaration-list>
+  addToParseTable(Symbol::Nonterminal::TYPE_DECLARATION_LIST,     // NOLINT
+                  {Symbol::Terminal::TYPE},                       // NOLINT
+                  {Symbol::Nonterminal::TYPE_DECLARATION,         // NOLINT
+                   Symbol::Nonterminal::TYPE_DECLARATION_LIST});  // NOLINT
+
   // 4: <type-declaration-list> -> NULL
   // 5: <var-declaration-list> -> <var-declaration> <var-declaration-list>
   // 6: <var-declaration-list> -> NULL

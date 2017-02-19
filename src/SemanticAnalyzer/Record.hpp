@@ -5,7 +5,7 @@
 #include <vector>
 
 class Record {
-public:
+ public:
   int scopeLevel = 0;
   std::string type = "";
   int dimension;
