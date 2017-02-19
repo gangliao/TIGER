@@ -3,18 +3,22 @@
  *
  * @author: Gatech Buzz
  */
+
 #include <cstring>
+#include <unordered_map>
+
 #include "../Scanner/Scanner.hpp"
 #include "../SemanticAnalyzer/SymbolTable.hpp"
 #include "../SemanticAnalyzer/SymbolTerminalPair.hpp"
+
 class Parser {
 private:
   Scanner scanner;
   int numErrors;
   std::string globalFileName;
   std::stack<int> parseStack;
-  std::map<int, std::string> terminalMapped;
-  std::map<SymbolTerminalPair, std::vector<int>> parseTable;
+  std::unordered_map<int, std::string> terminalMapped;
+  std::unordered_map<SymbolTerminalPair, std::vector<int>> parseTable;
 
 public:
   std::ofstream outFile;
@@ -68,8 +72,56 @@ public:
 
 private:
   void initializeTerminalMapped() {
-    terminalMapped.insert(std::make_pair(Symbol::Terminal::COMMA, ","));
-    // Map the other terminals accordingly
+    terminalMapped[Symbol::Terminal::ARRAY] = "array";
+    terminalMapped[Symbol::Terminal::BREAK] = "break";
+    terminalMapped[Symbol::Terminal::DO] = "do";
+    terminalMapped[Symbol::Terminal::ELSE] = "else";
+    terminalMapped[Symbol::Terminal::END] = "end";
+    terminalMapped[Symbol::Terminal::FOR] = "for";
+    terminalMapped[Symbol::Terminal::FUNCTION] = "function";
+    terminalMapped[Symbol::Terminal::IF] = "if";
+    terminalMapped[Symbol::Terminal::IN] = "in";
+    terminalMapped[Symbol::Terminal::LET] = "let";
+    terminalMapped[Symbol::Terminal::OF] = "of";
+    terminalMapped[Symbol::Terminal::THEN] = "then";
+    terminalMapped[Symbol::Terminal::TO] = "to";
+    terminalMapped[Symbol::Terminal::TYPE] = "type";
+    terminalMapped[Symbol::Terminal::VAR] = "var";
+    terminalMapped[Symbol::Terminal::WHILE] = "while";
+    terminalMapped[Symbol::Terminal::ENDIF] = "endif";
+    terminalMapped[Symbol::Terminal::BEGIN] = "begin";
+    terminalMapped[Symbol::Terminal::ENDDO] = "enddo";
+    terminalMapped[Symbol::Terminal::RETURN] = "return";
+    terminalMapped[Symbol::Terminal::INT] = "int";
+    terminalMapped[Symbol::Terminal::FLOAT] = "float";
+    terminalMapped[Symbol::Terminal::COMMA] = ",";
+    terminalMapped[Symbol::Terminal::COLON] = ":";
+    terminalMapped[Symbol::Terminal::SEMI] = ";";
+    terminalMapped[Symbol::Terminal::LPAREN] = "(";
+    terminalMapped[Symbol::Terminal::RPAREN] = ")";
+    terminalMapped[Symbol::Terminal::LBRACK] = "[";
+    terminalMapped[Symbol::Terminal::RBRACK] = "]";
+    terminalMapped[Symbol::Terminal::LBRACE] = "{";
+    terminalMapped[Symbol::Terminal::RBRACE] = "}";
+    terminalMapped[Symbol::Terminal::PERIOD] = ".";
+    terminalMapped[Symbol::Terminal::PLUS] = "+";
+    terminalMapped[Symbol::Terminal::MINUS] = "-";
+    terminalMapped[Symbol::Terminal::MULT] = "*";
+    terminalMapped[Symbol::Terminal::DIV] = "/";
+    terminalMapped[Symbol::Terminal::EQ] = "=";
+    terminalMapped[Symbol::Terminal::NEQ] = "!=";
+    terminalMapped[Symbol::Terminal::LESSER] = "<";
+    terminalMapped[Symbol::Terminal::GREATER] = ">";
+    terminalMapped[Symbol::Terminal::LESSEREQ] = "<=";
+    terminalMapped[Symbol::Terminal::GREATEREQ] = ">=";
+    terminalMapped[Symbol::Terminal::AND] = "&";
+    terminalMapped[Symbol::Terminal::OR] = "|";
+    terminalMapped[Symbol::Terminal::ASSIGN] = ":=";
+    terminalMapped[Symbol::Terminal::ID] = "id";
+    terminalMapped[Symbol::Terminal::INTLIT] = "intlit";
+    terminalMapped[Symbol::Terminal::FLOATLIT] = "floatlit";
+    terminalMapped[Symbol::Terminal::NULLL] = "epsilon";
+    terminalMapped[Symbol::Terminal::EOFF] = "";
   }
 };
 
