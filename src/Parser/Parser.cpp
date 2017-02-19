@@ -99,44 +99,163 @@ void Parser::initParseTable() {
                   {Symbol::Terminal::TYPE,                // NOLINT
                    Symbol::Terminal::ID,                  // NOLINT
                    Symbol::Terminal::EQ,                  // NOLINT
-                   Symbol::Nonterminal::TYPE_NOTER,       // NOLINT
+                   Symbol::Nonterminal::TYPE_EXPR,        // NOLINT
                    Symbol::Terminal::SEMI});              // NOLINT
 
   // 10: <type> -> <type-id>
-  addToParseTable(Symbol::Nonterminal::TYPE_NOTER,  // NOLINT
+  addToParseTable(Symbol::Nonterminal::TYPE_EXPR,   // NOLINT
                   {Symbol::Terminal::INT,           // NOLINT
                    Symbol::Terminal::FLOAT},        // NOLINT
                   {Symbol::Nonterminal::TYPE_ID});  // NOLINT
 
   // 11: <type> -> array [INTLIT] of <type-id>
+  addToParseTable(Symbol::Nonterminal::TYPE_EXPR,   // NOLINT
+                  {Symbol::Terminal::ARRAY},        // NOLINT
+                  {Symbol::Terminal::ARRAY,         // NOLINT
+                   Symbol::Terminal::LBRACK,        // NOLINT
+                   Symbol::Terminal::INTLIT,        // NOLINT
+                   Symbol::Terminal::RBRACK,        // NOLINT
+                   Symbol::Terminal::OF,            // NOLINT
+                   Symbol::Nonterminal::TYPE_ID});  // NOLINT
+
   // 12: <type> -> id
+  addToParseTable(Symbol::Nonterminal::TYPE_EXPR,  // NOLINT
+                  {Symbol::Terminal::ID},          // NOLINT
+                  {Symbol::Terminal::ID});         // NOLINT
 
   // 13: <type-id> -> int
+  addToParseTable(Symbol::Nonterminal::TYPE_ID,  // NOLINT
+                  {Symbol::Terminal::INT},       // NOLINT
+                  {Symbol::Terminal::INT});      // NOLINT
+
   // 14: <type-id> -> float
+  addToParseTable(Symbol::Nonterminal::TYPE_ID,  // NOLINT
+                  {Symbol::Terminal::FLOAT},     // NOLINT
+                  {Symbol::Terminal::FLOAT});    // NOLINT
 
   // # var-declaration
   // 15: <var-declaration> -> var <id-list> : <type> <optional-init>;
+  addToParseTable(Symbol::Nonterminal::TYPE_ID,  // NOLINT
+                  {Symbol::Terminal::FLOAT},     // NOLINT
+                  {Symbol::Terminal::FLOAT});    // NOLINT
+
   // 16: <id-list> -> id <id-list-tail>
+  addToParseTable(Symbol::Nonterminal::ID_LIST,          // NOLINT
+                  {Symbol::Terminal::ID},                // NOLINT
+                  {Symbol::Terminal::ID,                 // NOLINT
+                   Symbol::Nonterminal::ID_LIST_TAIL});  // NOLINT
+
   // 17: <id-list-tail> -> , id <id-list-tail>
+  addToParseTable(Symbol::Nonterminal::ID_LIST_TAIL,     // NOLINT
+                  {Symbol::Terminal::COMMA},             // NOLINT
+                  {Symbol::Terminal::COMMA,              // NOLINT
+                   Symbol::Nonterminal::ID_LIST_TAIL});  // NOLINT
+
   // 18: <id-list-tail> -> NULL
+  addToParseTable(Symbol::Nonterminal::ID_LIST_TAIL,  // NOLINT
+                  {Symbol::Terminal::COLON},          // NOLINT
+                  {Symbol::Terminal::NULLL});         // NOLINT
+
   // 19: <optional-init> -> := <const>
+  addToParseTable(Symbol::Nonterminal::OPTIONAL_INIT,  // NOLINT
+                  {Symbol::Terminal::ASSIGN},          // NOLINT
+                  {Symbol::Terminal::ASSIGN,           // NOLINT
+                   Symbol::Nonterminal::CONST});       // NOLINT
+
   // 20: <optional-init> -> NULL
+  addToParseTable(Symbol::Nonterminal::OPTIONAL_INIT,  // NOLINT
+                  {Symbol::Terminal::SEMI},            // NOLINT
+                  {Symbol::Terminal::NULLL});          // NOLINT
 
   // # funct-declaration
   // 21: <funct-declaration> -> function id (<param-list>) <ret-type> begin
   // <stat-seq> end;
+  addToParseTable(Symbol::Nonterminal::FUNCT_DECLARATION,  // NOLINT
+                  {Symbol::Terminal::FUNCTION},            // NOLINT
+                  {Symbol::Terminal::FUNCTION,             // NOLINT
+                   Symbol::Terminal::ID,                   // NOLINT
+                   Symbol::Terminal::LPAREN,               // NOLINT
+                   Symbol::Nonterminal::PARAM_LIST,        // NOLINT
+                   Symbol::Terminal::RPAREN,               // NOLINT
+                   Symbol::Nonterminal::RET_TYPE,          // NOLINT
+                   Symbol::Terminal::BEGIN,                // NOLINT
+                   Symbol::Nonterminal::STAT_SEQ,          // NOLINT
+                   Symbol::Terminal::END,                  // NOLINT
+                   Symbol::Terminal::SEMI});               // NOLINT
+
   // 22: <param-list> -> <param> <param-list-tail>
+  addToParseTable(Symbol::Nonterminal::PARAM_LIST,          // NOLINT
+                  {Symbol::Terminal::ID},                   // NOLINT
+                  {Symbol::Nonterminal::PARAM,              // NOLINT
+                   Symbol::Nonterminal::PARAM_LIST_TAIL});  // NOLINT
+
   // 23: <param-list> -> NULL
+  addToParseTable(Symbol::Nonterminal::PARAM_LIST,  // NOLINT
+                  {Symbol::Terminal::RPAREN},       // NOLINT
+                  {Symbol::Terminal::NULLL});       // NOLINT
+
   // 24: <param-list-tail> -> , <param> <param-list-tail>
+  addToParseTable(Symbol::Nonterminal::PARAM_LIST_TAIL,     // NOLINT
+                  {Symbol::Terminal::COMMA},                // NOLINT
+                  {Symbol::Terminal::COMMA,                 // NOLINT
+                   Symbol::Nonterminal::PARAM,              // NOLINT
+                   Symbol::Nonterminal::PARAM_LIST_TAIL});  // NOLINT
+
   // 25: <param-list-tail> -> NULL
+  addToParseTable(Symbol::Nonterminal::PARAM_LIST_TAIL,  // NOLINT
+                  {Symbol::Terminal::RPAREN},            // NOLINT
+                  {Symbol::Terminal::NULLL});            // NOLINT
+
   // 26: <ret-type> -> : <type>
+  addToParseTable(Symbol::Nonterminal::RET_TYPE,      // NOLINT
+                  {Symbol::Terminal::COLON},          // NOLINT
+                  {Symbol::Terminal::COLON,           // NOLINT
+                   Symbol::Nonterminal::TYPE_EXPR});  // NOLINT
+
   // 27: <ret-type> -> NULL
+  addToParseTable(Symbol::Nonterminal::RET_TYPE,  // NOLINT
+                  {Symbol::Terminal::BEGIN},      // NOLINT
+                  {Symbol::Terminal::NULLL});     // NOLINT
+
   // 28: <param> -> id : <type>
+  addToParseTable(Symbol::Nonterminal::PARAM,         // NOLINT
+                  {Symbol::Terminal::ID},             // NOLINT
+                  {Symbol::Terminal::ID,              // NOLINT
+                   Symbol::Terminal::COLON,           // NOLINT
+                   Symbol::Nonterminal::TYPE_EXPR});  // NOLINT
 
   // # stat-seq
   // 29: <stat-seq> -> <stat> <stat-seq-tail>
+  addToParseTable(Symbol::Nonterminal::STAT_SEQ,          // NOLINT
+                  {Symbol::Terminal::IF,                  // NOLINT
+                   Symbol::Terminal::WHILE,               // NOLINT
+                   Symbol::Terminal::FOR,                 // NOLINT
+                   Symbol::Terminal::BREAK,               // NOLINT
+                   Symbol::Terminal::RETURN,              // NOLINT
+                   Symbol::Terminal::LET,                 // NOLINT
+                   Symbol::Terminal::ID},                 // NOLINT
+                  {Symbol::Nonterminal::STAT,             // NOLINT
+                   Symbol::Nonterminal::STAT_SEQ_TAIL});  // NOLINT
+
   // 30: <stat-seq-tail> -> <stat> <stat-seq-tail>
+  addToParseTable(Symbol::Nonterminal::STAT_SEQ_TAIL,     // NOLINT
+                  {Symbol::Terminal::IF,                  // NOLINT
+                   Symbol::Terminal::WHILE,               // NOLINT
+                   Symbol::Terminal::FOR,                 // NOLINT
+                   Symbol::Terminal::BREAK,               // NOLINT
+                   Symbol::Terminal::RETURN,              // NOLINT
+                   Symbol::Terminal::LET,                 // NOLINT
+                   Symbol::Terminal::ID},                 // NOLINT
+                  {Symbol::Nonterminal::STAT,             // NOLINT
+                   Symbol::Nonterminal::STAT_SEQ_TAIL});  // NOLINT
+
   // 31: <stat-seq-tail> -> NULL
+  addToParseTable(Symbol::Nonterminal::STAT_SEQ_TAIL,  // NOLINT
+                  {Symbol::Terminal::ENDIF,            // NOLINT
+                   Symbol::Terminal::ELSE,             // NOLINT
+                   Symbol::Terminal::ENDDO,            // NOLINT
+                   Symbol::Terminal::END},             // NOLINT
+                  {Symbol::Nonterminal::NULLL});       // NOLINT
 
   // # stat
   // 32: <stat> -> if <expr> then <stat-seq> <stat-if-tail>
