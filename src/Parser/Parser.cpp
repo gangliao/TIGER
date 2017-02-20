@@ -14,11 +14,6 @@ Parser::Parser(std::string fileName) : scanner(fileName) {
 
   globalFileName = fileName;
 
-  // Insert the pair stp and rhsVec inside parseTable
-  // Fill in the remaining of the parseTable as above.
-  // Recommended- work out the parseTable by hand and then code it here
-  // parseTable.insert(std::make_pair(stp, rhsVec));
-
   initParseTable();
 }
 
@@ -766,7 +761,36 @@ void Parser::parse() {
     // then embed the semantic actions in the parsing table and
     // accordingly take actions and generate the IR.
     // Output the IR, only if there are no errors in the input.
-  }
+    std::vector<int> null = {Symbol::Terminal::NULLL};
+
+    // pop expression from stack
+    auto& expr = parseStack.top();
+    parseStack.pop();
+
+    if (expr == word->getTokenType().getValue()) {
+      if (word->getTokenType().getValue() == Symbol::Terminal::EOFF &&
+          parseStack.empty()) {
+        std::cout << "Successful parse tiger code.";
+        break;
+      } else {
+        word = scanner.getToken();
+      }
+    } else {
+      auto it = parseTable.find(
+          SymbolTerminalPair(expr, word->getTokenType().getValue()));
+      if (it != parseTable.end()) {
+        auto& rule = it->second;
+        if (rule != null) {
+          for (auto& word : reverse_iterate(rule)) {
+            parseStack.push(word);
+          }
+        }
+      } else {
+        // error(word, expr);
+        break;
+      } /* it == parseTable.end() */
+    }   /* expr != word->getTokenType().getValue() */
+  }     /* while */
 }
 
 void Parser::initializeTerminalMapped() {
