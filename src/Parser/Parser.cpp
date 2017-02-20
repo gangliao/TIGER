@@ -277,12 +277,14 @@ void Parser::initParseTable() {
                   {Symbol::Terminal::ELSE},           // NOLINT
                   {Symbol::Terminal::ELSE,            // NOLINT
                    Symbol::Nonterminal::STAT_SEQ,     // NOLINT
-                   Symbol::Terminal::ENDIF});         // NOLINT
+                   Symbol::Terminal::ENDIF,           // NOLINT
+                   Symbol::Terminal::SEMI});          // NOLINT
 
   // 34: <stat-if-tail> -> endif;
   addToParseTable(Symbol::Nonterminal::STAT_IF_TAIL,  // NOLINT
                   {Symbol::Terminal::ENDIF},          // NOLINT
-                  {Symbol::Terminal::ENDIF});         // NOLINT
+                  {Symbol::Terminal::ENDIF,           // NOLINT
+                   Symbol::Terminal::SEMI});          // NOLINT
 
   // 35: <stat> -> id <stat-funct-or-assign>
   addToParseTable(Symbol::Nonterminal::STAT,                     // NOLINT
@@ -301,7 +303,7 @@ void Parser::initParseTable() {
 
   // 37: <stat-funct-or-assign> -> (<expr-list>);
   addToParseTable(Symbol::Nonterminal::STAT_FUNCT_OR_ASSIGN,  // NOLINT
-                  {Symbol::Terminal::LBRACK},                 // NOLINT
+                  {Symbol::Terminal::LPAREN},                 // NOLINT
                   {Symbol::Terminal::LPAREN,                  // NOLINT
                    Symbol::Nonterminal::EXPR_LIST,            // NOLINT
                    Symbol::Terminal::RPAREN,                  // NOLINT
@@ -384,7 +386,8 @@ void Parser::initParseTable() {
   // 47: <stat-assign-tail> -> <term-tail>
   addToParseTable(Symbol::Nonterminal::STAT_ASSIGN_TAIL,  // NOLINT
                   {Symbol::Terminal::MULT,                // NOLINT
-                   Symbol::Terminal::DIV},                // NOLINT
+                   Symbol::Terminal::DIV,                 // NOLINT
+                   Symbol::Terminal::SEMI},               // NOLINT
                   {Symbol::Nonterminal::TERM_TAIL});      // NOLINT
 
   // 48: <stat> -> while <expr> do <stat-seq> enddo;
