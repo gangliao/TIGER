@@ -7,13 +7,16 @@
 #include "Parser.hpp"
 
 Parser::Parser(std::string fileName) : scanner(fileName) {
+  // push tiger program into parse stack
   parseStack.push(Symbol::Terminal::EOFF);
   parseStack.push(Symbol::Nonterminal::TIGER_PROGRAM);
-
+  // initialize terminal map
   initializeTerminalMapped();
-
+  // file name
   globalFileName = fileName;
-
+  // count parse errors
+  numErrors = 0;
+  // init and create parse table
   initParseTable();
 }
 
@@ -67,8 +70,9 @@ void Parser::initParseTable() {
 
   // 5: <var-declaration-list> -> <var-declaration> <var-declaration-list>
   addToParseTable(Symbol::Nonterminal::VAR_DECLARATION_LIST,     // NOLINT
-                  {Symbol::Nonterminal::VAR_DECLARATION},        // NOLINT
-                  {Symbol::Nonterminal::VAR_DECLARATION_LIST});  // NOLINT
+                  {Symbol::Terminal::VAR},                       // NOLINT
+                  {Symbol::Nonterminal::VAR_DECLARATION,         // NOLINT
+                   Symbol::Nonterminal::VAR_DECLARATION_LIST});  // NOLINT
 
   // 6: <var-declaration-list> -> NULL
   addToParseTable(Symbol::Nonterminal::VAR_DECLARATION_LIST,  // NOLINT
@@ -90,7 +94,7 @@ void Parser::initParseTable() {
   // # type-declaration
   // 9: <type-declaration> -> type id = <type>;
   addToParseTable(Symbol::Nonterminal::TYPE_DECLARATION,  // NOLINT
-                  {Symbol::Terminal::IN},                 // NOLINT
+                  {Symbol::Terminal::TYPE},               // NOLINT
                   {Symbol::Terminal::TYPE,                // NOLINT
                    Symbol::Terminal::ID,                  // NOLINT
                    Symbol::Terminal::EQ,                  // NOLINT
@@ -130,9 +134,14 @@ void Parser::initParseTable() {
 
   // # var-declaration
   // 15: <var-declaration> -> var <id-list> : <type> <optional-init>;
-  addToParseTable(Symbol::Nonterminal::TYPE_ID,  // NOLINT
-                  {Symbol::Terminal::FLOAT},     // NOLINT
-                  {Symbol::Terminal::FLOAT});    // NOLINT
+  addToParseTable(Symbol::Nonterminal::VAR_DECLARATION,  // NOLINT
+                  {Symbol::Terminal::VAR},               // NOLINT
+                  {Symbol::Terminal::VAR,                // NOLINT
+                   Symbol::Nonterminal::ID_LIST,         // NOLINT
+                   Symbol::Terminal::COLON,              // NOLINT
+                   Symbol::Nonterminal::TYPE_EXPR,       // NOLINT
+                   Symbol::Nonterminal::OPTIONAL_INIT,   // NOLINT
+                   Symbol::Terminal::SEMI});             // NOLINT
 
   // 16: <id-list> -> id <id-list-tail>
   addToParseTable(Symbol::Nonterminal::ID_LIST,          // NOLINT
@@ -144,6 +153,7 @@ void Parser::initParseTable() {
   addToParseTable(Symbol::Nonterminal::ID_LIST_TAIL,     // NOLINT
                   {Symbol::Terminal::COMMA},             // NOLINT
                   {Symbol::Terminal::COMMA,              // NOLINT
+                   Symbol::Terminal::ID,                 // NOLINT
                    Symbol::Nonterminal::ID_LIST_TAIL});  // NOLINT
 
   // 18: <id-list-tail> -> NULL
@@ -282,7 +292,8 @@ void Parser::initParseTable() {
 
   // 36: <stat-funct-or-assign> -> <lvalue-tail> := <stat-assign>;
   addToParseTable(Symbol::Nonterminal::STAT_FUNCT_OR_ASSIGN,  // NOLINT
-                  {Symbol::Terminal::LBRACK},                 // NOLINT
+                  {Symbol::Terminal::LBRACK,                  // NOLINT
+                   Symbol::Terminal::ASSIGN},                 // NOLINT
                   {Symbol::Nonterminal::LVALUE_TAIL,          // NOLINT
                    Symbol::Terminal::ASSIGN,                  // NOLINT
                    Symbol::Nonterminal::STAT_ASSIGN,          // NOLINT
@@ -566,25 +577,25 @@ void Parser::initParseTable() {
                    Symbol::Nonterminal::TERM_TAIL});  // NOLINT
 
   // 67: <term-tail> -> NULL
-  addToParseTable(Symbol::Nonterminal::COMPARE_TAIL,  // NOLINT
-                  {Symbol::Terminal::OR,              // NOLINT
-                   Symbol::Terminal::AND,             // NOLINT
-                   Symbol::Terminal::EQ,              // NOLINT
-                   Symbol::Terminal::NEQ,             // NOLINT
-                   Symbol::Terminal::LESSER,          // NOLINT
-                   Symbol::Terminal::GREATER,         // NOLINT
-                   Symbol::Terminal::LESSEREQ,        // NOLINT
-                   Symbol::Terminal::GREATEREQ,       // NOLINT
-                   Symbol::Terminal::PLUS,            // NOLINT
-                   Symbol::Terminal::MINUS,           // NOLINT
-                   Symbol::Terminal::DO,              // NOLINT
-                   Symbol::Terminal::THEN,            // NOLINT
-                   Symbol::Terminal::TO,              // NOLINT
-                   Symbol::Terminal::SEMI,            // NOLINT
-                   Symbol::Terminal::COMMA,           // NOLINT
-                   Symbol::Terminal::RPAREN,          // NOLINT
-                   Symbol::Terminal::RBRACK},         // NOLINT
-                  {Symbol::Terminal::NULLL});         // NOLINT
+  addToParseTable(Symbol::Nonterminal::TERM_TAIL,  // NOLINT
+                  {Symbol::Terminal::OR,           // NOLINT
+                   Symbol::Terminal::AND,          // NOLINT
+                   Symbol::Terminal::EQ,           // NOLINT
+                   Symbol::Terminal::NEQ,          // NOLINT
+                   Symbol::Terminal::LESSER,       // NOLINT
+                   Symbol::Terminal::GREATER,      // NOLINT
+                   Symbol::Terminal::LESSEREQ,     // NOLINT
+                   Symbol::Terminal::GREATEREQ,    // NOLINT
+                   Symbol::Terminal::PLUS,         // NOLINT
+                   Symbol::Terminal::MINUS,        // NOLINT
+                   Symbol::Terminal::DO,           // NOLINT
+                   Symbol::Terminal::THEN,         // NOLINT
+                   Symbol::Terminal::TO,           // NOLINT
+                   Symbol::Terminal::SEMI,         // NOLINT
+                   Symbol::Terminal::COMMA,        // NOLINT
+                   Symbol::Terminal::RPAREN,       // NOLINT
+                   Symbol::Terminal::RBRACK},      // NOLINT
+                  {Symbol::Terminal::NULLL});      // NOLINT
 
   // 68: <factor> -> (<expr>)
   addToParseTable(Symbol::Nonterminal::FACTOR,  // NOLINT
@@ -740,10 +751,12 @@ void Parser::initParseTable() {
                   {Symbol::Terminal::NULLL});        // NOLINT
 }
 
-void Parser::error(std::string message) {
-  numErrors++;
-  std::cout << globalFileName << ":" << scanner.getCurrLine()
-            << ": error: " << message << "\n";
+void Parser::error(int expr, TokenPair* word) {
+  std::cout << globalFileName << " line " << scanner.getCurrLine() << ": "
+            << scanner.getPrefix() << " found error. \n";
+  std::cout << "expression: " << expr
+            << " doesn't support token: " << word->getTokenString()
+            << std::endl;
 }
 
 void Parser::parse() {
@@ -767,17 +780,17 @@ void Parser::parse() {
     auto& expr = parseStack.top();
     parseStack.pop();
 
-    if (expr == word->getTokenType().getValue()) {
-      if (word->getTokenType().getValue() == Symbol::Terminal::EOFF &&
-          parseStack.empty()) {
+    auto wordType = word->getTokenType().getValue();
+
+    if (expr == wordType) {
+      if (wordType == Symbol::Terminal::EOFF && parseStack.empty()) {
         std::cout << "Successful parse tiger code.";
         break;
       } else {
         word = scanner.getToken();
       }
     } else {
-      auto it = parseTable.find(
-          SymbolTerminalPair(expr, word->getTokenType().getValue()));
+      auto it = parseTable.find(SymbolTerminalPair(expr, wordType));
       if (it != parseTable.end()) {
         auto& rule = it->second;
         if (rule != null) {
@@ -786,11 +799,13 @@ void Parser::parse() {
           }
         }
       } else {
-        // error(word, expr);
+        numErrors++;
+        error(expr, word);
         break;
-      } /* it == parseTable.end() */
+      } /* it != parseTable.end() */
     }   /* expr != word->getTokenType().getValue() */
   }     /* while */
+  std::cout << "Found " << numErrors << " errors!" << std::endl;
 }
 
 void Parser::initializeTerminalMapped() {

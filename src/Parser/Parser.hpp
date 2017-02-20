@@ -51,7 +51,7 @@ class Parser final {
   /// parse scanner's tokens
   void parse();
   /// parse error info
-  void error(std::string message);
+  void error(int expr, TokenPair *word);
   /// insert items into parse table
   void addToParseTable(const int nonterm, const std::vector<int> &terminals,
                        const std::vector<int> &expand_rule);
