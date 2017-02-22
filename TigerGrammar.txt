@@ -1,91 +1,91 @@
-tiger-program let declaration-segment in stat-seq end
-declaration-segment type-declaration-list var-declaration-list funct-declaration-list
-type-declaration-list type-declaration type-declaration-list
-type-declaration-list epsilon
-var-declaration-list var-declaration var-declaration-list
-var-declaration-list epsilon
-funct-declaration-list funct-declaration funct-declaration-list
-funct-declaration-list epsilon
-type-declaration type id = type' ;
-type' type-id
-type' array [ intlit ] of type-id
-type' id
-type-id int
-type-id float
-var-declaration var id-list : type' optional-init ;
-id-list id id-list-tail
-id-list-tail , id id-list-tail
-id-list-tail epsilon
-optional-init := const
-optional-init epsilon
-funct-declaration function id ( param-list ) ret-type begin stat-seq end ;
-param-list param , param-list-tail
-param-list epsilon
-param-list-tail , param param-list-tail
-param-list-tail epsilon
-ret-type : type
-ret-type epsilon
-param  id : type
-stat-seq stat stat-seq-tail
-stat-seq-tail stat stat-seq-tail
-stat-seq-tail epsilon
-stat if expr then stat-seq stat-if-tail
-stat id stat-funct-or-assign
-stat while expr do stat-seq enddo ;
-stat for id := expr to expr do stat-seq enddo ;
-stat break ;
-stat return expr ;
-stat let declaration-segment in stat-seq end
-stat-if-tail else stat-seq endif ;
-stat-if-tail endif ;
-stat-funct-or-assign lvalue-tail := stat-assign ;
-stat-funct-or-assign ( expr-list ) ;
-stat-assign id stat-assign-stuff
-stat-assign ( expr ) stat-assign-tail
-stat-assign const stat-assign-tail
-stat-assign-stuff ( expr-list )
-stat-assign-stuff lvalue-tail stat-assign-tail
-stat-assign-tail expr-tail
-stat-assign-tail OR-expr-tail
-stat-assign-tail AND-expr-tail
-stat-assign-tail compare-tail
-stat-assign-tail term-tail
-lvalue id lvalue-tail
-lvalue-tail [ expr ]
-lvalue-tail epsilon
-expr OR-expr expr-tail
-expr-tail OR-op OR-expr expr-tail
-expr-tail epsilon
-OR-expr AND-expr OR-expr-tail
-OR-expr-tail AND-op AND-expr OR-expr-tail
-OR-expr-tail epsilon
-AND-expr compare AND-expr-tail
-AND-expr-tail compare-op compare AND-expr-tail
-AND-expr-tail epsilon
-compare term compare-tail
-compare-tail add-op term compare-tail
-compare-tail epsilon
-term factor term-tail
-term-tail mul-op factor term-tail
-term-tail epsilon
-AND-op &
-OR-op |
-compare-op <>
-compare-op =
-compare-op >
-compare-op <
-compare-op >=
-compare-op <=
-add-op +
-add-op -
-mul-op *
-mul-op /
-factor ( expr )
-factor const
-factor lvalue
-const intlit
-const floatlit
-expr-list epsilon
-expr-list expr expr-list-tail
-expr-list-tail , expr expr-list-tail
-expr-list-tail epsilon
+tiger-program let declaration-segment in stat-seq end 
+declaration-segment type-declaration-list var-declaration-list funct-declaration-list 
+type-declaration-list type-declaration type-declaration-list 
+type-declaration-list epsilon 
+var-declaration-list var-declaration var-declaration-list 
+var-declaration-list epsilon 
+funct-declaration-list funct-declaration funct-declaration-list 
+funct-declaration-list epsilon 
+type-declaration type id = type' ; 
+type' type-id 
+type' array [ intlit ] of type-id 
+type' id 
+type-id int 
+type-id float 
+var-declaration var id-list : type' optional-init ; 
+id-list id id-list-tail 
+id-list-tail , id id-list-tail 
+id-list-tail epsilon 
+optional-init := const 
+optional-init epsilon 
+funct-declaration function id ( param-list ) ret-type begin stat-seq end ; 
+param-list param , param-list-tail 
+param-list epsilon 
+param-list-tail , param param-list-tail 
+param-list-tail epsilon 
+ret-type : type' 
+ret-type epsilon 
+param  id : type'  
+stat-seq stat stat-seq-tail 
+stat-seq-tail stat stat-seq-tail 
+stat-seq-tail epsilon 
+stat if expr then stat-seq stat-if-tail 
+stat id stat-funct-or-assign 
+stat while expr do stat-seq enddo ; 
+stat for id := expr to expr do stat-seq enddo ; 
+stat break ; 
+stat return expr ; 
+stat let declaration-segment in stat-seq end 
+stat-if-tail else stat-seq endif ; 
+stat-if-tail endif ; 
+stat-funct-or-assign lvalue-tail := stat-assign ; 
+stat-funct-or-assign ( expr-list ) ; 
+stat-assign id stat-assign-stuff 
+stat-assign ( expr ) stat-assign-tail   
+stat-assign const stat-assign-tail 
+stat-assign-stuff ( expr-list ) 
+stat-assign-stuff lvalue-tail stat-assign-tail 
+stat-assign-tail expr-tail 
+stat-assign-tail OR-expr-tail 
+stat-assign-tail AND-expr-tail 
+stat-assign-tail compare-tail 
+stat-assign-tail term-tail 
+lvalue id lvalue-tail 
+lvalue-tail [ expr ] 
+lvalue-tail epsilon 
+expr OR-expr expr-tail 
+expr-tail OR-op OR-expr expr-tail 
+expr-tail epsilon 
+OR-expr AND-expr OR-expr-tail 
+OR-expr-tail AND-op AND-expr OR-expr-tail 
+OR-expr-tail epsilon 
+AND-expr compare AND-expr-tail 
+AND-expr-tail compare-op compare AND-expr-tail 
+AND-expr-tail epsilon 
+compare term compare-tail 
+compare-tail add-op term compare-tail 
+compare-tail epsilon 
+term factor term-tail 
+term-tail mul-op factor term-tail 
+term-tail epsilon 
+AND-op & 
+OR-op | 
+compare-op <> 
+compare-op = 
+compare-op > 
+compare-op < 
+compare-op >= 
+compare-op <= 
+add-op + 
+add-op - 
+mul-op * 
+mul-op / 
+factor ( expr ) 
+factor const 
+factor lvalue 
+const intlit 
+const floatlit 
+expr-list epsilon 
+expr-list expr expr-list-tail 
+expr-list-tail , expr expr-list-tail 
+expr-list-tail epsilon 
