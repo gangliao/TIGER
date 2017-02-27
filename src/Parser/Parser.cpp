@@ -758,48 +758,43 @@ void Parser::error(int expr, TokenPair* word) {
   std::cout << globalFileName << " line " << scanner.getCurrLine() << ": "
             << scanner.getPrefix() << " doesn't support token: "
             << word->getTokenString() << std::endl;
-  for (auto& token : terminalTokens) {
-    if (terminalMapped.find(token) != terminalMapped.end()) {
-      std::cout << terminalMapped[token] << " ";
-    }
-  }
-  std::cout << std::endl;
 }
 
 void Parser::parse() {
   TokenPair* word = scanner.getToken();
-  terminalTokens.push_back(word->getTokenType().getValue());
-//  std::string parseStackTemp = "";
-//  Symbol focus;
-
-  /* Used for the DEBUG FLAG */
-  int currLine = scanner.getCurrLine();
-  int lastLine = scanner.getCurrLine();
-
+  if (printDebug == true) {
+    std::cout << "\n\n[ RUN ] parsing code... \n\n"
+              << terminalMapped[word->getTokenType().getValue()] << " ";
+  }
+  
+  int focus;
+  std::vector<int> null = {Symbol::Terminal::NULLL};
+  
   while (true) {
     // get the token and parse
     // complete parsing before going to semantic analysis
     // then embed the semantic actions in the parsing table and
     // accordingly take actions and generate the IR.
     // Output the IR, only if there are no errors in the input.
-    std::vector<int> null = {Symbol::Terminal::NULLL};
 
     // pop expression from stack
     auto& expr = parseStack.top();
     parseStack.pop();
 
-    auto wordType = word->getTokenType().getValue();
+    focus = word->getTokenType().getValue();
 
-    if (expr == wordType) {
-      if (wordType == Symbol::Terminal::EOFF && parseStack.empty()) {
-        std::cout << "successful parse..." << std::endl;
+    if (expr == focus) {
+      if (focus == Symbol::Terminal::EOFF && parseStack.empty()) {
+        std::cout << "\n\n[ OK ] successful parse..." << std::endl;
         break;
       } else {
         word = scanner.getToken();
-        terminalTokens.push_back(word->getTokenType().getValue());
+        if (printDebug == true) {
+          std::cout << terminalMapped[word->getTokenType().getValue()] << " ";
+        }
       }
     } else {
-      auto it = parseTable.find(SymbolTerminalPair(expr, wordType));
+      auto it = parseTable.find(SymbolTerminalPair(expr, focus));
       if (it != parseTable.end()) {
         auto& rule = it->second;
         if (rule != null) {
