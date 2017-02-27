@@ -71,4 +71,5 @@ class Parser final {
   std::stack<int> parseStack;
   std::unordered_map<int, std::string> terminalMapped;
   std::map<SymbolTerminalPair, std::vector<int> > parseTable;
+  std::vector<int> terminalTokens;
 };

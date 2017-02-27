@@ -756,16 +756,21 @@ void Parser::initParseTable() {
 
 void Parser::error(int expr, TokenPair* word) {
   std::cout << globalFileName << " line " << scanner.getCurrLine() << ": "
-            << scanner.getPrefix() << " found error. \n";
-  std::cout << "expression: " << expr
-            << " doesn't support token: " << word->getTokenString()
-            << std::endl;
+            << scanner.getPrefix() << " doesn't support token: "
+            << word->getTokenString() << std::endl;
+  for (auto& token : terminalTokens) {
+    if (terminalMapped.find(token) != terminalMapped.end()) {
+      std::cout << terminalMapped[token] << " ";
+    }
+  }
+  std::cout << std::endl;
 }
 
 void Parser::parse() {
   TokenPair* word = scanner.getToken();
-  std::string parseStackTemp = "";
-  Symbol focus;
+  terminalTokens.push_back(word->getTokenType().getValue());
+//  std::string parseStackTemp = "";
+//  Symbol focus;
 
   /* Used for the DEBUG FLAG */
   int currLine = scanner.getCurrLine();
@@ -787,10 +792,11 @@ void Parser::parse() {
 
     if (expr == wordType) {
       if (wordType == Symbol::Terminal::EOFF && parseStack.empty()) {
-        std::cout << "Successful parse tiger code.";
+        std::cout << "successful parse..." << std::endl;
         break;
       } else {
         word = scanner.getToken();
+        terminalTokens.push_back(word->getTokenType().getValue());
       }
     } else {
       auto it = parseTable.find(SymbolTerminalPair(expr, wordType));
@@ -808,7 +814,6 @@ void Parser::parse() {
       } /* it != parseTable.end() */
     }   /* expr != word->getTokenType().getValue() */
   }     /* while */
-  std::cout << "Found " << numErrors << " errors!" << std::endl;
 }
 
 void Parser::initializeTerminalMapped() {
