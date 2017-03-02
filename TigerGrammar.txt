@@ -25,7 +25,7 @@ param-list-tail , param param-list-tail
 param-list-tail epsilon 
 ret-type : type' 
 ret-type epsilon 
-param  id : type'  
+param  id : type' 
 stat-seq stat stat-seq-tail 
 stat-seq-tail stat stat-seq-tail 
 stat-seq-tail epsilon 
