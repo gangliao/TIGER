@@ -7,10 +7,11 @@
 #include "../SemanticAnalyzer/SymbolTable.hpp"
 #include "../SemanticAnalyzer/SymbolTerminalPair.hpp"
 #include "ParseTable.h"
-#include<cstring>
+#include <cstring>
 #include <string.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 class Parser {
 
@@ -21,6 +22,9 @@ private:
 	std::stack<int> parseStack;
 	std::map<int, std::string> terminalMapped;
 	std::map<SymbolTerminalPair, std::vector<int>> parseTable;
+	std::map<int, SymbolTable> globalSymbolTable;
+	SymbolTable symTable[5];
+	unsigned int scopeCount = 0;
 	enum symbolType
 	{
 		TERMINAL,
@@ -70,17 +74,16 @@ public:
 		Symbol focus;
 		char **identifiers;
 		int err=Parser::errorType::NONE;
-		int max_size = 20;
+		int max_size = 50;
 		int non_ter_enum_start = 101;
 
-		/*
+		
 		//as of now I am using identifiers as array of sstrings, it should go in symbol table
 		identifiers = (char**)malloc(max_size * sizeof(char*));
-
 		for(int i = 0; i < max_size; i++) {
 			identifiers[i] = (char*)malloc(max_size * sizeof(char));
 			strcpy(identifiers[i], "MY_NULL");
-		}*/
+		}
 		
 		/* Used for the DEBUG FLAG */
 		int currLine = scanner.getCurrLine();
@@ -97,6 +100,7 @@ public:
 		TokenPair *word;
 		std::string tokenStr;
 		unsigned int tokenNum=0; 
+		int identifier_index=0;
 		while (1) {
 			
 			std::cout << "--------------------------------------------------" <<std::endl;
@@ -114,10 +118,22 @@ public:
 				word = scanner.getToken();
 				tokenStr = word->getTokenString();	
 				tokenNum = get_token_enum(tokenStr);
+				strcpy(&identifiers[identifier_index++][0],(char*)tokenStr.c_str());
+				
+				
 				std::cout << "token is: " << word->emit()<<tokenNum <<'\n' <<std::endl;
 				if(tokenNum == Symbol::Terminal::EOFF){
 					err |= Parser::errorType::INPUT_OVER;
 					std::cout << "input is over " << err <<std::endl;
+				}
+				if(tokenNum == Symbol::Terminal::SEMI){
+					//create symbol  table entries atleast after getting a line
+					createSymbolTableEntries(identifiers,identifier_index);
+					for(int i = 0; i <= identifier_index; i++) {
+						strcpy(identifiers[i], "");
+					}
+					identifier_index = 0;
+					
 				}
 			}
 			//pop stack
@@ -179,16 +195,7 @@ public:
 				if(stackSymbolNum == tokenNum)
 				{
 					std::cout<< "Input symbol matched with stack top " <<std::endl;
-					//add in the indentifier list 
-					/*for(int i = 0; i < 20; i++)
-					{
-						if((strcmp(strings[i],"MY_NULL")) != 0)
-						{
-							strcpy(&identifiers[i][0],(char*)tokenStr.c_str());
-							std::cout << "Adding in identifier list....................." << tokenStr <<std::endl;
-							break;
-						}	
-					}*/
+					
 					//move input read pointer
 					get_next_token = 1;
 				}
@@ -200,12 +207,222 @@ public:
 		//Output the IR, only if there are no errors in the input.
 		}
 
+		for(int i=0;i<=scopeCount;i++)
+			globalSymbolTable.insert(std::pair<int,SymbolTable>(scopeCount,symTable[i]));
 
+		typedef std::map<int,SymbolTable>::const_iterator MapIterator;
+		for (MapIterator iter = globalSymbolTable.begin(); iter != globalSymbolTable.end(); iter++)
+		{
+			globalSymbolTable[iter->first].print_symTable();
+		}
+		
 	}
 
 
 
 private:
+	bool isPresentInSymbolTable(int scopeCount,std::string type,std::string name)
+	{
+		bool ret = false;
+		typedef std::map<int,SymbolTable>::const_iterator MapIterator;
+		for (MapIterator iter = globalSymbolTable.begin(); iter != globalSymbolTable.end(); iter++){
+			ret = globalSymbolTable[iter->first].containsKey(type, name);
+			if(ret == true)
+				return ret;
+		}
+		
+		return ret;
+	}
+	void createSymbolTableEntries(char** p,int len)
+	{
+		
+		//std::stringstream ss(p[0]);
+		  std::string to[10];
+		  int num_line=0;
+
+		  for(int i = 0; i < len; i++){
+
+			if(*p[i] != ';'){
+				to[num_line].append(p[i]);
+				to[num_line].append(" ");
+				}
+			else{
+				//to[num_line].append(" ");
+				to[num_line].append(p[i]);
+				num_line=num_line+1;
+				}
+		  }
+		  
+		  for(int i = 0; i <= num_line; i++){
+		  	
+  		  		  std::cout << to[i] <<std::endl;
+				  std::string p = to[i];
+				  std::size_t line_pos=0; 
+				  while(p[line_pos] != ';'){
+
+						//std::cout << "starting for line pos " << line_pos<<std::endl;
+					  //create symbol table
+					  std::size_t pos0 = to[i].find("let",line_pos,3);
+					  if((pos0 < strlen(to[i].c_str()))&&(pos0==line_pos)){
+				      	//std::cout << "got let " << pos0 ;
+						symTable[scopeCount] = SymbolTable(scopeCount);
+						
+				      }
+					  
+				  	  //find and create type record
+					  pos0 = to[i].find("type",line_pos,4);     
+				      if((pos0 < strlen(to[i].c_str()))&&(pos0==line_pos)){
+					      	//std::cout << "got type " << pos0 <<std::endl;
+							pos0 = pos0+5;
+							std::string type_var;
+							while(to[i][pos0] != ' '){
+								type_var += to[i][pos0];
+								pos0++;
+							} //end of while
+							type_var += '\n';
+							std::cout << "type var is " << type_var <<std::endl;
+							pos0 = pos0+3;
+							std::string type_type;
+							while(to[i][pos0] != ' '){
+								type_type += to[i][pos0];
+								pos0++;
+							} //end of while
+							type_type += '\n';
+							std::cout << "type type is " << type_type <<std::endl;
+							if(type_type.compare(0,5,"array") == 0){
+								
+								pos0 = pos0+3;
+								std::string dim;
+								while(to[i][pos0] != ' '){
+									dim += to[i][pos0];
+									pos0++;
+								} //end of while
+								dim += '\n';
+								
+								pos0 = pos0+6;
+								std::string array_type;
+								while(to[i][pos0] != ' '){
+									array_type += to[i][pos0];
+									pos0++;
+								} //end of while
+								array_type += '\n';
+								std::cout << "here array type is " << array_type ;
+								if(isPresentInSymbolTable(scopeCount,"type",type_var) == false)
+									symTable[scopeCount].insert(SymbolTable::symbolType::TYPE,type_var,type_type,dim,array_type);
+							}
+							else{
+
+								if(isPresentInSymbolTable(scopeCount,"type",type_var) == false)
+									symTable[scopeCount].insert(SymbolTable::symbolType::TYPE,type_var,type_type,"","");
+							}
+							//globalSymbolTable.insert(std::pair<int,SymbolTable>(scopeCount,symTable[scopeCount]));
+							
+				      }
+					  
+					  //find and create var record
+					  pos0 = to[i].find("var",line_pos,3);      
+				      if((pos0 < strlen(to[i].c_str()))&&(pos0==line_pos)){
+				      	//std::cout << "got var " << pos0 <<std::endl;
+						pos0 = pos0+3;
+						int var_index = 0;
+						std::string var_name[10];
+						//find var name
+						while(to[i][pos0] != ':'){
+								if((to[i][pos0] != ',')&&(to[i][pos0] != ' ')){
+									while(to[i][pos0] != ' '){
+										var_name[var_index] += to[i][pos0];
+										pos0++;
+										} //end of while
+										var_name[var_index] += '\n';
+										std::cout << "var name is " << var_name[var_index] <<std::endl;
+										var_index++;
+										
+									}//end of not , and space
+								else{
+									pos0++;
+									}
+								
+							}//end of :
+
+						//find var type
+						pos0 = pos0+2;
+						std::string var_type;
+						while(to[i][pos0] != ' '){
+							var_type += to[i][pos0];
+							//std::cout << "in while " << var_type;
+							pos0++;
+						} //end of while
+						var_type += '\n';
+						std::cout << "var type is " << var_type <<std::endl;
+						
+						for(int k=0;k<var_index;k++){
+							if(isPresentInSymbolTable(scopeCount,"variable",var_name[k]) == false)
+								symTable[scopeCount].insert(SymbolTable::symbolType::VARIABLE,var_name[k], var_type,"","");
+						}
+						//globalSymbolTable.insert(std::pair<int,SymbolTable>(scopeCount,symTable[scopeCount]));
+					
+				      }
+
+					  //find and create function record
+					  pos0 = to[i].find("function",line_pos,8); 
+				      if((pos0 < strlen(to[i].c_str()))&&(pos0==line_pos)){
+				      	//std::cout << "got function " << pos0 <<std::endl;
+						pos0 = pos0+9;
+						int j = 0;
+						std::string function_name;
+						while(to[i][pos0] != ' '){
+								function_name += to[i][pos0];
+								pos0++;
+								j++;
+							}
+						function_name += '\n';
+						
+						//search for param name
+						pos0 = pos0 + 3;
+						std::string param_name;
+						while(to[i][pos0] != ' '){
+								param_name += to[i][pos0];
+								pos0++;
+								j++;
+							}
+						param_name += '\n';
+						//search for param type
+						pos0 = pos0 + 3;
+						std::string param_type;
+						while(to[i][pos0] != ' '){
+								param_type += to[i][pos0];
+								pos0++;
+								j++;
+							}
+						param_type += '\n';
+						//std::cout << "function: " <<function_name << param_name <<param_type;
+						if(isPresentInSymbolTable(scopeCount,"function",function_name) == false)
+							symTable[scopeCount].insert(SymbolTable::symbolType::FUNCTION,function_name,param_name, param_type,"");
+						  //globalSymbolTable.insert(std::pair<int,SymbolTable>(scopeCount,symTable[scopeCount]));
+				      }//end of function
+
+					  pos0 = to[i].find("begin",line_pos,5);
+					  if((pos0 < strlen(to[i].c_str()))&&(pos0==line_pos)){
+				      	//std::cout << "got begin " << pos0<<std::endl;
+						scopeCount++;
+						symTable[scopeCount] = SymbolTable(scopeCount);
+				      }
+					  pos0 = to[i].find("end",line_pos,3);
+					  if((pos0 < strlen(to[i].c_str()))&&(pos0==line_pos)){
+				      	//std::cout << "got end " << pos0 <<std::endl;
+						
+						if(scopeCount>0)
+							scopeCount--;
+				      }
+
+					  line_pos++;
+					  //std::cout << "line pos is "<<line_pos <<std::endl;
+					  
+				  	}//end of current line
+			  
+		  	}//end of all lines loop
+		
+	}
 	void initializeTerminalMapped() {
 		terminalMapped.insert(std::make_pair(Symbol::Terminal::COMMA, ","));
 		//Map the other terminals accordingly
@@ -603,22 +820,52 @@ private:
 		}
 		else{ //need to discuss this part
 			//check if it is a const	
-			int ival = atoi(inString.c_str());
-			if(ival){
-				
-				std::cout << "string val is " << ival;
-				return (Symbol::Terminal::INTLIT);
-			}
-			float fval = atof(inString.c_str());
-			if(fval){
-				
-				std::cout << "string val is " << fval;
-				return (Symbol::Terminal::FLOATLIT);
-			}
+			int ret = checkType(inString.c_str());
+			//std::cout << "came here for " << inString.c_str() << " " << ret <<std::endl;
+			
 			//??? return identifier
-			return (Symbol::Terminal::ID);
+			if(ret == -1)
+				return (Symbol::Terminal::ID);
+			else
+				return ret;
 		}
 		
+	}
+	int checkType(const char *input)
+	{
+	    short int isInt=0;//we use int as a boolean value;
+	    short int isFloat=0;
+	    short int isUndifined=0;
+	    int count;
+		int len = strlen(input);
+	    for(count = 0 ; count<len; count++)
+	    {
+	        if(isdigit(input[count])){//you should include ctype.h at the beginning of this program
+	            isInt=1;
+				//std::cout << "got int ";
+	        }
+	        else if(input[count] == '.'){
+	            isFloat=1;
+				//std::cout << "got float ";
+	        	}
+	        else{
+				//std::cout << "dnt know ";
+	            return -1;//some character that neither int nor '.' char.
+	        	}
+	    }
+	    if(isInt == 1 && isFloat ==1){
+			//std::cout << "Returning float ";
+	        return (Symbol::Terminal::FLOATLIT);
+	    	}
+	    else if(isInt == 1 && isFloat ==0){
+			//std::cout << "Returning int ";
+	        return (Symbol::Terminal::INTLIT);
+	    	}
+	    else{
+			
+			//std::cout << "Returning unknown";
+	        return -1;//illegal format
+	    	}
 	}
 	void get_parse_rule(unsigned int ruleNum, char** p)
 	{
