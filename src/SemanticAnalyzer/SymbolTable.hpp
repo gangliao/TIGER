@@ -1,3 +1,4 @@
+#pragma once
 
 #include "Level.hpp"
 #include "Record.hpp"
