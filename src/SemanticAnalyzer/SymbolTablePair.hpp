@@ -18,8 +18,8 @@ class SymbolTablePair {
 
   const std::string& getName() const { return name; }
 
-  friend bool operator<(const SymbolTablePair &lhs,
-                        const SymbolTablePair &rhs) {
+  friend bool operator<(const SymbolTablePair& lhs,
+                        const SymbolTablePair& rhs) {
     if (lhs.entry < rhs.entry) {
       return true;
     } else {

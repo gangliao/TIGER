@@ -93,6 +93,12 @@ class SymbolTable {
     std::exit(EXIT_FAILURE);
   }
 
+#define INSERT_SYMBOL_TABLE(__type__) \
+  case Entry::__type__: {             \
+    insert##__type__(idx, args...);   \
+    break;                            \
+  }
+
  public:
   SymbolTable(int level) {
     scopeLevel = level;
@@ -102,12 +108,6 @@ class SymbolTable {
   /// insert symbols into table
   template <typename... Args>
   void insert(SymbolTablePair& idx, Args... args) {
-#define INSERT_SYMBOL_TABLE(__type__) \
-  case Entry::__type__: {             \
-    insert##__type__(idx, args...);   \
-    break;                            \
-  }
-
     switch (idx.getEntry()) {
       INSERT_SYMBOL_TABLE(Types)
       INSERT_SYMBOL_TABLE(Constants)
@@ -143,7 +143,7 @@ class SymbolTable {
       } else if (item.first.getEntry() == Entry::Variables) {
         std::cout << "VARIABLE: \t" << item.first.getName() << std::endl;
         std::cout << "type: \t" << item.second.getType() << std::endl;
-        std::cout << "dim: \t" << item.second.getDimension() << std::endl;      
+        std::cout << "dim: \t" << item.second.getDimension() << std::endl;
       } else if (item.first.getEntry() == Entry::Functions) {
         std::cout << "FUNCTION: \t" << item.first.getName() << std::endl;
         auto& paramType = item.second.getParameterTypes();
@@ -153,7 +153,8 @@ class SymbolTable {
           std::cout << "param " << i << " :" << paramType[i]
                     << " type: " << paramDims[i] << std::endl;
         }
-        std::cout << "Return Type: \t" << item.second.getReturnType() << std::endl;
+        std::cout << "Return Type: \t" << item.second.getReturnType()
+                  << std::endl;
       }
     }
     std::cout << "---------------------------------" << std::endl;
