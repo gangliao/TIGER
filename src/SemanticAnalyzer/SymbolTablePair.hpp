@@ -14,9 +14,9 @@ class SymbolTablePair {
     this->name = name;
   }
 
-  Entry getEntry() { return entry; }
+  const Entry& getEntry() const { return entry; }
 
-  std::string getName() { return name; }
+  const std::string& getName() const { return name; }
 
   friend bool operator<(const SymbolTablePair &lhs,
                         const SymbolTablePair &rhs) {

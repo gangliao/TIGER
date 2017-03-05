@@ -130,4 +130,24 @@ class SymbolTable {
     }
     return table_[idx];
   }
+
+  void dump() {
+    std::cout << "---------------------------------" << std::endl;
+    std::cout << "Symbol table level: " << scopeLevel << std::endl;
+    std::cout << "---------------------------------" << std::endl
+    for (auto& item : table_) {
+      if (item.first.getEntry() == Entry::Types) {
+        std::cout << "TYPE: \t" << item.first.getName() << std::endl;
+        std::cout << "type: \t" << item.second.getType() << std::endl;
+        std::cout << "dim: \t" << item.second.getDimension() << std::endl;
+      } else if (item.first.getEntry() == Entry::Variables) {
+        std::cout << "VARIABLE: \t" << item.first.getName() << std::endl;
+        std::cout << "type: \t" << item.second.getType() << std::endl;
+        std::cout << "dim: \t" << item.second.getDimension() << std::endl;      
+      } else if (item.first.getEntry() == Entry::Functions) {
+        std::cout << "FUNCTION: \t" << item.first.getName() << std::endl;
+      }
+    }
+    std::cout << "---------------------------------" << std::endl;
+  }
 };

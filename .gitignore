@@ -30,3 +30,5 @@
 
 # ignore bin dir
 bin/*
+
+.vscode
