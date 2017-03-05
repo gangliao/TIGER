@@ -756,8 +756,9 @@ void Parser::initParseTable() {
 
 void Parser::error(int expr, TokenPair* word) {
   std::cout << globalFileName << " line " << scanner.getCurrLine() << ": "
-            << scanner.getPrefix() << " doesn't support token: "
-            << word->getTokenString() << std::endl;
+            << scanner.getPrefix()
+            << " doesn't support token: " << word->getTokenString()
+            << std::endl;
 }
 
 void Parser::parse() {
@@ -766,10 +767,10 @@ void Parser::parse() {
     std::cout << "\n\n[ RUN ] parsing code... \n\n"
               << terminalMapped[word->getTokenType().getValue()] << " ";
   }
-  
+
   int focus;
   std::vector<int> null = {Symbol::Terminal::NULLL};
-  
+
   while (true) {
     // get the token and parse
     // complete parsing before going to semantic analysis

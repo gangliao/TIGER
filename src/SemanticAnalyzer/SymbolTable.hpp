@@ -16,9 +16,7 @@ class SymbolTable {
   int scopeLevel;
   std::unordered_map<SymbolTablePair, Record> table_;
 
-  void insertTypes(SymbolTablePair& idx,
-                   std::string& arg1,
-                   std::string& arg2,
+  void insertTypes(SymbolTablePair& idx, std::string& arg1, std::string& arg2,
                    std::string& arg3) {
     Record record(scopeLevel);
 
@@ -41,8 +39,7 @@ class SymbolTable {
     table_[idx] = record;
   }
 
-  void insertFunctions(SymbolTablePair& idx, 
-                       std::string& retType,
+  void insertFunctions(SymbolTablePair& idx, std::string& retType,
                        std::vector<std::string>& paramTypes) {
     Record record(scopeLevel);
     record.parameterTypes.reserve(paramTypes.size());
@@ -51,10 +48,10 @@ class SymbolTable {
     for (auto& paramType : paramTypes) {
       // assign parameters type
       record.parameterTypes.push_back(
-        lookup(Entry::Types, paramType).getType());
+          lookup(Entry::Types, paramType).getType());
       // assign parameters dim
       record.parameterDimensions.push_back(
-        lookup(Entry::Types, paramType).getDimension());        
+          lookup(Entry::Types, paramType).getDimension());
     }
 
     // assign return type
@@ -63,10 +60,8 @@ class SymbolTable {
     table_[idx] = record;
   }
 
-  void insertVariables(SymbolTablePair& idx, 
-                       std::string& arg1,
-                       std::string& arg2,
-                       std::string& arg3) {
+  void insertVariables(SymbolTablePair& idx, std::string& arg1,
+                       std::string& arg2, std::string& arg3) {
     Record record(scopeLevel);
 
     if (arg1 == "array") {
@@ -103,30 +98,28 @@ class SymbolTable {
     scopeLevel = level;
     insertConstants();
   }
-  
+
   /// insert symbols into table
   template <typename... Args>
   void insert(SymbolTablePair& idx, Args... args) {
-    #define INSERT_SYMBOL_TABLE(__type__)         \
-      case Entry::__type__:                       \
-      {                                           \
-        insert##__type__(idx, args...);           \
-        break;                                    \
-      }
+#define INSERT_SYMBOL_TABLE(__type__) \
+  case Entry::__type__: {             \
+    insert##__type__(idx, args...);   \
+    break;                            \
+  }
 
-    switch(idx.getEntry()) {
+    switch (idx.getEntry()) {
       INSERT_SYMBOL_TABLE(Types)
       INSERT_SYMBOL_TABLE(Constants)
       INSERT_SYMBOL_TABLE(Functions)
       INSERT_SYMBOL_TABLE(Variables)
       INSERT_SYMBOL_TABLE(Temporaries)
-      default:
-      {
+      default: {
         std::cerr << "Entry enum value: idx.getEntry() not defined! \n";
         std::exit(EXIT_FAILURE);
       }
     }
   }
 
-  const Record& lookup(int entry, std::string name) {};
+  const Record& lookup(int entry, std::string name){};
 };
