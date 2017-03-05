@@ -15,4 +15,6 @@ class Record {
   std::string returnType = "";
 
   Record(int scopeLevel) { this->scopeLevel = scopeLevel; }
+  std::string getType() const { return type; }
+  int getDimension() const { return dimension; }
 };
