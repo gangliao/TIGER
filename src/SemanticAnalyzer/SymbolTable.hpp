@@ -146,6 +146,14 @@ class SymbolTable {
         std::cout << "dim: \t" << item.second.getDimension() << std::endl;      
       } else if (item.first.getEntry() == Entry::Functions) {
         std::cout << "FUNCTION: \t" << item.first.getName() << std::endl;
+        auto& paramType = item.second.getParameterTypes();
+        auto& paramDims = item.second.getParameterDimensions();
+        std::cout << "Parameters: \t" << std::endl;
+        for (int i = 0; i < paramType.size(); ++i) {
+          std::cout << "param " << i << " :" << paramType[i]
+                    << " type: " << paramDims[i] << std::endl;
+        }
+        std::cout << "Return Type: \t" << item.second.getReturnType() << std::endl;
       }
     }
     std::cout << "---------------------------------" << std::endl;
