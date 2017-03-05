@@ -14,7 +14,7 @@ class SymbolTable {
   Level currLevel;
 
   int scopeLevel;
-  std::unordered_map<SymbolTablePair, Record> table_;
+  std::map<SymbolTablePair, Record> table_;
 
   void insertTypes(SymbolTablePair& idx, std::string& arg1, std::string& arg2,
                    std::string& arg3) {
@@ -115,11 +115,19 @@ class SymbolTable {
       INSERT_SYMBOL_TABLE(Variables)
       INSERT_SYMBOL_TABLE(Temporaries)
       default: {
-        std::cerr << "Entry enum value: idx.getEntry() not defined! \n";
+        std::cerr << "Entry enum value: " << idx.getEntry()
+                  << " not defined! \n";
         std::exit(EXIT_FAILURE);
       }
     }
   }
 
-  const Record& lookup(int entry, std::string name){};
+  const Record& lookup(Entry entry, std::string name) {
+    SymbolTablePair idx(entry, name);
+    if (table_.find(idx) == table_.end()) {
+      std::cerr << name << " is not defined before! \n";
+      std::exit(EXIT_FAILURE);
+    }
+    return table_[idx];
+  }
 };
