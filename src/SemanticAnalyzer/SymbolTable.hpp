@@ -134,7 +134,7 @@ class SymbolTable {
   void dump() {
     std::cout << "---------------------------------" << std::endl;
     std::cout << "Symbol table level: " << scopeLevel << std::endl;
-    std::cout << "---------------------------------" << std::endl
+    std::cout << "---------------------------------" << std::endl;
     for (auto& item : table_) {
       if (item.first.getEntry() == Entry::Types) {
         std::cout << "TYPE: \t" << item.first.getName() << std::endl;
