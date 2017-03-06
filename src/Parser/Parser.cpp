@@ -775,15 +775,18 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       std::cout << tokenPair.emit();
     }
     std::cout << std::endl;
+  } else if (expr == Symbol::Action::MakeVariablesEnd) {
+    for (auto& tokenPair : tempBuffer) {
+      std::cout << tokenPair.emit();
+    }
+    std::cout << std::endl;
+  } else if (expr == Symbol::Action::MakeFunctionsEnd) {
+    for (auto& tokenPair : tempBuffer) {
+      std::cout << tokenPair.emit();
+    }
+    std::cout << std::endl;
   }
-  
-  if (expr == Symbol::Action::MakeVariablesEnd) {
-
-  }
-  
-  if (expr == Symbol::Action::MakeFunctionsEnd) {
-
-  }
+  tempBuffer.clear();
 }
 
 void Parser::parse() {
@@ -797,7 +800,7 @@ void Parser::parse() {
   bool enable_buffer = false;
   std::vector<int> null = {Symbol::Terminal::NULLL};
   std::vector<TokenPair> tempBuffer;
-  tempBuffer.reserve(20);
+  tempBuffer.reserve(100);
 
   while (true) {
     // get the token and parse
@@ -823,12 +826,14 @@ void Parser::parse() {
         expr == Symbol::Action::MakeVariablesBegin ||
         expr == Symbol::Action::MakeFunctionsBegin) {
       enable_buffer = true;
+      continue;
     }
     if (expr == Symbol::Action::MakeTypesEnd ||
         expr == Symbol::Action::MakeVariablesEnd ||
         expr == Symbol::Action::MakeFunctionsEnd) {
       enable_buffer = false;
       parseAction(expr, tempBuffer);
+      continue;
     }
 
     if (enable_buffer == true) {
