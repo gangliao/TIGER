@@ -37,11 +37,13 @@ void Parser::initParseTable() {
   // 1: <tiger-program> -> let <declaration-segment> in <stat-seq> end
   addToParseTable(Symbol::Nonterminal::TIGER_PROGRAM,         // NOLINT
                   {Symbol::Terminal::LET},                    // NOLINT
-                  {Symbol::Terminal::LET,                     // NOLINT
+                  {Symbol::Action::InitializeScope,           // NOLINT
+                   Symbol::Terminal::LET,                     // NOLINT
                    Symbol::Nonterminal::DECLARATION_SEGMENT,  // NOLINT
                    Symbol::Terminal::IN,                      // NOLINT
                    Symbol::Nonterminal::STAT_SEQ,             // NOLINT
-                   Symbol::Terminal::END});                   // NOLINT
+                   Symbol::Terminal::END,                     // NOLINT
+                   Symbol::Action::FinalizeScope});           // NOLINT
 
   // # declaration-segment
   // 2: <declaration-segment> -> <type-declaration-list> <var-declaration-list>
@@ -95,11 +97,13 @@ void Parser::initParseTable() {
   // 9: <type-declaration> -> type id = <type>;
   addToParseTable(Symbol::Nonterminal::TYPE_DECLARATION,  // NOLINT
                   {Symbol::Terminal::TYPE},               // NOLINT
-                  {Symbol::Terminal::TYPE,                // NOLINT
+                  {Symbol::Action::MakeTypesBegin,        // NOLINT
+                   Symbol::Terminal::TYPE,                // NOLINT
                    Symbol::Terminal::ID,                  // NOLINT
                    Symbol::Terminal::EQ,                  // NOLINT
                    Symbol::Nonterminal::TYPE_EXPR,        // NOLINT
-                   Symbol::Terminal::SEMI});              // NOLINT
+                   Symbol::Terminal::SEMI,                // NOLINT
+                   Symbol::Action::MakeTypesEnd});        // NOLINT
 
   // 10: <type> -> <type-id>
   addToParseTable(Symbol::Nonterminal::TYPE_EXPR,   // NOLINT
@@ -136,12 +140,14 @@ void Parser::initParseTable() {
   // 15: <var-declaration> -> var <id-list> : <type> <optional-init>;
   addToParseTable(Symbol::Nonterminal::VAR_DECLARATION,  // NOLINT
                   {Symbol::Terminal::VAR},               // NOLINT
-                  {Symbol::Terminal::VAR,                // NOLINT
+                  {Symbol::Action::MakeVariablesBegin,   // NOLINT
+                   Symbol::Terminal::VAR,                // NOLINT
                    Symbol::Nonterminal::ID_LIST,         // NOLINT
                    Symbol::Terminal::COLON,              // NOLINT
                    Symbol::Nonterminal::TYPE_EXPR,       // NOLINT
                    Symbol::Nonterminal::OPTIONAL_INIT,   // NOLINT
-                   Symbol::Terminal::SEMI});             // NOLINT
+                   Symbol::Terminal::SEMI,               // NOLINT
+                   Symbol::Action::MakeVariablesEnd});   // NOLINT
 
   // 16: <id-list> -> id <id-list-tail>
   addToParseTable(Symbol::Nonterminal::ID_LIST,          // NOLINT
@@ -177,12 +183,14 @@ void Parser::initParseTable() {
   // <stat-seq> end;
   addToParseTable(Symbol::Nonterminal::FUNCT_DECLARATION,  // NOLINT
                   {Symbol::Terminal::FUNCTION},            // NOLINT
-                  {Symbol::Terminal::FUNCTION,             // NOLINT
+                  {Symbol::Action::MakeFunctionsBegin,     // NOLINT
+                   Symbol::Terminal::FUNCTION,             // NOLINT
                    Symbol::Terminal::ID,                   // NOLINT
                    Symbol::Terminal::LPAREN,               // NOLINT
                    Symbol::Nonterminal::PARAM_LIST,        // NOLINT
                    Symbol::Terminal::RPAREN,               // NOLINT
                    Symbol::Nonterminal::RET_TYPE,          // NOLINT
+                   Symbol::Action::MakeFunctionsEnd,       // NOLINT
                    Symbol::Terminal::BEGIN,                // NOLINT
                    Symbol::Nonterminal::STAT_SEQ,          // NOLINT
                    Symbol::Terminal::END,                  // NOLINT
@@ -761,6 +769,23 @@ void Parser::error(int expr, TokenPair* word) {
             << std::endl;
 }
 
+void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
+  if (expr == Symbol::Action::MakeTypesEnd) {
+    for (auto& tokenPair : tempBuffer) {
+      std::cout << tokenPair.emit();
+    }
+    std::cout << std::endl;
+  }
+  
+  if (expr == Symbol::Action::MakeVariablesEnd) {
+
+  }
+  
+  if (expr == Symbol::Action::MakeFunctionsEnd) {
+
+  }
+}
+
 void Parser::parse() {
   TokenPair* word = scanner.getToken();
   if (printDebug == true) {
@@ -769,7 +794,10 @@ void Parser::parse() {
   }
 
   int focus;
+  bool enable_buffer = false;
   std::vector<int> null = {Symbol::Terminal::NULLL};
+  std::vector<TokenPair> tempBuffer;
+  tempBuffer.reserve(20);
 
   while (true) {
     // get the token and parse
@@ -781,6 +809,31 @@ void Parser::parse() {
     // pop expression from stack
     auto& expr = parseStack.top();
     parseStack.pop();
+
+    // check symbol action: scoping
+    if (expr == Symbol::Action::InitializeScope) {
+      initScoping();
+      continue;
+    }
+    if (expr == Symbol::Action::FinalizeScope) {
+      finalizeScoping();
+      continue;
+    }
+    if (expr == Symbol::Action::MakeTypesBegin ||
+        expr == Symbol::Action::MakeVariablesBegin ||
+        expr == Symbol::Action::MakeFunctionsBegin) {
+      enable_buffer = true;
+    }
+    if (expr == Symbol::Action::MakeTypesEnd ||
+        expr == Symbol::Action::MakeVariablesEnd ||
+        expr == Symbol::Action::MakeFunctionsEnd) {
+      enable_buffer = false;
+      parseAction(expr, tempBuffer);
+    }
+
+    if (enable_buffer == true) {
+      tempBuffer.push_back(*word);
+    }
 
     focus = word->getTokenType().getValue();
 

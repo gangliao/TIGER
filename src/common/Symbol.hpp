@@ -144,7 +144,12 @@ class Symbol {
     FinalizeScope,
 
     // Fill in the required Actions
-
+    MakeTypesBegin,
+    MakeTypesEnd,
+    MakeVariablesBegin,
+    MakeVariablesEnd,
+    MakeFunctionsBegin,
+    MakeFunctionsEnd
   };
 
   void operator=(int value) { this->value = value; }

@@ -65,10 +65,29 @@ class Parser final {
   void initializeTerminalMapped();
   /// create parse table for Tiger
   void initParseTable();
+  /// parse action like TYPES, VARIABLES, FUNCTIONS declaration
+  void parseAction(int expr, std::vector<TokenPair>& tempBuffer);
+  /// initialize Scop
+  inline void initScoping() {
+    ++currentLevel;
+    SymbolTable st(currentLevel);
+    globalSymbolTable.insert(
+      std::map<int, SymbolTable>::value_type(currentLevel, st));
+  }
+  /// finalize Scope
+  inline void finalizeScoping() {
+    globalSymbolTable.erase(currentLevel);
+    --currentLevel;
+  }
+
   Scanner scanner;
-  int numErrors;
+  int numErrors = 0;
+  int currentLevel = -1;
   std::string globalFileName;
   std::stack<int> parseStack;
   std::unordered_map<int, std::string> terminalMapped;
   std::map<SymbolTerminalPair, std::vector<int> > parseTable;
+
+  /// global symbol table <level, symbol table>
+  std::map<int, SymbolTable> globalSymbolTable;
 };
