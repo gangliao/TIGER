@@ -120,7 +120,7 @@ class SymbolTable {
 
   void dump() {
     for (auto& item : table_) {
-      std::cout << "----------------------------------------" << std::endl;
+      std::cout << "\n\n----------------------------------------" << std::endl;
       std::cout << "Table: ";
       if (item.first.getEntry() == Entry::Types) {
         std::cout << "Types" << std::endl;
@@ -128,7 +128,7 @@ class SymbolTable {
         std::cout << "----------------------------------------" << std::endl;
         std::cout << "Scope: " << scopeLevel << std::endl;
         std::cout << "Type: " << item.second->getType() << std::endl;
-        std::cout << "Dimension: -" << std::endl;
+        std::cout << "Dimension: " << item.second->getDimension() << std::endl;
         std::cout << "Parameters: -" << std::endl;
         std::cout << "Parameter types: -" << std::endl;
         std::cout << "Parameter dimensions: -" << std::endl;
@@ -185,6 +185,6 @@ class SymbolTable {
                   << std::endl;
       }
     }
-    std::cout << "----------------------------------------" << std::endl;
+    std::cout << "----------------------------------------\n\n" << std::endl;
   }
 };

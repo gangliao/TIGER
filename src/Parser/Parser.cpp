@@ -782,9 +782,9 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
     } else {
       globalSymbolTable[currentLevel]->insertTypes(
           idx, tempBuffer[3].getTokenString(), tempBuffer[5].getTokenString(),
-          tempBuffer[7].getTokenString());
+          tempBuffer[8].getTokenString());
     }
-    // globalSymbolTable[currentLevel]->dump();
+    globalSymbolTable[currentLevel]->dump();
   } else if (expr == Symbol::Action::MakeVariablesEnd) {
     for (auto& tokenPair : tempBuffer) {
       std::cout << tokenPair.emit();
