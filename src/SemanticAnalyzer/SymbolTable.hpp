@@ -14,26 +14,25 @@ class SymbolTable {
   Level currLevel;
 
   int scopeLevel;
-  std::map<SymbolTablePair, Record> table_;
+  std::map<SymbolTablePair, RecordPtr> table_;
 
   void insertTypes(SymbolTablePair& idx, std::string& arg1, std::string& arg2,
                    std::string& arg3) {
-    Record record(scopeLevel);
-
+    RecordPtr record = std::make_shared<Record>(scopeLevel);
     if (arg1 == "array") {
       /*************************************
       * type id = array [num] of type_id
       *            |      |        |
       *           arg1   arg2     arg3
       *************************************/
-      record.dimension = std::stoi(arg2);
-      record.type = arg3;
+      record->dimension = std::stoi(arg2);
+      record->type = arg3;
     } else {
       /*************************************
       * type id = <id> | int | float
       *************************************/
-      record.dimension = lookup(Entry::Types, arg1).getDimension();
-      record.type = lookup(Entry::Types, arg1).getType();
+      record->dimension = lookup(Entry::Types, arg1)->getDimension();
+      record->type = lookup(Entry::Types, arg1)->getType();
     }
     // insert into table
     table_[idx] = record;
@@ -41,49 +40,49 @@ class SymbolTable {
 
   void insertFunctions(SymbolTablePair& idx, std::string& retType,
                        std::vector<std::string>& paramTypes) {
-    Record record(scopeLevel);
-    record.parameterTypes.reserve(paramTypes.size());
-    record.parameterDimensions.reserve(paramTypes.size());
+    RecordPtr record = std::make_shared<Record>(scopeLevel);
+    record->parameterTypes.reserve(paramTypes.size());
+    record->parameterDimensions.reserve(paramTypes.size());
 
     for (auto& paramType : paramTypes) {
       // assign parameters type
-      record.parameterTypes.push_back(
-          lookup(Entry::Types, paramType).getType());
+      record->parameterTypes.push_back(
+          lookup(Entry::Types, paramType)->getType());
       // assign parameters dim
-      record.parameterDimensions.push_back(
-          lookup(Entry::Types, paramType).getDimension());
+      record->parameterDimensions.push_back(
+          lookup(Entry::Types, paramType)->getDimension());
     }
 
     // assign return type
-    record.returnType = retType;
+    record->returnType = retType;
     // insert into table
     table_[idx] = record;
   }
 
   void insertVariables(SymbolTablePair& idx, std::string& arg1,
                        std::string& arg2, std::string& arg3) {
-    Record record(scopeLevel);
+    RecordPtr record = std::make_shared<Record>(scopeLevel);
 
     if (arg1 == "array") {
-      record.dimension = std::stoi(arg2);
-      record.type = arg3;
+      record->dimension = std::stoi(arg2);
+      record->type = arg3;
     } else {
-      record.dimension = lookup(Entry::Types, arg1).getDimension();
-      record.type = lookup(Entry::Types, arg1).getType();
+      record->dimension = lookup(Entry::Types, arg1)->getDimension();
+      record->type = lookup(Entry::Types, arg1)->getType();
     }
     table_[idx] = record;
   }
 
   void insertConstants() {
-    Record record1(scopeLevel);
-    record1.dimension = 1;
-    record1.type = "int";
+    RecordPtr record1 = std::make_shared<Record>(scopeLevel);
+    record1->dimension = 1;
+    record1->type = "int";
     SymbolTablePair idx1(Entry::Types, "int");
     table_[idx1] = record1;
 
-    Record record2(scopeLevel);
-    record2.dimension = 1;
-    record2.type = "float";
+    RecordPtr record2 = std::make_shared<Record>(scopeLevel);
+    record2->dimension = 1;
+    record2->type = "float";
     SymbolTablePair idx2(Entry::Types, "float");
     table_[idx2] = record2;
   }
@@ -122,7 +121,7 @@ class SymbolTable {
     }
   }
 
-  const Record& lookup(Entry entry, std::string name) {
+  const RecordPtr lookup(Entry entry, std::string name) {
     SymbolTablePair idx(entry, name);
     if (table_.find(idx) == table_.end()) {
       std::cerr << name << " is not defined before! \n";
@@ -138,22 +137,22 @@ class SymbolTable {
     for (auto& item : table_) {
       if (item.first.getEntry() == Entry::Types) {
         std::cout << "TYPE: \t" << item.first.getName() << std::endl;
-        std::cout << "type: \t" << item.second.getType() << std::endl;
-        std::cout << "dim: \t" << item.second.getDimension() << std::endl;
+        std::cout << "type: \t" << item.second->getType() << std::endl;
+        std::cout << "dim: \t" << item.second->getDimension() << std::endl;
       } else if (item.first.getEntry() == Entry::Variables) {
         std::cout << "VARIABLE: \t" << item.first.getName() << std::endl;
-        std::cout << "type: \t" << item.second.getType() << std::endl;
-        std::cout << "dim: \t" << item.second.getDimension() << std::endl;
+        std::cout << "type: \t" << item.second->getType() << std::endl;
+        std::cout << "dim: \t" << item.second->getDimension() << std::endl;
       } else if (item.first.getEntry() == Entry::Functions) {
         std::cout << "FUNCTION: \t" << item.first.getName() << std::endl;
-        auto& paramType = item.second.getParameterTypes();
-        auto& paramDims = item.second.getParameterDimensions();
+        auto& paramType = item.second->getParameterTypes();
+        auto& paramDims = item.second->getParameterDimensions();
         std::cout << "Parameters: \t" << std::endl;
         for (int i = 0; i < paramType.size(); ++i) {
           std::cout << "param " << i << " :" << paramType[i]
                     << " type: " << paramDims[i] << std::endl;
         }
-        std::cout << "Return Type: \t" << item.second.getReturnType()
+        std::cout << "Return Type: \t" << item.second->getReturnType()
                   << std::endl;
       }
     }

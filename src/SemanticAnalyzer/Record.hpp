@@ -4,6 +4,10 @@
 #include <string>
 #include <vector>
 
+class Record;
+
+using RecordPtr = std::shared_ptr<Record>;
+
 class Record {
  public:
   int scopeLevel = 0;
@@ -14,7 +18,6 @@ class Record {
   std::vector<int> parameterDimensions;
   std::string returnType = "";
 
-  Record() {}
   Record(int scopeLevel) { this->scopeLevel = scopeLevel; }
 
   /// get type
