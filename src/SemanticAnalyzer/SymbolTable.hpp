@@ -47,7 +47,8 @@ class SymbolTable {
   SymbolTable(int level) {
 	this->scopeLevel = level;
   }
-  void insert(int type, std::string str1, std::string str2,std::string str3,std::string str4){
+  //str1: name, str2 : for multiple param names, str3 :  for multiple param types, str4: return type
+  void insert(int type, std::string str1, std::string str2[10],std::string str3[10],std::string str4){
 
 	if(type==SymbolTable::symbolType::INT){
 		  Record intRecord(scopeLevel);
@@ -65,34 +66,36 @@ class SymbolTable {
 		  typeRecord.type = "type";
 		  typeRecord.name=str1;
 		  
-		  if(str2.compare(0,5,"array") == 0){
-		  	int dimension = stoi(str3);
-			std::cout << "got dimension " << dimension << str4;
+		  if(str2[0].compare(0,5,"array") == 0){
+		  	int dimension = stoi(str3[0]);
 		  	typeRecord.parameterDimensions.push_back(dimension);
 			typeRecord.parameterTypes.push_back(str4);
 		  	}
 		  else{
-		  	typeRecord.parameterTypes.push_back(str2);
+		  	typeRecord.parameterTypes.push_back(str2[0]);
 		  	}
 		  this->recordList.push_back(typeRecord);
-		  std::cout << "inserted type record " <<std::endl;
+		 // std::cout << "inserted type record " <<" " << str2[0] <<std::endl;
 		}
 	if(type == SymbolTable::symbolType::FUNCTION){
 		  Record functionRecord(scopeLevel);
 		  functionRecord.type = "function";
 		  functionRecord.name=str1;
-		  functionRecord.parameters.push_back(str2);
-		  functionRecord.parameterTypes.push_back(str3);
+		  for (int i=0;i<10;i++)
+		  	functionRecord.parameters.push_back(str2[i]);
+		  for (int i=0;i<10;i++)
+			  functionRecord.parameterTypes.push_back(str3[i]);
+		  functionRecord.returnType = str4;
 		  this->recordList.push_back(functionRecord);
-		  std::cout << "inserted function record " <<std::endl;
+		  //std::cout << "inserted function record " <<std::endl;
 		}
 	if(type == SymbolTable::symbolType::VARIABLE){
 		  Record variableRecord(scopeLevel);
 		  variableRecord.type = "variable";
 		  variableRecord.name=str1;
-		  variableRecord.parameterTypes.push_back(str2);
+		  variableRecord.parameterTypes.push_back(str2[0]);
 		  this->recordList.push_back(variableRecord);
-		  std::cout << "inserted variable record " <<std::endl;
+		  //std::cout << "inserted variable record " <<str1 << str2[0] <<std::endl;
 		}
 	}
 
@@ -109,6 +112,26 @@ class SymbolTable {
 	return false;
 	  	
   }
+  void getRecord(std::string type,std::string name,Record &rec)
+  {
+  	
+	rec.name = "";			 
+	for (std::list<Record>::iterator it=recordList.begin(); it != recordList.end(); ++it)
+	{
+	  	if(it->type.compare(0,strlen(type.c_str()),type)==0){
+			  if(it->name.compare(0,strlen(name.c_str()),name)==0){
+			  	 rec.type = it->type;
+				 rec.name = it->name;
+				 rec.returnType = it->returnType;
+				 for (int i = 0; i < it->parameterTypes.size(); i++) {
+				 	std::string str = it->parameterTypes[i];
+            		rec.parameterTypes.push_back(str);
+        		  }
+			  	}
+	  		}	
+		}  	
+  }
+  
   void print_symTable()
   {
 	std::cout << "---------------------------------" <<std::endl;
@@ -117,6 +140,7 @@ class SymbolTable {
     		std::cout << "Type: " << it->type <<std::endl;
 			//print param names
 			std::cout << "Name: "<< it->name << " ";
+			std::cout << std::endl;
 			std::cout << "Params: "<< " ";
 			for (int i = 0; i < it->parameters.size(); i++) {
             std::cout << it->parameters[i] << " ";
@@ -127,10 +151,13 @@ class SymbolTable {
 			for (int i = 0; i < it->parameterTypes.size(); i++) {
             std::cout << it->parameterTypes[i] << " ";
         	}
+			std::cout << std::endl;
 			std::cout << "Param Dimension: ";
 			for (int i = 0; i < it->parameterDimensions.size(); i++) {
             std::cout << it->parameterDimensions[i] << " ";
         	}
+			std::cout << std::endl;
+			std::cout << "Return type : "<< it->returnType << " ";
 			std::cout << std::endl;
 			std::cout << "Scope: " << this->scopeLevel <<std::endl;
 			std::cout << "---------------------------------" <<std::endl;
