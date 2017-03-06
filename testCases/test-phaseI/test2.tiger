@@ -1,5 +1,6 @@
 let
-        function print ( n : int ) begin
+        type ArrayInt = array [100] of int; 
+        function print ( n : int, me : ArrayInt) begin
                 printi(n);
         end;
 in

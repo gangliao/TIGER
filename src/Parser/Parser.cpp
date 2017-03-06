@@ -770,10 +770,10 @@ void Parser::error(int expr, TokenPair* word) {
 }
 
 void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
-  for (auto& tokenPair : tempBuffer) {
-    std::cout << tokenPair.emit();
-  }
-  std::cout << std::endl;  
+  // for (auto& tokenPair : tempBuffer) {
+  //   std::cout << tokenPair.emit();
+  // }
+  // std::cout << std::endl;  
   if (expr == Symbol::Action::MakeTypesEnd) {
     SymbolTablePair idx(Entry::Types, tempBuffer[1].getTokenString());
     if (tempBuffer.size() <= 5) {
@@ -822,7 +822,7 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
     } else {
       retType = tempBuffer[paramEndIdx + 1].getTokenString();
     }
-    for (size_t i = paramBeginIdx + 1; i < paramEndIdx; i += 3) {
+    for (size_t i = paramBeginIdx + 1; i < paramEndIdx; i += 4) {
       params.push_back(tempBuffer[i].getTokenString());
       paramTypes.push_back(tempBuffer[i + 2].getTokenString());
     }
