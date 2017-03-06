@@ -775,12 +775,16 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
     //   std::cout << tokenPair.emit();
     // }
     // std::cout << std::endl;
-    SymbolTablePair idx(Entry::Types, 
-                        tempBuffer[1].getTokenString());
-    globalSymbolTable[currentLevel]->insertTypes(idx,
-                      tempBuffer[3].getTokenString(),
-                      tempBuffer[5].getTokenString(),
-                      tempBuffer[7].getTokenString());
+    SymbolTablePair idx(Entry::Types, tempBuffer[1].getTokenString());
+    if (tempBuffer.size() <= 5) {
+      globalSymbolTable[currentLevel]->insertTypes(
+          idx, tempBuffer[3].getTokenString());
+    } else {
+      globalSymbolTable[currentLevel]->insertTypes(
+          idx, tempBuffer[3].getTokenString(), tempBuffer[5].getTokenString(),
+          tempBuffer[7].getTokenString());
+    }
+    // globalSymbolTable[currentLevel]->dump();
   } else if (expr == Symbol::Action::MakeVariablesEnd) {
     for (auto& tokenPair : tempBuffer) {
       std::cout << tokenPair.emit();

@@ -34,4 +34,6 @@ class Record {
   const std::vector<int>& getParameterDimensions() const {
     return parameterDimensions;
   }
+  /// get paramenters
+  const std::vector<std::string>& getParameters() const { return parameters; }
 };

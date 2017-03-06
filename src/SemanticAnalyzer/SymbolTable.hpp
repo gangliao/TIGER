@@ -26,10 +26,10 @@ class SymbolTable {
     insertConstants();
   }
 
-  void insertTypes(SymbolTablePair& idx,  // NOLINT
-                   std::string arg1,      // NOLINT
-                   std::string arg2,      // NOLINT
-                   std::string arg3) {    // NOLINT
+  void insertTypes(SymbolTablePair& idx,       // NOLINT
+                   std::string arg1,           // NOLINT
+                   std::string arg2 = NULL,    // NOLINT
+                   std::string arg3 = NULL) {  // NOLINT
     RecordPtr record = std::make_shared<Record>(scopeLevel);
     if (arg1 == "array") {
       /*************************************
@@ -50,14 +50,13 @@ class SymbolTable {
     table_[idx] = record;
   }
 
-  void insertFunctions(SymbolTablePair& idx, // NOLINT
-                       std::string retType,  // NOLINT
-                       std::vector<std::string>& paramTypes, // NOLINT
-                       std::vector<std::string>& params) {   // NOLINT
+  void insertFunctions(SymbolTablePair& idx,                  // NOLINT
+                       std::string retType,                   // NOLINT
+                       std::vector<std::string>& paramTypes,  // NOLINT
+                       std::vector<std::string>& params) {    // NOLINT
     RecordPtr record = std::make_shared<Record>(scopeLevel);
     record->parameterTypes.reserve(paramTypes.size());
     record->parameterDimensions.reserve(paramTypes.size());
-
     for (auto& paramType : paramTypes) {
       // assign parameters type
       record->parameterTypes.push_back(
@@ -66,6 +65,8 @@ class SymbolTable {
       record->parameterDimensions.push_back(
           lookup(Entry::Types, paramType)->getDimension());
     }
+    // assign parameters
+    record->parameters = std::move(params);
 
     // assign return type
     record->returnType = retType;
@@ -73,10 +74,10 @@ class SymbolTable {
     table_[idx] = record;
   }
 
-  void insertVariables(SymbolTablePair& idx, // NOLINT
-                       std::string arg1,     // NOLINT
-                       std::string arg2,     // NOLINT
-                       std::string arg3) {   // NOLINT
+  void insertVariables(SymbolTablePair& idx,       // NOLINT
+                       std::string arg1,           // NOLINT
+                       std::string arg2 = NULL,    // NOLINT
+                       std::string arg3 = NULL) {  // NOLINT
     RecordPtr record = std::make_shared<Record>(scopeLevel);
 
     if (arg1 == "array") {
@@ -118,31 +119,72 @@ class SymbolTable {
   }
 
   void dump() {
-    std::cout << "---------------------------------" << std::endl;
-    std::cout << "Symbol table level: " << scopeLevel << std::endl;
-    std::cout << "---------------------------------" << std::endl;
     for (auto& item : table_) {
+      std::cout << "----------------------------------------" << std::endl;
+      std::cout << "Table: ";
       if (item.first.getEntry() == Entry::Types) {
-        std::cout << "TYPE: \t" << item.first.getName() << std::endl;
-        std::cout << "type: \t" << item.second->getType() << std::endl;
-        std::cout << "dim: \t" << item.second->getDimension() << std::endl;
+        std::cout << "Types" << std::endl;
+        std::cout << "Name: " << item.first.getName() << std::endl;
+        std::cout << "----------------------------------------" << std::endl;
+        std::cout << "Scope: " << scopeLevel << std::endl;
+        std::cout << "Type: " << item.second->getType() << std::endl;
+        std::cout << "Dimension: -" << std::endl;
+        std::cout << "Parameters: -" << std::endl;
+        std::cout << "Parameter types: -" << std::endl;
+        std::cout << "Parameter dimensions: -" << std::endl;
+        std::cout << "Return type: -" << std::endl;
       } else if (item.first.getEntry() == Entry::Variables) {
-        std::cout << "VARIABLE: \t" << item.first.getName() << std::endl;
-        std::cout << "type: \t" << item.second->getType() << std::endl;
-        std::cout << "dim: \t" << item.second->getDimension() << std::endl;
+        std::cout << "Variables:" << std::endl;
+        std::cout << "Name: " << item.first.getName() << std::endl;
+        std::cout << "----------------------------------------" << std::endl;
+        std::cout << "Scope: " << scopeLevel << std::endl;
+        std::cout << "Type: " << item.second->getType() << std::endl;
+        std::cout << "Dimension: " << item.second->getDimension() << std::endl;
+        std::cout << "Parameters: -" << std::endl;
+        std::cout << "Parameter types: -" << std::endl;
+        std::cout << "Parameter dimensions: -" << std::endl;
+        std::cout << "Return type: -" << std::endl;
       } else if (item.first.getEntry() == Entry::Functions) {
-        std::cout << "FUNCTION: \t" << item.first.getName() << std::endl;
+        std::cout << "Functions:" << std::endl;
+        std::cout << "Name: " << item.first.getName() << std::endl;
+        std::cout << "----------------------------------------" << std::endl;
+        std::cout << "Scope: " << scopeLevel << std::endl;
+        std::cout << "Type: -" << std::endl;
+        std::cout << "Dimension: -" << std::endl;
         auto& paramType = item.second->getParameterTypes();
         auto& paramDims = item.second->getParameterDimensions();
-        std::cout << "Parameters: \t" << std::endl;
-        for (int i = 0; i < paramType.size(); ++i) {
-          std::cout << "param " << i << " :" << paramType[i]
-                    << " type: " << paramDims[i] << std::endl;
+        auto& params = item.second->getParameters();
+        size_t size = params.size();
+        std::cout << "Parameters: [" << std::endl;
+        for (int i = 0; i < size; ++i) {
+          std::cout << params[i];
+          if (i != size - 1) {
+            std::cout << ",";
+          }
         }
-        std::cout << "Return Type: \t" << item.second->getReturnType()
+        std::cout << "]" << std::endl;
+
+        std::cout << "Parameter types: [" << std::endl;
+        for (int i = 0; i < size; ++i) {
+          std::cout << paramType[i];
+          if (i != size - 1) {
+            std::cout << ",";
+          }
+        }
+        std::cout << "]" << std::endl;
+
+        std::cout << "Parameter dimensions: [" << std::endl;
+        for (int i = 0; i < size; ++i) {
+          std::cout << paramDims[i];
+          if (i != size - 1) {
+            std::cout << ",";
+          }
+        }
+        std::cout << "]" << std::endl;
+        std::cout << "Return type: " << item.second->getReturnType()
                   << std::endl;
       }
     }
-    std::cout << "---------------------------------" << std::endl;
+    std::cout << "----------------------------------------" << std::endl;
   }
 };

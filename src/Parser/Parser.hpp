@@ -66,7 +66,7 @@ class Parser final {
   /// create parse table for Tiger
   void initParseTable();
   /// parse action like TYPES, VARIABLES, FUNCTIONS declaration
-  void parseAction(int expr, std::vector<TokenPair>& tempBuffer);
+  void parseAction(int expr, std::vector<TokenPair> &tempBuffer);
   /// initialize Scop
   inline void initScoping() {
     ++currentLevel;
