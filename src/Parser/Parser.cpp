@@ -773,7 +773,7 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
   // for (auto& tokenPair : tempBuffer) {
   //   std::cout << tokenPair.emit();
   // }
-  // std::cout << std::endl;  
+  // std::cout << std::endl;
   if (expr == Symbol::Action::MakeTypesEnd) {
     SymbolTablePair idx(Entry::Types, tempBuffer[1].getTokenString());
     if (tempBuffer.size() <= 5) {
@@ -798,10 +798,10 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
             idx, tempBuffer[i + 1].getTokenString());
       } else {
         SymbolTablePair idx(Entry::Variables, tempBuffer[j].getTokenString());
-        globalSymbolTable[currentLevel]->insertVariables(idx,
-          tempBuffer[i + 1].getTokenString(),
-          tempBuffer[i + 3].getTokenString(),
-          tempBuffer[i + 6].getTokenString());
+        globalSymbolTable[currentLevel]->insertVariables(
+            idx, tempBuffer[i + 1].getTokenString(),
+            tempBuffer[i + 3].getTokenString(),
+            tempBuffer[i + 6].getTokenString());
       }
     }
   } else if (expr == Symbol::Action::MakeFunctionsEnd) {
@@ -826,9 +826,9 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       params.push_back(tempBuffer[i].getTokenString());
       paramTypes.push_back(tempBuffer[i + 2].getTokenString());
     }
-    
-    globalSymbolTable[currentLevel]->insertFunctions(idx,
-      retType, paramTypes, params);
+
+    globalSymbolTable[currentLevel]->insertFunctions(idx, retType, paramTypes,
+                                                     params);
   }
   globalSymbolTable[currentLevel]->dump();
 }
