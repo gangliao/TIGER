@@ -6,7 +6,7 @@
 
 class Record;
 
-using RecordPtr = std::shared_ptr<Record>;
+typedef std::shared_ptr<Record> RecordPtr;
 
 class Record {
  public:

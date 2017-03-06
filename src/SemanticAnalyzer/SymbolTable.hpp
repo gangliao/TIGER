@@ -10,7 +10,7 @@
 /// Implement the scoping and symbol table details in this file
 class SymbolTable;
 
-using SymbolTablePtr = std::shared_ptr<SymbolTable>;
+typedef std::shared_ptr<SymbolTable> SymbolTablePtr;
 
 class SymbolTable {
  private:
