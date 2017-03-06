@@ -771,10 +771,16 @@ void Parser::error(int expr, TokenPair* word) {
 
 void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
   if (expr == Symbol::Action::MakeTypesEnd) {
-    for (auto& tokenPair : tempBuffer) {
-      std::cout << tokenPair.emit();
-    }
-    std::cout << std::endl;
+    // for (auto& tokenPair : tempBuffer) {
+    //   std::cout << tokenPair.emit();
+    // }
+    // std::cout << std::endl;
+    SymbolTablePair idx(Entry::Types, 
+                        tempBuffer[1].getTokenString());
+    globalSymbolTable[currentLevel]->insertTypes(idx,
+                      tempBuffer[3].getTokenString(),
+                      tempBuffer[5].getTokenString(),
+                      tempBuffer[7].getTokenString());
   } else if (expr == Symbol::Action::MakeVariablesEnd) {
     for (auto& tokenPair : tempBuffer) {
       std::cout << tokenPair.emit();
@@ -836,13 +842,12 @@ void Parser::parse() {
       continue;
     }
 
-    if (enable_buffer == true) {
-      tempBuffer.push_back(*word);
-    }
-
     focus = word->getTokenType().getValue();
 
     if (expr == focus) {
+      if (enable_buffer == true) {
+        tempBuffer.push_back(*word);
+      }
       if (focus == Symbol::Terminal::EOFF && parseStack.empty()) {
         std::cout << "\n\n[ OK ] successful parse..." << std::endl;
         break;

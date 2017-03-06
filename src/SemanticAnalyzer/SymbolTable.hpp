@@ -8,6 +8,10 @@
 #include "SymbolTablePair.hpp"
 
 /// Implement the scoping and symbol table details in this file
+class SymbolTable;
+
+using SymbolTablePtr = std::shared_ptr<SymbolTable>;
+
 class SymbolTable {
  private:
   Level topLevel;
@@ -16,8 +20,16 @@ class SymbolTable {
   int scopeLevel;
   std::map<SymbolTablePair, RecordPtr> table_;
 
-  void insertTypes(SymbolTablePair& idx, std::string& arg1, std::string& arg2,
-                   std::string& arg3) {
+ public:
+  SymbolTable(int level) {
+    scopeLevel = level;
+    insertConstants();
+  }
+
+  void insertTypes(SymbolTablePair& idx,  // NOLINT
+                   std::string arg1,      // NOLINT
+                   std::string arg2,      // NOLINT
+                   std::string arg3) {    // NOLINT
     RecordPtr record = std::make_shared<Record>(scopeLevel);
     if (arg1 == "array") {
       /*************************************
@@ -38,8 +50,10 @@ class SymbolTable {
     table_[idx] = record;
   }
 
-  void insertFunctions(SymbolTablePair& idx, std::string& retType,
-                       std::vector<std::string>& paramTypes) {
+  void insertFunctions(SymbolTablePair& idx, // NOLINT
+                       std::string retType,  // NOLINT
+                       std::vector<std::string>& paramTypes, // NOLINT
+                       std::vector<std::string>& params) {   // NOLINT
     RecordPtr record = std::make_shared<Record>(scopeLevel);
     record->parameterTypes.reserve(paramTypes.size());
     record->parameterDimensions.reserve(paramTypes.size());
@@ -59,8 +73,10 @@ class SymbolTable {
     table_[idx] = record;
   }
 
-  void insertVariables(SymbolTablePair& idx, std::string& arg1,
-                       std::string& arg2, std::string& arg3) {
+  void insertVariables(SymbolTablePair& idx, // NOLINT
+                       std::string arg1,     // NOLINT
+                       std::string arg2,     // NOLINT
+                       std::string arg3) {   // NOLINT
     RecordPtr record = std::make_shared<Record>(scopeLevel);
 
     if (arg1 == "array") {
@@ -87,38 +103,9 @@ class SymbolTable {
     table_[idx2] = record2;
   }
 
-  void insertTemporaries(SymbolTablePair& idx) {
+  void insertTemporaries() {
     std::cerr << "Not Implemented! \n";
     std::exit(EXIT_FAILURE);
-  }
-
-#define INSERT_SYMBOL_TABLE(__type__) \
-  case Entry::__type__: {             \
-    insert##__type__(idx, args...);   \
-    break;                            \
-  }
-
- public:
-  SymbolTable(int level) {
-    scopeLevel = level;
-    insertConstants();
-  }
-
-  /// insert symbols into table
-  template <typename... Args>
-  void insert(SymbolTablePair& idx, Args... args) {
-    switch (idx.getEntry()) {
-      INSERT_SYMBOL_TABLE(Types)
-      INSERT_SYMBOL_TABLE(Constants)
-      INSERT_SYMBOL_TABLE(Functions)
-      INSERT_SYMBOL_TABLE(Variables)
-      INSERT_SYMBOL_TABLE(Temporaries)
-      default: {
-        std::cerr << "Entry enum value: " << idx.getEntry()
-                  << " not defined! \n";
-        std::exit(EXIT_FAILURE);
-      }
-    }
   }
 
   const RecordPtr lookup(Entry entry, std::string name) {
