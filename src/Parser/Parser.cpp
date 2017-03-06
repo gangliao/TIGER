@@ -784,7 +784,6 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
           idx, tempBuffer[3].getTokenString(), tempBuffer[5].getTokenString(),
           tempBuffer[8].getTokenString());
     }
-    // globalSymbolTable[currentLevel]->dump();
   } else if (expr == Symbol::Action::MakeVariablesEnd) {
     size_t i = 0;
     for (i = 1; i < tempBuffer.size(); ++i) {
@@ -805,13 +804,33 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
           tempBuffer[i + 6].getTokenString());
       }
     }
-    // globalSymbolTable[currentLevel]->dump();
   } else if (expr == Symbol::Action::MakeFunctionsEnd) {
-    for (auto& tokenPair : tempBuffer) {
-      std::cout << tokenPair.emit();
+    SymbolTablePair idx(Entry::Functions, tempBuffer[1].getTokenString());
+    std::vector<std::string> params;
+    std::vector<std::string> paramTypes;
+    size_t paramBeginIdx, paramEndIdx;
+    std::string retType;
+    for (size_t i = 0; i < tempBuffer.size(); ++i) {
+      if (tempBuffer[i].getTokenString() == "(") {
+        paramBeginIdx = i;
+      } else if (tempBuffer[i].getTokenString() == ")") {
+        paramEndIdx = i;
+      }
     }
-    std::cout << std::endl;
+    if (paramEndIdx + 1 == tempBuffer.size()) {
+      retType = "-";
+    } else {
+      retType = tempBuffer[paramEndIdx + 1].getTokenString();
+    }
+    for (size_t i = paramBeginIdx + 1; i < paramEndIdx; i += 3) {
+      params.push_back(tempBuffer[i].getTokenString());
+      paramTypes.push_back(tempBuffer[i + 2].getTokenString());
+    }
+    
+    globalSymbolTable[currentLevel]->insertFunctions(idx,
+      retType, paramTypes, params);
   }
+  globalSymbolTable[currentLevel]->dump();
 }
 
 void Parser::parse() {

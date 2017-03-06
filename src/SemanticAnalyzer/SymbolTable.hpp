@@ -155,7 +155,7 @@ class SymbolTable {
         auto& paramDims = item.second->getParameterDimensions();
         auto& params = item.second->getParameters();
         size_t size = params.size();
-        std::cout << "Parameters: [" << std::endl;
+        std::cout << "Parameters: [";
         for (int i = 0; i < size; ++i) {
           std::cout << params[i];
           if (i != size - 1) {
@@ -164,7 +164,7 @@ class SymbolTable {
         }
         std::cout << "]" << std::endl;
 
-        std::cout << "Parameter types: [" << std::endl;
+        std::cout << "Parameter types: [";
         for (int i = 0; i < size; ++i) {
           std::cout << paramType[i];
           if (i != size - 1) {
@@ -173,7 +173,7 @@ class SymbolTable {
         }
         std::cout << "]" << std::endl;
 
-        std::cout << "Parameter dimensions: [" << std::endl;
+        std::cout << "Parameter dimensions: [";
         for (int i = 0; i < size; ++i) {
           std::cout << paramDims[i];
           if (i != size - 1) {
@@ -185,6 +185,6 @@ class SymbolTable {
                   << std::endl;
       }
     }
-    std::cout << "----------------------------------------\n\n" << std::endl;
+    std::cout << "----------------------------------------\n" << std::endl;
   }
 };
