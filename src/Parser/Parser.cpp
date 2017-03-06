@@ -770,11 +770,11 @@ void Parser::error(int expr, TokenPair* word) {
 }
 
 void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
+  for (auto& tokenPair : tempBuffer) {
+    std::cout << tokenPair.emit();
+  }
+  std::cout << std::endl;  
   if (expr == Symbol::Action::MakeTypesEnd) {
-    // for (auto& tokenPair : tempBuffer) {
-    //   std::cout << tokenPair.emit();
-    // }
-    // std::cout << std::endl;
     SymbolTablePair idx(Entry::Types, tempBuffer[1].getTokenString());
     if (tempBuffer.size() <= 5) {
       globalSymbolTable[currentLevel]->insertTypes(
@@ -784,19 +784,34 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
           idx, tempBuffer[3].getTokenString(), tempBuffer[5].getTokenString(),
           tempBuffer[8].getTokenString());
     }
-    globalSymbolTable[currentLevel]->dump();
+    // globalSymbolTable[currentLevel]->dump();
   } else if (expr == Symbol::Action::MakeVariablesEnd) {
-    for (auto& tokenPair : tempBuffer) {
-      std::cout << tokenPair.emit();
+    size_t i = 0;
+    for (i = 1; i < tempBuffer.size(); ++i) {
+      if (tempBuffer[i].getTokenString() == ":") {
+        break;
+      }
     }
-    std::cout << std::endl;
+    for (size_t j = 1; j < i; j += 2) {
+      if (tempBuffer.size() <= i + 4) {
+        SymbolTablePair idx(Entry::Variables, tempBuffer[j].getTokenString());
+        globalSymbolTable[currentLevel]->insertVariables(
+            idx, tempBuffer[i + 1].getTokenString());
+      } else {
+        SymbolTablePair idx(Entry::Variables, tempBuffer[j].getTokenString());
+        globalSymbolTable[currentLevel]->insertVariables(idx,
+          tempBuffer[i + 1].getTokenString(),
+          tempBuffer[i + 3].getTokenString(),
+          tempBuffer[i + 6].getTokenString());
+      }
+    }
+    // globalSymbolTable[currentLevel]->dump();
   } else if (expr == Symbol::Action::MakeFunctionsEnd) {
     for (auto& tokenPair : tempBuffer) {
       std::cout << tokenPair.emit();
     }
     std::cout << std::endl;
   }
-  tempBuffer.clear();
 }
 
 void Parser::parse() {
@@ -843,6 +858,7 @@ void Parser::parse() {
         expr == Symbol::Action::MakeFunctionsEnd) {
       enable_buffer = false;
       parseAction(expr, tempBuffer);
+      tempBuffer.clear();
       continue;
     }
 

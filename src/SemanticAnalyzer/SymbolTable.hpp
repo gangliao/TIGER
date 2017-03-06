@@ -28,8 +28,8 @@ class SymbolTable {
 
   void insertTypes(SymbolTablePair& idx,       // NOLINT
                    std::string arg1,           // NOLINT
-                   std::string arg2 = NULL,    // NOLINT
-                   std::string arg3 = NULL) {  // NOLINT
+                   std::string arg2 = "",      // NOLINT
+                   std::string arg3 = "") {    // NOLINT
     RecordPtr record = std::make_shared<Record>(scopeLevel);
     if (arg1 == "array") {
       /*************************************
