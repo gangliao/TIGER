@@ -830,7 +830,6 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
     globalSymbolTable[currentLevel]->insertFunctions(idx, retType, paramTypes,
                                                      params);
   }
-  globalSymbolTable[currentLevel]->dump();
 }
 
 void Parser::parse() {

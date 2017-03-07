@@ -75,6 +75,7 @@ class Parser final {
   }
   /// finalize Scope
   inline void finalizeScoping() {
+    globalSymbolTable[currentLevel]->dump();
     globalSymbolTable.erase(currentLevel);
     --currentLevel;
   }
