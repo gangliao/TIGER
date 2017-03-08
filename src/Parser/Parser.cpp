@@ -792,19 +792,80 @@ void Parser::error(int expr, TokenPair* word) {
             << std::endl;
 }
 
-std::string Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
-                                 size_t index) {
-  std::string expr;
+std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
+                                            size_t index) {
+  // TODO(gangliao): consider array
+  auto prec = [&](int op) -> int {
+    switch (op) {
+      case Symbol::Terminal::PLUS:
+      case Symbol::Terminal::MINUS:
+        return 1;
+      case Symbol::Terminal::MULT:
+      case Symbol::Terminal::DIV:
+        return 2;
+      default:
+        return 0;
+    }
+  };
+
+  /// expression operator stack
+  std::stack<TokenPair> stack;
+  std::vector<TokenPair> expr;
+  expr.reserve(tempBuffer.size());
   // get expression string
   for (size_t i = index; i < tempBuffer.size(); ++i) {
-    expr += tempBuffer[i].getTokenString();
+    // expr += tempBuffer[i].getTokenString();
+    if (tempBuffer[i].getTokenType().getValue() == Symbol::Terminal::ID ||
+        tempBuffer[i].getTokenType().getValue() == Symbol::Terminal::INTLIT ||
+        tempBuffer[i].getTokenType().getValue() == Symbol::Terminal::FLOATLIT) {
+      expr.push_back(tempBuffer[i]);
+    } else if (tempBuffer[i].getTokenType().getValue() ==
+               Symbol::Terminal::LPAREN) {
+      stack.push(tempBuffer[i]);
+    } else if (tempBuffer[i].getTokenType().getValue() ==
+               Symbol::Terminal::RPAREN) {
+      while (!stack.empty() &&
+             stack.top().getTokenType().getValue() !=
+                 Symbol::Terminal::LPAREN) {
+        TokenPair temp = stack.top();
+        expr.push_back(temp);
+        stack.pop();
+      }
+      stack.pop();  // discard left parenthesis
+    } else if (tempBuffer[i].getTokenType().getValue() ==
+                   Symbol::Terminal::MULT ||
+               tempBuffer[i].getTokenType().getValue() ==
+                   Symbol::Terminal::DIV ||
+               tempBuffer[i].getTokenType().getValue() ==
+                   Symbol::Terminal::PLUS ||
+               tempBuffer[i].getTokenType().getValue() ==
+                   Symbol::Terminal::MINUS) {
+      if (stack.empty() ||
+          stack.top().getTokenType().getValue() == Symbol::Terminal::LPAREN) {
+        stack.push(tempBuffer[i]);
+      } else {
+        while (!stack.empty() &&
+               stack.top().getTokenType().getValue() !=
+                   Symbol::Terminal::LPAREN &&
+               prec(tempBuffer[i].getTokenType().getValue()) <=
+                   prec(stack.top().getTokenType().getValue())) {
+          TokenPair temp = stack.top();
+          expr.push_back(temp);
+          stack.pop();
+        }
+        stack.push(tempBuffer[i]);
+      }
+    }
   }
 
-  // convert into postfix format
-
+  while (!stack.empty()) {
+    TokenPair temp = stack.top();
+    expr.push_back(temp);
+    stack.pop();
+  }
 
   // generate IR and semantic checking
-
+  // ...
   return expr;
 }
 

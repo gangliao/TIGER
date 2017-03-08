@@ -5,11 +5,12 @@
  */
 #pragma once
 
-#include <cstring>
-#include <unordered_map>
 #include "../Scanner/Scanner.hpp"
 #include "../SemanticAnalyzer/SymbolTable.hpp"
 #include "../SemanticAnalyzer/SymbolTerminalPair.hpp"
+
+#include <cstring>
+#include <unordered_map>
 
 /**
  * Disable copy macro.
@@ -81,7 +82,8 @@ class Parser final {
    * @note  posifix expression is convenient way to do semantic
    *        check and generate IR.
    */
-  std::string cvt2PostExpr(std::vector<TokenPair> &tempBuffer, size_t index);
+  std::vector<TokenPair> cvt2PostExpr(std::vector<TokenPair> &tempBuffer,
+                                      size_t index);
 
   /// generate IR and symbol table elements from postfix expression
   void genExprIR(std::string expr);
@@ -110,11 +112,10 @@ class Parser final {
   int numTemps = 0;            /// generate temp variable for IR
   std::string globalFileName;  /// global file name
   std::stack<int> parseStack;  /// parse stack
-  std::stack<int> expOpStack;  /// expression operator stack
 
   /// terminal symbol's string output for error info
   std::unordered_map<int, std::string> terminalMapped;
 
   /// parse table for parsing
-  std::map<SymbolTerminalPair, std::vector<int> > parseTable;
+  std::map<SymbolTerminalPair, std::vector<int>> parseTable;
 };
