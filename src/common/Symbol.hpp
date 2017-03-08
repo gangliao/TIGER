@@ -133,23 +133,33 @@ class Symbol {
   };
 
   enum Action {
-
     // Dealing with main
     MakeMainLabel = 200,
     MakeReturn,
-    //
 
     // Scope
     InitializeScope,
     FinalizeScope,
 
-    // Fill in the required Actions
+    // type
     MakeTypesBegin,
     MakeTypesEnd,
+
+    // variable
     MakeVariablesBegin,
     MakeVariablesEnd,
+
+    // function
     MakeFunctionsBegin,
-    MakeFunctionsEnd
+    MakeFunctionsEnd,
+
+    // assign
+    MakeAssignBegin,
+    MakeAssignEnd,
+
+    // expression
+    MakeExprBegin,
+    MakeExprEnd
   };
 
   void operator=(int value) { this->value = value; }

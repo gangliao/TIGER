@@ -275,7 +275,9 @@ void Parser::initParseTable() {
   addToParseTable(Symbol::Nonterminal::STAT,             // NOLINT
                   {Symbol::Terminal::IF},                // NOLINT
                   {Symbol::Terminal::IF,                 // NOLINT
+                   Symbol::Action::MakeExprBegin,        // NOLINT
                    Symbol::Nonterminal::EXPR,            // NOLINT
+                   Symbol::Action::MakeExprEnd,          // NOLINT
                    Symbol::Terminal::THEN,               // NOLINT
                    Symbol::Nonterminal::STAT_SEQ,        // NOLINT
                    Symbol::Nonterminal::STAT_IF_TAIL});  // NOLINT
@@ -297,7 +299,8 @@ void Parser::initParseTable() {
   // 35: <stat> -> id <stat-funct-or-assign>
   addToParseTable(Symbol::Nonterminal::STAT,                     // NOLINT
                   {Symbol::Terminal::ID},                        // NOLINT
-                  {Symbol::Terminal::ID,                         // NOLINT
+                  {Symbol::Action::MakeAssignBegin,              // NOLINT
+                   Symbol::Terminal::ID,                         // NOLINT
                    Symbol::Nonterminal::STAT_FUNCT_OR_ASSIGN});  // NOLINT
 
   // 36: <stat-funct-or-assign> -> <lvalue-tail> := <stat-assign>;
@@ -307,6 +310,7 @@ void Parser::initParseTable() {
                   {Symbol::Nonterminal::LVALUE_TAIL,          // NOLINT
                    Symbol::Terminal::ASSIGN,                  // NOLINT
                    Symbol::Nonterminal::STAT_ASSIGN,          // NOLINT
+                   Symbol::Action::MakeAssignEnd,             // NOLINT
                    Symbol::Terminal::SEMI});                  // NOLINT
 
   // 37: <stat-funct-or-assign> -> (<expr-list>);
@@ -315,6 +319,7 @@ void Parser::initParseTable() {
                   {Symbol::Terminal::LPAREN,                  // NOLINT
                    Symbol::Nonterminal::EXPR_LIST,            // NOLINT
                    Symbol::Terminal::RPAREN,                  // NOLINT
+                   Symbol::Action::MakeAssignEnd,             // NOLINT
                    Symbol::Terminal::SEMI});                  // NOLINT
 
   // 38: <stat-assign> -> id <stat-assign-stuff>
@@ -327,7 +332,9 @@ void Parser::initParseTable() {
   addToParseTable(Symbol::Nonterminal::STAT_ASSIGN,          // NOLINT
                   {Symbol::Terminal::LPAREN},                // NOLINT
                   {Symbol::Terminal::LPAREN,                 // NOLINT
+                   Symbol::Action::MakeExprBegin,            // NOLINT
                    Symbol::Nonterminal::EXPR,                // NOLINT
+                   Symbol::Action::MakeExprEnd,              // NOLINT
                    Symbol::Terminal::RPAREN,                 // NOLINT
                    Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
@@ -402,7 +409,9 @@ void Parser::initParseTable() {
   addToParseTable(Symbol::Nonterminal::STAT,       // NOLINT
                   {Symbol::Terminal::WHILE},       // NOLINT
                   {Symbol::Terminal::WHILE,        // NOLINT
+                   Symbol::Action::MakeExprBegin,  // NOLINT
                    Symbol::Nonterminal::EXPR,      // NOLINT
+                   Symbol::Action::MakeExprEnd,    // NOLINT
                    Symbol::Terminal::DO,           // NOLINT
                    Symbol::Nonterminal::STAT_SEQ,  // NOLINT
                    Symbol::Terminal::ENDDO,        // NOLINT
@@ -414,9 +423,13 @@ void Parser::initParseTable() {
                   {Symbol::Terminal::FOR,          // NOLINT
                    Symbol::Terminal::ID,           // NOLINT
                    Symbol::Terminal::ASSIGN,       // NOLINT
+                   Symbol::Action::MakeExprBegin,  // NOLINT
                    Symbol::Nonterminal::EXPR,      // NOLINT
+                   Symbol::Action::MakeExprEnd,    // NOLINT
                    Symbol::Terminal::TO,           // NOLINT
+                   Symbol::Action::MakeExprBegin,  // NOLINT
                    Symbol::Nonterminal::EXPR,      // NOLINT
+                   Symbol::Action::MakeExprEnd,    // NOLINT
                    Symbol::Terminal::DO,           // NOLINT
                    Symbol::Nonterminal::STAT_SEQ,  // NOLINT
                    Symbol::Terminal::ENDDO,        // NOLINT
@@ -429,11 +442,13 @@ void Parser::initParseTable() {
                    Symbol::Terminal::SEMI});  // NOLINT
 
   // 51: <stat> -> return <expr>;
-  addToParseTable(Symbol::Nonterminal::STAT,   // NOLINT
-                  {Symbol::Terminal::RETURN},  // NOLINT
-                  {Symbol::Terminal::RETURN,   // NOLINT
-                   Symbol::Nonterminal::EXPR,  // NOLINT
-                   Symbol::Terminal::SEMI});   // NOLINT
+  addToParseTable(Symbol::Nonterminal::STAT,       // NOLINT
+                  {Symbol::Terminal::RETURN},      // NOLINT
+                  {Symbol::Terminal::RETURN,       // NOLINT
+                   Symbol::Action::MakeExprBegin,  // NOLINT
+                   Symbol::Nonterminal::EXPR,      // NOLINT
+                   Symbol::Action::MakeExprEnd,    // NOLINT
+                   Symbol::Terminal::SEMI});       // NOLINT
 
   // 52: <stat> -> let <declaration-segment> in <stat-seq> end
   addToParseTable(Symbol::Nonterminal::STAT,                  // NOLINT
@@ -609,11 +624,13 @@ void Parser::initParseTable() {
                   {Symbol::Terminal::NULLL});      // NOLINT
 
   // 68: <factor> -> (<expr>)
-  addToParseTable(Symbol::Nonterminal::FACTOR,  // NOLINT
-                  {Symbol::Terminal::LPAREN},   // NOLINT
-                  {Symbol::Terminal::LPAREN,    // NOLINT
-                   Symbol::Nonterminal::EXPR,   // NOLINT
-                   Symbol::Terminal::RPAREN});  // NOLINT
+  addToParseTable(Symbol::Nonterminal::FACTOR,     // NOLINT
+                  {Symbol::Terminal::LPAREN},      // NOLINT
+                  {Symbol::Terminal::LPAREN,       // NOLINT
+                   Symbol::Action::MakeExprBegin,  // NOLINT
+                   Symbol::Nonterminal::EXPR,      // NOLINT
+                   Symbol::Action::MakeExprEnd,    // NOLINT
+                   Symbol::Terminal::RPAREN});     // NOLINT
 
   // 69: <factor> -> <const>
   addToParseTable(Symbol::Nonterminal::FACTOR,    // NOLINT
@@ -709,14 +726,18 @@ void Parser::initParseTable() {
                    Symbol::Terminal::LPAREN,               // NOLINT
                    Symbol::Terminal::INTLIT,               // NOLINT
                    Symbol::Terminal::FLOATLIT},            // NOLINT
-                  {Symbol::Nonterminal::EXPR,              // NOLINT
+                  {Symbol::Action::MakeExprBegin,          // NOLINT
+                   Symbol::Nonterminal::EXPR,              // NOLINT
+                   Symbol::Action::MakeExprEnd,            // NOLINT
                    Symbol::Nonterminal::EXPR_LIST_TAIL});  // NOLINT
 
   // 87: <expr-list-tail> -> , <expr> <expr-list-tail>
   addToParseTable(Symbol::Nonterminal::EXPR_LIST_TAIL,     // NOLINT
                   {Symbol::Terminal::COMMA},               // NOLINT
                   {Symbol::Terminal::COMMA,                // NOLINT
+                   Symbol::Action::MakeExprBegin,          // NOLINT
                    Symbol::Nonterminal::EXPR,              // NOLINT
+                   Symbol::Action::MakeExprEnd,            // NOLINT
                    Symbol::Nonterminal::EXPR_LIST_TAIL});  // NOLINT
 
   // 88: <expr-list-tail> -> NULL
@@ -734,7 +755,9 @@ void Parser::initParseTable() {
   addToParseTable(Symbol::Nonterminal::LVALUE_TAIL,  // NOLINT
                   {Symbol::Terminal::LBRACK},        // NOLINT
                   {Symbol::Terminal::LBRACK,         // NOLINT
+                   Symbol::Action::MakeExprBegin,    // NOLINT
                    Symbol::Nonterminal::EXPR,        // NOLINT
+                   Symbol::Action::MakeExprEnd,      // NOLINT
                    Symbol::Terminal::RBRACK});       // NOLINT
 
   // 91: <lvalue-tail> -> NULL
@@ -769,16 +792,32 @@ void Parser::error(int expr, TokenPair* word) {
             << std::endl;
 }
 
+std::string Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
+                                 size_t index) {
+  std::string expr;
+  // get expression string
+  for (size_t i = index; i < tempBuffer.size(); ++i) {
+    expr += tempBuffer[i].getTokenString();
+  }
+
+  // convert into postfix format
+
+
+  // generate IR and semantic checking
+
+  return expr;
+}
+
 void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
-  // for (auto& tokenPair : tempBuffer) {
-  //   std::cout << tokenPair.emit();
-  // }
-  // std::cout << std::endl;
+  for (auto& tokenPair : tempBuffer) {
+    std::cout << tokenPair.emit();
+  }
+  std::cout << std::endl;
   if (expr == Symbol::Action::MakeTypesEnd) {
     SymbolTablePair idx(Entry::Types, tempBuffer[1].getTokenString());
     if (tempBuffer.size() <= 5) {
-      g_SymbolTable[currentLevel]->insertTypes(
-          idx, tempBuffer[3].getTokenString());
+      g_SymbolTable[currentLevel]->insertTypes(idx,
+                                               tempBuffer[3].getTokenString());
     } else {
       g_SymbolTable[currentLevel]->insertTypes(
           idx, tempBuffer[3].getTokenString(), tempBuffer[5].getTokenString(),
@@ -826,10 +865,48 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       params.push_back(tempBuffer[i].getTokenString());
       paramTypes.push_back(tempBuffer[i + 2].getTokenString());
     }
-
     g_SymbolTable[currentLevel]->insertFunctions(idx, retType, paramTypes,
-                                                     params);
+                                                 params);
+  } else if (expr == Symbol::Action::MakeAssignEnd) {
+    if (tempBuffer[1].getTokenString() == "(") { /* function */
+      // ....
+    } else { /* assignment */
+      cvt2PostExpr(tempBuffer, 2);
+    }
   }
+}
+
+bool Parser::detectAction(int symbol, bool& enable_buffer,
+                          std::vector<TokenPair>& tempBuffer) {
+  // check symbol action: scoping
+  if (symbol == Symbol::Action::InitializeScope) {
+    initScoping();
+    return true;
+  }
+  if (symbol == Symbol::Action::FinalizeScope) {
+    finalizeScoping();
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeTypesBegin ||
+      symbol == Symbol::Action::MakeVariablesBegin ||
+      symbol == Symbol::Action::MakeFunctionsBegin ||
+      symbol == Symbol::Action::MakeExprBegin ||
+      symbol == Symbol::Action::MakeAssignBegin) {
+    enable_buffer = true;
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeTypesEnd ||
+      symbol == Symbol::Action::MakeVariablesEnd ||
+      symbol == Symbol::Action::MakeFunctionsEnd ||
+      symbol == Symbol::Action::MakeExprEnd ||
+      symbol == Symbol::Action::MakeAssignEnd) {
+    enable_buffer = false;
+    parseAction(symbol, tempBuffer);
+    tempBuffer.clear();
+    return true;
+  }
+
+  return false;
 }
 
 void Parser::parse() {
@@ -852,33 +929,12 @@ void Parser::parse() {
     // accordingly take actions and generate the IR.
     // Output the IR, only if there are no errors in the input.
 
-    // pop expression from stack
+    // pop grammar rule from stack
     auto& expr = parseStack.top();
     parseStack.pop();
 
-    // check symbol action: scoping
-    if (expr == Symbol::Action::InitializeScope) {
-      initScoping();
-      continue;
-    }
-    if (expr == Symbol::Action::FinalizeScope) {
-      finalizeScoping();
-      continue;
-    }
-    if (expr == Symbol::Action::MakeTypesBegin ||
-        expr == Symbol::Action::MakeVariablesBegin ||
-        expr == Symbol::Action::MakeFunctionsBegin) {
-      enable_buffer = true;
-      continue;
-    }
-    if (expr == Symbol::Action::MakeTypesEnd ||
-        expr == Symbol::Action::MakeVariablesEnd ||
-        expr == Symbol::Action::MakeFunctionsEnd) {
-      enable_buffer = false;
-      parseAction(expr, tempBuffer);
-      tempBuffer.clear();
-      continue;
-    }
+    // detect action and its post process
+    if (detectAction(expr, enable_buffer, tempBuffer)) continue;
 
     focus = word->getTokenType().getValue();
 

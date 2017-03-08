@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include <unordered_map>
 #include <memory>
+#include <unordered_map>
 
 #include "Level.hpp"
 #include "Record.hpp"
@@ -24,9 +24,7 @@ class SymbolTable {
   int scopeLevel;
   std::map<SymbolTablePair, RecordPtr> table_;
 
-  std::map<SymbolTablePair, RecordPtr> getTable() {
-    return table_;
-  }
+  std::map<SymbolTablePair, RecordPtr> getTable() { return table_; }
 
  public:
   SymbolTable(int level) {

@@ -44,7 +44,6 @@ reverse_range<T> reverse_iterate(T &x) {
 
 class Parser final {
  public:
-
   /// disable implicit copy
   DISABLE_COPY(Parser);
 
@@ -67,7 +66,6 @@ class Parser final {
   bool printDebug;
 
  private:
-
   /// initialize terminal map data structure: terminalMapped
   void initializeTerminalMapped();
 
@@ -83,7 +81,7 @@ class Parser final {
    * @note  posifix expression is convenient way to do semantic
    *        check and generate IR.
    */
-  std::string cvt2PostExpr(std::vector<TokenPair> &tempBuffer);
+  std::string cvt2PostExpr(std::vector<TokenPair> &tempBuffer, size_t index);
 
   /// generate IR and symbol table elements from postfix expression
   void genExprIR(std::string expr);
@@ -94,6 +92,7 @@ class Parser final {
     SymbolTablePtr st = std::make_shared<SymbolTable>(currentLevel);
     g_SymbolTable[currentLevel] = st;
   }
+
   /// finalize Scope
   inline void finalizeScoping() {
     g_SymbolTable[currentLevel]->dump();
@@ -101,13 +100,17 @@ class Parser final {
     --currentLevel;
   }
 
-  Scanner scanner;            /// code scanner
-  int numErrors = 0;          /// how many errors detected
-  int currentLevel = -1;      /// current paser code's scope level
-  int numTemps = 0;           /// generate temp variable for IR
-  std::string globalFileName; /// global file name
-  std::stack<int> parseStack; /// parse stack
-  std::stack<int> expOpStack; /// expression operator stack
+  /// detect action
+  bool detectAction(int symbol, bool &enable_buffer,
+                    std::vector<TokenPair> &tempBuffer);
+
+  Scanner scanner;             /// code scanner
+  int numErrors = 0;           /// how many errors detected
+  int currentLevel = -1;       /// current paser code's scope level
+  int numTemps = 0;            /// generate temp variable for IR
+  std::string globalFileName;  /// global file name
+  std::stack<int> parseStack;  /// parse stack
+  std::stack<int> expOpStack;  /// expression operator stack
 
   /// terminal symbol's string output for error info
   std::unordered_map<int, std::string> terminalMapped;
