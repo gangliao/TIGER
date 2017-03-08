@@ -71,12 +71,12 @@ class Parser final {
   inline void initScoping() {
     ++currentLevel;
     SymbolTablePtr st = std::make_shared<SymbolTable>(currentLevel);
-    globalSymbolTable[currentLevel] = st;
+    g_SymbolTable[currentLevel] = st;
   }
   /// finalize Scope
   inline void finalizeScoping() {
-    globalSymbolTable[currentLevel]->dump();
-    globalSymbolTable.erase(currentLevel);
+    g_SymbolTable[currentLevel]->dump();
+    g_SymbolTable.erase(currentLevel);
     --currentLevel;
   }
 
@@ -87,7 +87,4 @@ class Parser final {
   std::stack<int> parseStack;
   std::unordered_map<int, std::string> terminalMapped;
   std::map<SymbolTerminalPair, std::vector<int> > parseTable;
-
-  /// global symbol table <level, symbol table>
-  std::unordered_map<int, SymbolTablePtr> globalSymbolTable;
 };

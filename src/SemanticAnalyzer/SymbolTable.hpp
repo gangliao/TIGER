@@ -13,6 +13,9 @@ class SymbolTable;
 
 typedef std::shared_ptr<SymbolTable> SymbolTablePtr;
 
+/// global symbol table <level, symbol table>
+std::unordered_map<int, SymbolTablePtr> g_SymbolTable;
+
 class SymbolTable {
  private:
   Level topLevel;
@@ -20,6 +23,10 @@ class SymbolTable {
 
   int scopeLevel;
   std::map<SymbolTablePair, RecordPtr> table_;
+
+  std::map<SymbolTablePair, RecordPtr> getTable() {
+    return table_;
+  }
 
  public:
   SymbolTable(int level) {
@@ -112,11 +119,20 @@ class SymbolTable {
 
   const RecordPtr lookup(Entry entry, std::string name) {
     SymbolTablePair idx(entry, name);
-    if (table_.find(idx) == table_.end()) {
+    bool found = false;
+    int32_t level;
+    for (level = scopeLevel; level >= 0; --level) {
+      auto table = g_SymbolTable[level]->getTable();
+      if (table.find(idx) != table.end()) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
       std::cerr << name << " is not defined before! \n";
       std::exit(EXIT_FAILURE);
     }
-    return table_[idx];
+    return g_SymbolTable[level]->getTable()[idx];
   }
 
   void dump() {
