@@ -795,6 +795,7 @@ void Parser::error(int expr, TokenPair* word) {
 std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
                                             size_t index) {
   // TODO(gangliao): consider array
+  // have a bug when expr includes ()
   auto prec = [&](int op) -> int {
     switch (op) {
       case Symbol::Terminal::PLUS:
@@ -812,9 +813,8 @@ std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
   std::stack<TokenPair> stack;
   std::vector<TokenPair> expr;
   expr.reserve(tempBuffer.size());
-  // get expression string
+
   for (size_t i = index; i < tempBuffer.size(); ++i) {
-    // expr += tempBuffer[i].getTokenString();
     if (tempBuffer[i].getTokenType().getValue() == Symbol::Terminal::ID ||
         tempBuffer[i].getTokenType().getValue() == Symbol::Terminal::INTLIT ||
         tempBuffer[i].getTokenType().getValue() == Symbol::Terminal::FLOATLIT) {
@@ -869,16 +869,84 @@ std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
     stack.pop();
   }
 
-  // generate IR and semantic checking
-  // ...
   return expr;
 }
 
-void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
-  for (auto& tokenPair : tempBuffer) {
-    std::cout << tokenPair.emit();
+std::string Parser::getSymbolType(TokenPair A) {
+  std::string typeA;
+  if (A.getTokenType().getValue() == Symbol::Terminal::ID) {
+    RecordPtr record = g_SymbolTable[currentLevel]->lookup(Entry::Variables,
+                                                           A.getTokenString());
+    typeA = record->getType();
+  } else {
+    if (A.getTokenType().getValue() == Symbol::Terminal::INTLIT) {
+      typeA = "int";
+    } else if (A.getTokenType().getValue() == Symbol::Terminal::FLOATLIT) {
+      typeA = "float";
+    }
   }
-  std::cout << std::endl;
+  return typeA;
+}
+
+int Parser::evaPostfix(std::vector<TokenPair>& expr) {
+  std::stack<TokenPair> stack;
+  for (size_t i = 0; i < expr.size(); ++i) {
+    if (expr[i].getTokenType().getValue() == Symbol::Terminal::MULT ||
+        expr[i].getTokenType().getValue() == Symbol::Terminal::DIV ||
+        expr[i].getTokenType().getValue() == Symbol::Terminal::PLUS ||
+        expr[i].getTokenType().getValue() == Symbol::Terminal::MINUS) {
+      TokenPair A = stack.top();
+      std::string typeA;
+      stack.pop();
+      TokenPair B = stack.top();
+      std::string typeB;
+      stack.pop();
+
+      // produce a type for temp var
+      std::string temp = new_temp();
+      typeA = getSymbolType(A);
+      typeB = getSymbolType(B);
+
+      RecordPtr record = std::make_shared<Record>(currentLevel);
+      SymbolTablePair idx(Entry::Variables, temp);
+      if (typeA == typeB) {
+        record->type = typeA;
+      } else {
+        record->type = "float";
+      }
+      record->dimension = 0;
+      g_SymbolTable[currentLevel]->insert(idx, record);
+
+      // generate IR: op A B temp
+      std::cout << terminalMapped[expr[i].getTokenType().getValue()]
+                << " " << A.getTokenString()
+                << " " << B.getTokenString()
+                << " " << temp << std::endl;
+
+      // push temp var into stack
+      TokenPair token(Symbol::Terminal::ID, temp);
+      stack.push(token);
+    } else if (expr[i].getTokenType().getValue() ==
+                   Symbol::Terminal::ID ||
+               expr[i].getTokenType().getValue() ==
+                   Symbol::Terminal::INTLIT ||
+               expr[i].getTokenType().getValue() ==
+                   Symbol::Terminal::FLOATLIT) {
+      stack.push(expr[i]);
+    }
+  }
+
+  // final elem in stack
+  TokenPair res = stack.top();
+  stack.pop();
+  return res.getTokenType().getValue();
+}
+
+void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
+  // for (auto& tokenPair : tempBuffer) {
+  //   std::cout << tokenPair.emit();
+  // }
+  // std::cout << std::endl;
   if (expr == Symbol::Action::MakeTypesEnd) {
     SymbolTablePair idx(Entry::Types, tempBuffer[1].getTokenString());
     if (tempBuffer.size() <= 5) {
@@ -937,7 +1005,8 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
     if (tempBuffer[1].getTokenString() == "(") { /* function */
       // ....
     } else { /* assignment */
-      cvt2PostExpr(tempBuffer, 2);
+      std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 2);
+      evaPostfix(postExpr);
     }
   }
 }

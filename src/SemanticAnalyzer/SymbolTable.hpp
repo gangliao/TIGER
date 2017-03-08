@@ -24,12 +24,17 @@ class SymbolTable {
   int scopeLevel;
   std::map<SymbolTablePair, RecordPtr> table_;
 
-  std::map<SymbolTablePair, RecordPtr> getTable() { return table_; }
 
  public:
   SymbolTable(int level) {
     scopeLevel = level;
     insertConstants();
+  }
+
+  std::map<SymbolTablePair, RecordPtr> getTable() { return table_; }
+
+  void insert(SymbolTablePair& idx, RecordPtr record) {
+    table_[idx] = record;
   }
 
   void insertTypes(SymbolTablePair& idx,     // NOLINT

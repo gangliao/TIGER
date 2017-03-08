@@ -86,7 +86,7 @@ class Parser final {
                                       size_t index);
 
   /// generate IR and symbol table elements from postfix expression
-  void genExprIR(std::string expr);
+  int evaPostfix(std::vector<TokenPair> &expr);
 
   /// initialize Scop
   inline void initScoping() {
@@ -101,6 +101,12 @@ class Parser final {
     g_SymbolTable.erase(currentLevel);
     --currentLevel;
   }
+
+  /// generate new temp name
+  inline std::string new_temp() { return "t" + std::to_string(numTemps++); }
+
+  /// get terminal symbol type
+  std::string getSymbolType(TokenPair A);
 
   /// detect action
   bool detectAction(int symbol, bool &enable_buffer,
