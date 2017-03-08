@@ -332,9 +332,7 @@ void Parser::initParseTable() {
   addToParseTable(Symbol::Nonterminal::STAT_ASSIGN,          // NOLINT
                   {Symbol::Terminal::LPAREN},                // NOLINT
                   {Symbol::Terminal::LPAREN,                 // NOLINT
-                   Symbol::Action::MakeExprBegin,            // NOLINT
                    Symbol::Nonterminal::EXPR,                // NOLINT
-                   Symbol::Action::MakeExprEnd,              // NOLINT
                    Symbol::Terminal::RPAREN,                 // NOLINT
                    Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
@@ -627,9 +625,7 @@ void Parser::initParseTable() {
   addToParseTable(Symbol::Nonterminal::FACTOR,     // NOLINT
                   {Symbol::Terminal::LPAREN},      // NOLINT
                   {Symbol::Terminal::LPAREN,       // NOLINT
-                   Symbol::Action::MakeExprBegin,  // NOLINT
                    Symbol::Nonterminal::EXPR,      // NOLINT
-                   Symbol::Action::MakeExprEnd,    // NOLINT
                    Symbol::Terminal::RPAREN});     // NOLINT
 
   // 69: <factor> -> <const>
@@ -943,10 +939,10 @@ int Parser::evaPostfix(std::vector<TokenPair>& expr) {
 }
 
 void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
-  // for (auto& tokenPair : tempBuffer) {
-  //   std::cout << tokenPair.emit();
-  // }
-  // std::cout << std::endl;
+  for (auto& tokenPair : tempBuffer) {
+    std::cout << tokenPair.emit();
+  }
+  std::cout << std::endl;
   if (expr == Symbol::Action::MakeTypesEnd) {
     SymbolTablePair idx(Entry::Types, tempBuffer[1].getTokenString());
     if (tempBuffer.size() <= 5) {
@@ -1006,6 +1002,10 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       // ....
     } else { /* assignment */
       std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 2);
+        for (auto& tokenPair : postExpr) {
+    std::cout << tokenPair.emit();
+  }
+  std::cout << std::endl;
       evaPostfix(postExpr);
     }
   }

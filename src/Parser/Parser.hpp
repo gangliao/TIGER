@@ -97,7 +97,7 @@ class Parser final {
 
   /// finalize Scope
   inline void finalizeScoping() {
-    g_SymbolTable[currentLevel]->dump();
+    // g_SymbolTable[currentLevel]->dump();
     g_SymbolTable.erase(currentLevel);
     --currentLevel;
   }
