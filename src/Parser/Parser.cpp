@@ -818,6 +818,11 @@ std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
     if (tempBuffer[i].getTokenType().getValue() == Symbol::Terminal::ID ||
         tempBuffer[i].getTokenType().getValue() == Symbol::Terminal::INTLIT ||
         tempBuffer[i].getTokenType().getValue() == Symbol::Terminal::FLOATLIT) {
+      if (tempBuffer[i].getTokenType().getValue() == Symbol::Terminal::ID) {
+        // semantic check
+        g_SymbolTable[currentLevel]->lookup(Entry::Variables,
+                                            tempBuffer[i].getTokenString());
+      }
       expr.push_back(tempBuffer[i]);
     } else if (tempBuffer[i].getTokenType().getValue() ==
                Symbol::Terminal::LPAREN) {
