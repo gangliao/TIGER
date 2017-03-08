@@ -44,29 +44,50 @@ reverse_range<T> reverse_iterate(T &x) {
 
 class Parser final {
  public:
+
   /// disable implicit copy
   DISABLE_COPY(Parser);
+
   /// enable explicit constructor
   explicit Parser(std::string fileName);
+
   /// parse scanner's tokens
   void parse();
+
   /// parse error info
   void error(int expr, TokenPair *word);
+
   /// insert items into parse table
   void addToParseTable(const int nonterm, const std::vector<int> &terminals,
                        const std::vector<int> &expand_rule);
   /// output file
   std::ofstream outFile;
+
   /// print debug
   bool printDebug;
 
  private:
+
   /// initialize terminal map data structure: terminalMapped
   void initializeTerminalMapped();
+
   /// create parse table for Tiger
   void initParseTable();
+
   /// parse action like TYPES, VARIABLES, FUNCTIONS declaration
   void parseAction(int expr, std::vector<TokenPair> &tempBuffer);
+
+  /**
+   * @brief parse expression from infix to postfix expression.
+   *
+   * @note  posifix expression is convenient way to do semantic
+   *        check and generate IR.
+   */
+  std::string cvt2PostExpr(std::vector<TokenPair> &tempBuffer);
+
+  /// generate IR and symbol table elements from postfix expression
+  void genExprIR(std::string expr);
+
   /// initialize Scop
   inline void initScoping() {
     ++currentLevel;
@@ -80,11 +101,17 @@ class Parser final {
     --currentLevel;
   }
 
-  Scanner scanner;
-  int numErrors = 0;
-  int currentLevel = -1;
-  std::string globalFileName;
-  std::stack<int> parseStack;
+  Scanner scanner;            /// code scanner
+  int numErrors = 0;          /// how many errors detected
+  int currentLevel = -1;      /// current paser code's scope level
+  int numTemps = 0;           /// generate temp variable for IR
+  std::string globalFileName; /// global file name
+  std::stack<int> parseStack; /// parse stack
+  std::stack<int> expOpStack; /// expression operator stack
+
+  /// terminal symbol's string output for error info
   std::unordered_map<int, std::string> terminalMapped;
+
+  /// parse table for parsing
   std::map<SymbolTerminalPair, std::vector<int> > parseTable;
 };
