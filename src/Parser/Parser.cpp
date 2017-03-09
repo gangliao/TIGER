@@ -1088,6 +1088,17 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
                     << std::endl;
           std::exit(EXIT_FAILURE);
         }
+
+        auto retType = g_SymbolTable[currentLevel]  // NOLINT
+                           ->lookup(Entry::Variables,
+                                    tempBuffer[0].getTokenString())  // NOLINT
+                           ->getReturnType();                        // NOLINT
+        if (record->getReturnType() != retType) {
+          std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
+                    << " return type is different to var: "
+                    << tempBuffer[0].getTokenString() << " !\n" << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
         // save IR code
         IR.push_back(code);
       } else {
