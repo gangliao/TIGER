@@ -888,7 +888,7 @@ std::string Parser::getSymbolType(TokenPair A) {
   return typeA;
 }
 
-int Parser::evaPostfix(std::vector<TokenPair>& expr) {
+int Parser::evaPostfix(TokenPair var, std::vector<TokenPair>& expr) {
   std::stack<TokenPair> stack;
   for (size_t i = 0; i < expr.size(); ++i) {
     if (expr[i].getTokenType().getValue() == Symbol::Terminal::MULT ||
@@ -939,6 +939,10 @@ int Parser::evaPostfix(std::vector<TokenPair>& expr) {
   // final elem in stack
   TokenPair res = stack.top();
   stack.pop();
+
+  std::string code =
+      "assgin, " + var.getTokenString() + ", " + res.getTokenString() + ",";
+  IR.push_back(code);
   return res.getTokenType().getValue();
 }
 
@@ -1012,25 +1016,28 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       // IR: code
       std::string code = "call, " + tempBuffer[0].getTokenString();
       size_t j = 0;
-      for (size_t i = 2; i < tempBuffer.size() - 1; i+=2, ++j) {
+      for (size_t i = 2; i < tempBuffer.size() - 1; i += 2, ++j) {
         code += ", " + tempBuffer[i].getTokenString();
         RecordPtr record = g_SymbolTable[currentLevel]->lookup(
             Entry::Variables, tempBuffer[i].getTokenString());
         if (j >= paramTypes.size()) {
           std::cerr << "\nError: function " << tempBuffer[0].getTokenString()
-                    << " has too many parameters! \n" << std::endl;
-          std::exit(EXIT_FAILURE);          
+                    << " has too many parameters! \n"
+                    << std::endl;
+          std::exit(EXIT_FAILURE);
         }
 
         if (record->getType() != paramTypes[j]) {
           std::cerr << tempBuffer[i].getTokenString()
-                    << " is not defined before! \n" << std::endl;
+                    << " is not defined before! \n"
+                    << std::endl;
           std::exit(EXIT_FAILURE);
         }
       }
       if (j != paramTypes.size()) {
         std::cerr << "\nError: function " << tempBuffer[0].getTokenString()
-                  << " parameter numbers is not matched! \n" << std::endl;
+                  << " parameter numbers is not matched! \n"
+                  << std::endl;
         std::exit(EXIT_FAILURE);
       }
 
@@ -1050,39 +1057,43 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
         std::string code = "callr, " + tempBuffer[0].getTokenString() + ", " +
                            tempBuffer[2].getTokenString();
         size_t j = 0;
-        for (size_t i = 4; i < tempBuffer.size() - 1; i+=2, ++j) {
+        for (size_t i = 4; i < tempBuffer.size() - 1; i += 2, ++j) {
           code += ", " + tempBuffer[i].getTokenString();
           RecordPtr record = g_SymbolTable[currentLevel]->lookup(
               Entry::Variables, tempBuffer[i].getTokenString());
           if (j >= paramTypes.size()) {
             std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
-                      << " has too many parameters! \n" << std::endl;
-            std::exit(EXIT_FAILURE);          
+                      << " has too many parameters! \n"
+                      << std::endl;
+            std::exit(EXIT_FAILURE);
           }
 
           if (record->getType() != paramTypes[j]) {
             std::cerr << tempBuffer[i].getTokenString()
-                      << " is not defined before! \n" << std::endl;
+                      << " is not defined before! \n"
+                      << std::endl;
             std::exit(EXIT_FAILURE);
           }
         }
         if (j != paramTypes.size()) {
           std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
-                    << " parameter numbers is not matched! \n" << std::endl;
+                    << " parameter numbers is not matched! \n"
+                    << std::endl;
           std::exit(EXIT_FAILURE);
         }
 
-        if(record->getReturnType() == "-") {
+        if (record->getReturnType() == "-") {
           std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
-                    << " does not have an return value! \n" << std::endl;
-          std::exit(EXIT_FAILURE);          
+                    << " does not have an return value! \n"
+                    << std::endl;
+          std::exit(EXIT_FAILURE);
         }
         // save IR code
         IR.push_back(code);
       } else {
         // assignment expression
         std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 2);
-        evaPostfix(postExpr);
+        evaPostfix(tempBuffer[0], postExpr);
       }
     }
   }

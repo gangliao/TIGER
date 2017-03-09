@@ -9,5 +9,5 @@ in
                                                   b := a | b;
         endif;
                 b := not(a);
-        a := printi(a);
+        printi(a);
 end
