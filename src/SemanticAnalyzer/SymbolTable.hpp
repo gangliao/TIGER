@@ -28,6 +28,10 @@ class SymbolTable {
   SymbolTable(int level) {
     scopeLevel = level;
     insertConstants();
+    builtinFunctions("printi", "-", {0}, {"int"}, {"i"});
+    builtinFunctions("flush", "-", {}, {}, {});
+    builtinFunctions("not", "int", {0}, {"int"}, {"i"});
+    builtinFunctions("exit", "-", {0}, {"int"}, {"i"});
   }
 
   std::map<SymbolTablePair, RecordPtr> getTable() { return table_; }
@@ -95,6 +99,34 @@ class SymbolTable {
       record->dimension = lookup(Entry::Types, arg1)->getDimension();
       record->type = lookup(Entry::Types, arg1)->getType();
     }
+    table_[idx] = record;
+  }
+
+  void builtinFunctions(std::string name, std::string retType,
+                        std::vector<int> dims,
+                        std::vector<std::string> paramTypes,
+                        std::vector<std::string> params) {
+    SymbolTablePair idx(Entry::Functions, name);                      
+    RecordPtr record = std::make_shared<Record>(scopeLevel);
+
+    record->parameterTypes.reserve(paramTypes.size());
+    record->parameters.reserve(params.size());
+    record->parameterDimensions.reserve(dims.size());
+
+    for (auto& paramType : paramTypes) {
+      // assign parameters type
+      record->parameterTypes.push_back(paramType);
+    }
+    for (auto& param : params) {
+      // assign parameters
+      record->parameters.push_back(param);
+    }
+    for (auto& dim : dims) {
+      // assign parameter dims
+      record->parameterDimensions.push_back(dim);
+    }
+    record->returnType = retType;
+
     table_[idx] = record;
   }
 
