@@ -913,8 +913,9 @@ int Parser::evaPostfix(std::vector<TokenPair>& expr) {
       g_SymbolTable[currentLevel]->insert(idx, record);
 
       // generate IR: op A B temp
-      std::string code = OperatorMapped[expr[i].getTokenType().getValue()] + ", " +
-          A.getTokenString() + ", " + B.getTokenString() + ", " + temp;
+      std::string code = OperatorMapped[expr[i].getTokenType().getValue()] +
+                         ", " + A.getTokenString() + ", " + B.getTokenString() +
+                         ", " + temp;
       IR.push_back(code);
 
       // push temp var into stack
@@ -995,12 +996,27 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
                                                  params);
   } else if (expr == Symbol::Action::MakeAssignEnd) {
     if (tempBuffer[1].getTokenString() == "(") { /* function */
-      RecordPtr record = g_SymbolTable[currentLevel]->lookup(Entry::Functions,
-                                    tempBuffer[0].getTokenString());
+      RecordPtr record = g_SymbolTable[currentLevel]->lookup(
+          Entry::Functions, tempBuffer[0].getTokenString());
       auto& dims = record->getParameterDimensions();
       auto& paramTypes = record->getParameterTypes();
 
-      
+      // semantic checking: param size
+      size_t j = 0;
+      for (size_t i = 2; i < tempBuffer.size() - 1; ++i, ++j) {
+        RecordPtr record = g_SymbolTable[currentLevel]->lookup(
+            Entry::Variables, tempBuffer[i].getTokenString());
+        if (record->getType() != paramTypes[j]) {
+          std::cerr << tempBuffer[i].getTokenString()
+                    << " is not defined before! \n";
+          std::exit(EXIT_FAILURE);
+        }
+      }
+      if (j != paramTypes.size()) {
+        std::cerr << "function " << tempBuffer[0].getTokenString()
+                  << " parametet numbers is not matched! \n";
+        std::exit(EXIT_FAILURE);
+      }
     } else { /* assignment */
       std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 2);
       evaPostfix(postExpr);
