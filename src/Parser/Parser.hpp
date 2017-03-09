@@ -92,7 +92,7 @@ class Parser final {
                                       size_t index);
 
   /// generate IR and symbol table elements from postfix expression
-  int evaPostfix(std::vector<TokenPair> &expr);
+  int evaPostfix(TokenPair var, std::vector<TokenPair> &expr);
 
   /// initialize Scop
   inline void initScoping() {

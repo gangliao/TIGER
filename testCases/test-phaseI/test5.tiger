@@ -1,5 +1,6 @@
 let
         var a, b : int := 0;
+        var c : float := 1.0;
 in
 
         if(a = b) then
@@ -8,6 +9,6 @@ in
 						  a := 2;
                                                   b := a | b;
         endif;
-                b := not(a);
-        a := printi(a);
+                c := not(a);
+        printi(a);
 end
