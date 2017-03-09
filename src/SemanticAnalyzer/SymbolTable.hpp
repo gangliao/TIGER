@@ -100,13 +100,13 @@ class SymbolTable {
 
   void insertConstants() {
     RecordPtr record1 = std::make_shared<Record>(scopeLevel);
-    record1->dimension = 1;
+    record1->dimension = 0;
     record1->type = "int";
     SymbolTablePair idx1(Entry::Types, "int");
     table_[idx1] = record1;
 
     RecordPtr record2 = std::make_shared<Record>(scopeLevel);
-    record2->dimension = 1;
+    record2->dimension = 0;
     record2->type = "float";
     SymbolTablePair idx2(Entry::Types, "float");
     table_[idx2] = record2;

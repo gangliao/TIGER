@@ -723,9 +723,7 @@ void Parser::initParseTable() {
                    Symbol::Terminal::LPAREN,               // NOLINT
                    Symbol::Terminal::INTLIT,               // NOLINT
                    Symbol::Terminal::FLOATLIT},            // NOLINT
-                  {Symbol::Action::MakeExprBegin,          // NOLINT
-                   Symbol::Nonterminal::EXPR,              // NOLINT
-                   Symbol::Action::MakeExprEnd,            // NOLINT
+                  {Symbol::Nonterminal::EXPR,              // NOLINT
                    Symbol::Nonterminal::EXPR_LIST_TAIL});  // NOLINT
 
   // 87: <expr-list-tail> -> , <expr> <expr-list-tail>
@@ -997,13 +995,14 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
                                                  params);
   } else if (expr == Symbol::Action::MakeAssignEnd) {
     if (tempBuffer[1].getTokenString() == "(") { /* function */
-      // ....
+      RecordPtr record = g_SymbolTable[currentLevel]->lookup(Entry::Functions,
+                                    tempBuffer[0].getTokenString());
+      auto& dims = record->getParameterDimensions();
+      auto& paramTypes = record->getParameterTypes();
+
+      
     } else { /* assignment */
       std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 2);
-      for (auto& tokenPair : postExpr) {
-        std::cout << tokenPair.emit();
-      }
-      std::cout << std::endl;
       evaPostfix(postExpr);
     }
   }
