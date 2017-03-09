@@ -54,6 +54,9 @@ class Parser final {
   /// parse scanner's tokens
   void parse();
 
+  /// generate IR code
+  void ir_code();
+
   /// parse error info
   void error(int expr, TokenPair *word);
 
@@ -69,6 +72,9 @@ class Parser final {
  private:
   /// initialize terminal map data structure: terminalMapped
   void initializeTerminalMapped();
+
+  /// initial symbol string for IR
+  void initializeIRMapped();
 
   /// create parse table for Tiger
   void initParseTable();
@@ -118,6 +124,9 @@ class Parser final {
   int numTemps = 0;            /// generate temp variable for IR
   std::string globalFileName;  /// global file name
   std::stack<int> parseStack;  /// parse stack
+
+  std::unordered_map<int, std::string> OperatorMapped;
+  std::vector<std::string> IR;  /// IR container
 
   /// terminal symbol's string output for error info
   std::unordered_map<int, std::string> terminalMapped;

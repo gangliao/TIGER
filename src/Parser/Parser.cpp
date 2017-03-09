@@ -12,6 +12,7 @@ Parser::Parser(std::string fileName) : scanner(fileName) {
   parseStack.push(Symbol::Nonterminal::TIGER_PROGRAM);
   // initialize terminal map
   initializeTerminalMapped();
+  initializeIRMapped();
   // file name
   globalFileName = fileName;
   // count parse errors
@@ -622,11 +623,11 @@ void Parser::initParseTable() {
                   {Symbol::Terminal::NULLL});      // NOLINT
 
   // 68: <factor> -> (<expr>)
-  addToParseTable(Symbol::Nonterminal::FACTOR,     // NOLINT
-                  {Symbol::Terminal::LPAREN},      // NOLINT
-                  {Symbol::Terminal::LPAREN,       // NOLINT
-                   Symbol::Nonterminal::EXPR,      // NOLINT
-                   Symbol::Terminal::RPAREN});     // NOLINT
+  addToParseTable(Symbol::Nonterminal::FACTOR,  // NOLINT
+                  {Symbol::Terminal::LPAREN},   // NOLINT
+                  {Symbol::Terminal::LPAREN,    // NOLINT
+                   Symbol::Nonterminal::EXPR,   // NOLINT
+                   Symbol::Terminal::RPAREN});  // NOLINT
 
   // 69: <factor> -> <const>
   addToParseTable(Symbol::Nonterminal::FACTOR,    // NOLINT
@@ -914,18 +915,15 @@ int Parser::evaPostfix(std::vector<TokenPair>& expr) {
       g_SymbolTable[currentLevel]->insert(idx, record);
 
       // generate IR: op A B temp
-      std::cout << terminalMapped[expr[i].getTokenType().getValue()]
-                << " " << A.getTokenString()
-                << " " << B.getTokenString()
-                << " " << temp << std::endl;
+      std::string code = OperatorMapped[expr[i].getTokenType().getValue()] + ", " +
+          A.getTokenString() + ", " + B.getTokenString() + ", " + temp;
+      IR.push_back(code);
 
       // push temp var into stack
       TokenPair token(Symbol::Terminal::ID, temp);
       stack.push(token);
-    } else if (expr[i].getTokenType().getValue() ==
-                   Symbol::Terminal::ID ||
-               expr[i].getTokenType().getValue() ==
-                   Symbol::Terminal::INTLIT ||
+    } else if (expr[i].getTokenType().getValue() == Symbol::Terminal::ID ||
+               expr[i].getTokenType().getValue() == Symbol::Terminal::INTLIT ||
                expr[i].getTokenType().getValue() ==
                    Symbol::Terminal::FLOATLIT) {
       stack.push(expr[i]);
@@ -1002,10 +1000,10 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       // ....
     } else { /* assignment */
       std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 2);
-        for (auto& tokenPair : postExpr) {
-    std::cout << tokenPair.emit();
-  }
-  std::cout << std::endl;
+      for (auto& tokenPair : postExpr) {
+        std::cout << tokenPair.emit();
+      }
+      std::cout << std::endl;
       evaPostfix(postExpr);
     }
   }
@@ -1046,9 +1044,9 @@ bool Parser::detectAction(int symbol, bool& enable_buffer,
 
 void Parser::parse() {
   TokenPair* word = scanner.getToken();
+  std::cout << "\n\n[ RUN ] parsing code... \n\n";
   if (printDebug == true) {
-    std::cout << "\n\n[ RUN ] parsing code... \n\n"
-              << terminalMapped[word->getTokenType().getValue()] << " ";
+    std::cout << terminalMapped[word->getTokenType().getValue()] << " ";
   }
 
   int focus;
@@ -1102,6 +1100,39 @@ void Parser::parse() {
       } /* it != parseTable.end() */
     }   /* expr != word->getTokenType().getValue() */
   }     /* while */
+}
+
+void Parser::ir_code() {
+  std::cout << "\n\n----------------------------------------" << std::endl;
+  std::cout << "Generate IR CODE ..." << std::endl;
+  std::cout << "----------------------------------------" << std::endl;
+  for (size_t i = 0; i < IR.size(); ++i) {
+    std::cout << "    " << IR[i] << std::endl;
+  }
+  std::cout << "----------------------------------------\n" << std::endl;
+}
+
+void Parser::initializeIRMapped() {
+  // op: (op, y, z, x)
+  OperatorMapped[Symbol::Terminal::MULT] = "mult";
+  OperatorMapped[Symbol::Terminal::DIV] = "div";
+  OperatorMapped[Symbol::Terminal::PLUS] = "add";
+  OperatorMapped[Symbol::Terminal::MINUS] = "sub";
+  OperatorMapped[Symbol::Terminal::AND] = "and";
+  OperatorMapped[Symbol::Terminal::OR] = "or";
+  // assign: (op, x, y, _)
+  OperatorMapped[Symbol::Terminal::ASSIGN] = "assign";
+  // goto: (op, label, _, _)
+  OperatorMapped[Symbol::Terminal::BREAK] = "goto";
+  // branch (op, y, z, label)
+  OperatorMapped[Symbol::Terminal::NEQ] = "breq";
+  OperatorMapped[Symbol::Terminal::EQ] = "brneq";
+  OperatorMapped[Symbol::Terminal::GREATEREQ] = "brlt";
+  OperatorMapped[Symbol::Terminal::LESSEREQ] = "brgt";
+  OperatorMapped[Symbol::Terminal::LESSER] = "brgeq";
+  OperatorMapped[Symbol::Terminal::GREATER] = "brleq";
+  // return: (op, x, _, _)
+  OperatorMapped[Symbol::Terminal::RETURN] = "return";
 }
 
 void Parser::initializeTerminalMapped() {
@@ -1200,6 +1231,9 @@ int main(int argc, char** argv) {
 
   // Pass
   parser.parse();
+
+  // output IR
+  parser.ir_code();
 
   // Close all open files like
   parser.outFile.close();
