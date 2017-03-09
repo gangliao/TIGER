@@ -24,7 +24,7 @@ naive grammar
 5: <var-declaration-list> -> <var-declaration> <var-declaration-list>
 6: <var-declaration-list> -> NULL
 7: <funct-declaration-list> -> <funct-declaration> <funct-declaration-list>
-8: <funct-declaration-list> -> NULL 
+8: <funct-declaration-list> -> NULL
 
 # type-declaration
 9: <type-declaration> -> type id = <type>;

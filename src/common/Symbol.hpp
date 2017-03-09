@@ -20,7 +20,7 @@
 enum Entry { Variables, Constants, Types, Functions, Temporaries };
 
 class Symbol {
-public:
+ public:
   enum Terminal {
     // Keyword tokens
     ARRAY = 0,
@@ -84,33 +84,88 @@ public:
   };
 
   enum Nonterminal {
-    TIGER_PROGRAM,
+    TIGER_PROGRAM = 100,
     DECLARATION_SEGMENT,
     STAT_SEQ,
+    TYPE_DECLARATION_LIST,
+    VAR_DECLARATION_LIST,
+    FUNCT_DECLARATION_LIST,
+    TYPE_DECLARATION,
+    VAR_DECLARATION,
+    FUNCT_DECLARATION,
+    TYPE_EXPR,
+    TYPE_ID,
+    ID_LIST,
+    OPTIONAL_INIT,
+    ID_LIST_TAIL,
     CONST,
+    PARAM_LIST,
+    RET_TYPE,
+    PARAM,
+    PARAM_LIST_TAIL,
+    STAT,
+    STAT_SEQ_TAIL,
     EXPR,
-    // Fill in the required Non-Terminals
+    STAT_IF_TAIL,
+    STAT_FUNCT_OR_ASSIGN,
+    LVALUE_TAIL,
+    STAT_ASSIGN,
+    EXPR_LIST,
+    STAT_ASSIGN_STUFF,
+    STAT_ASSIGN_TAIL,
+    EXPR_TAIL,
+    OR_EXPR_TAIL,
+    AND_EXPR_TAIL,
+    COMPARE_TAIL,
+    TERM_TAIL,
+    OR_EXPR,
+    OR_OP,
+    AND_EXPR,
+    AND_OP,
+    COMPARE,
+    COMPARE_OP,
+    TERM,
+    ADD_OP,
+    FACTOR,
+    MUL_OP,
+    LVALUE,
+    EXPR_LIST_TAIL
   };
 
   enum Action {
-
     // Dealing with main
-    MakeMainLabel,
+    MakeMainLabel = 200,
     MakeReturn,
-    //
 
     // Scope
     InitializeScope,
     FinalizeScope,
 
-    // Fill in the required Actions
+    // type
+    MakeTypesBegin,
+    MakeTypesEnd,
 
+    // variable
+    MakeVariablesBegin,
+    MakeVariablesEnd,
+
+    // function
+    MakeFunctionsBegin,
+    MakeFunctionsEnd,
+
+    // assign
+    MakeAssignBegin,
+    MakeAssignEnd,
+
+    // expression
+    MakeExprBegin,
+    MakeExprEnd
   };
 
   void operator=(int value) { this->value = value; }
 
-  int getValue() { return value; }
+  int getValue() const { return value; }
 
-private:
+ private:
   int value;
 };
