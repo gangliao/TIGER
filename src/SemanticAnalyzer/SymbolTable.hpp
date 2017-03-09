@@ -183,7 +183,7 @@ class SymbolTable {
         std::cout << "Parameter dimensions: -" << std::endl;
         std::cout << "Return type: -" << std::endl;
       } else if (item.first.getEntry() == Entry::Variables) {
-        std::cout << "Variables:" << std::endl;
+        std::cout << "Variables" << std::endl;
         std::cout << "Name: " << item.first.getName() << std::endl;
         std::cout << "----------------------------------------" << std::endl;
         std::cout << "Scope: " << scopeLevel << std::endl;
@@ -194,7 +194,7 @@ class SymbolTable {
         std::cout << "Parameter dimensions: -" << std::endl;
         std::cout << "Return type: -" << std::endl;
       } else if (item.first.getEntry() == Entry::Functions) {
-        std::cout << "Functions:" << std::endl;
+        std::cout << "Functions" << std::endl;
         std::cout << "Name: " << item.first.getName() << std::endl;
         std::cout << "----------------------------------------" << std::endl;
         std::cout << "Scope: " << scopeLevel << std::endl;
