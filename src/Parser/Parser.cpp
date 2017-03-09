@@ -1018,19 +1018,19 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
             Entry::Variables, tempBuffer[i].getTokenString());
         if (j >= paramTypes.size()) {
           std::cerr << "\nError: function " << tempBuffer[0].getTokenString()
-                    << " has too many parameters! \n";
+                    << " has too many parameters! \n" << std::endl;
           std::exit(EXIT_FAILURE);          
         }
 
         if (record->getType() != paramTypes[j]) {
           std::cerr << tempBuffer[i].getTokenString()
-                    << " is not defined before! \n";
+                    << " is not defined before! \n" << std::endl;
           std::exit(EXIT_FAILURE);
         }
       }
       if (j != paramTypes.size()) {
         std::cerr << "\nError: function " << tempBuffer[0].getTokenString()
-                  << " parameter numbers is not matched! \n";
+                  << " parameter numbers is not matched! \n" << std::endl;
         std::exit(EXIT_FAILURE);
       }
 
@@ -1056,22 +1056,27 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
               Entry::Variables, tempBuffer[i].getTokenString());
           if (j >= paramTypes.size()) {
             std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
-                      << " has too many parameters! \n";
+                      << " has too many parameters! \n" << std::endl;
             std::exit(EXIT_FAILURE);          
           }
 
           if (record->getType() != paramTypes[j]) {
             std::cerr << tempBuffer[i].getTokenString()
-                      << " is not defined before! \n";
+                      << " is not defined before! \n" << std::endl;
             std::exit(EXIT_FAILURE);
           }
         }
         if (j != paramTypes.size()) {
           std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
-                    << " parameter numbers is not matched! \n";
+                    << " parameter numbers is not matched! \n" << std::endl;
           std::exit(EXIT_FAILURE);
         }
 
+        if(record->getReturnType() == "-") {
+          std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
+                    << " does not have an return value! \n" << std::endl;
+          std::exit(EXIT_FAILURE);          
+        }
         // save IR code
         IR.push_back(code);
       } else {
