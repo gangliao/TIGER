@@ -109,7 +109,7 @@ class Parser final {
   }
 
   /// generate new temp name
-  inline std::string new_temp() { return "t" + std::to_string(numTemps++); }
+  inline std::string new_temp() { return "$t" + std::to_string(numTemps++); }
 
   /// get terminal symbol type
   std::string getSymbolType(TokenPair A);

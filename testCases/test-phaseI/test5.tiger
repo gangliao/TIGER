@@ -1,10 +1,13 @@
 let
         var a, b : int := 0;
 in
+
         if(a = b) then
                 a := b + (2 + a) * b + (5 / b);
 				else
 						  a := 2;
+                                                  b := a | b;
         endif;
+                b := not(a, b);
         printi(a);
 end
