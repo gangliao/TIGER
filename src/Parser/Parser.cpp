@@ -730,9 +730,7 @@ void Parser::initParseTable() {
   addToParseTable(Symbol::Nonterminal::EXPR_LIST_TAIL,     // NOLINT
                   {Symbol::Terminal::COMMA},               // NOLINT
                   {Symbol::Terminal::COMMA,                // NOLINT
-                   Symbol::Action::MakeExprBegin,          // NOLINT
                    Symbol::Nonterminal::EXPR,              // NOLINT
-                   Symbol::Action::MakeExprEnd,            // NOLINT
                    Symbol::Nonterminal::EXPR_LIST_TAIL});  // NOLINT
 
   // 88: <expr-list-tail> -> NULL
@@ -799,6 +797,9 @@ std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
       case Symbol::Terminal::MULT:
       case Symbol::Terminal::DIV:
         return 2;
+      case Symbol::Terminal::AND:
+      case Symbol::Terminal::OR:
+        return 3;
       default:
         return 0;
     }
@@ -839,7 +840,11 @@ std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
                tempBuffer[i].getTokenType().getValue() ==
                    Symbol::Terminal::PLUS ||
                tempBuffer[i].getTokenType().getValue() ==
-                   Symbol::Terminal::MINUS) {
+                   Symbol::Terminal::MINUS ||
+               tempBuffer[i].getTokenType().getValue() ==
+                   Symbol::Terminal::AND ||
+               tempBuffer[i].getTokenType().getValue() ==
+                   Symbol::Terminal::OR) {
       if (stack.empty() ||
           stack.top().getTokenType().getValue() == Symbol::Terminal::LPAREN) {
         stack.push(tempBuffer[i]);
@@ -889,7 +894,9 @@ int Parser::evaPostfix(std::vector<TokenPair>& expr) {
     if (expr[i].getTokenType().getValue() == Symbol::Terminal::MULT ||
         expr[i].getTokenType().getValue() == Symbol::Terminal::DIV ||
         expr[i].getTokenType().getValue() == Symbol::Terminal::PLUS ||
-        expr[i].getTokenType().getValue() == Symbol::Terminal::MINUS) {
+        expr[i].getTokenType().getValue() == Symbol::Terminal::MINUS ||
+        expr[i].getTokenType().getValue() == Symbol::Terminal::AND ||
+        expr[i].getTokenType().getValue() == Symbol::Terminal::OR) {
       TokenPair A = stack.top();
       std::string typeA;
       stack.pop();
@@ -1005,27 +1012,78 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       // IR: code
       std::string code = "call, " + tempBuffer[0].getTokenString();
       size_t j = 0;
-      for (size_t i = 2; i < tempBuffer.size() - 1; ++i, ++j) {
+      for (size_t i = 2; i < tempBuffer.size() - 1; i+=2, ++j) {
         code += ", " + tempBuffer[i].getTokenString();
         RecordPtr record = g_SymbolTable[currentLevel]->lookup(
             Entry::Variables, tempBuffer[i].getTokenString());
+        if (j >= paramTypes.size()) {
+          std::cerr << "\nError: function " << tempBuffer[0].getTokenString()
+                    << " has too many parameters! \n" << std::endl;
+          std::exit(EXIT_FAILURE);          
+        }
+
         if (record->getType() != paramTypes[j]) {
           std::cerr << tempBuffer[i].getTokenString()
-                    << " is not defined before! \n";
+                    << " is not defined before! \n" << std::endl;
           std::exit(EXIT_FAILURE);
         }
       }
       if (j != paramTypes.size()) {
-        std::cerr << "function " << tempBuffer[0].getTokenString()
-                  << " parametet numbers is not matched! \n";
+        std::cerr << "\nError: function " << tempBuffer[0].getTokenString()
+                  << " parameter numbers is not matched! \n" << std::endl;
         std::exit(EXIT_FAILURE);
       }
 
-      // Save IR code
+      // save IR code
       IR.push_back(code);
     } else { /* assignment */
-      std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 2);
-      evaPostfix(postExpr);
+      if (tempBuffer[tempBuffer.size() - 1].getTokenString() == ")" &&
+          tempBuffer[3].getTokenString() == "(") {
+        // assignment function
+        RecordPtr record = g_SymbolTable[currentLevel]->lookup(
+            Entry::Functions, tempBuffer[2].getTokenString());
+        auto& dims = record->getParameterDimensions();
+        auto& paramTypes = record->getParameterTypes();
+
+        // semantic checking: param size
+        // IR: code
+        std::string code = "callr, " + tempBuffer[0].getTokenString() + ", " +
+                           tempBuffer[2].getTokenString();
+        size_t j = 0;
+        for (size_t i = 4; i < tempBuffer.size() - 1; i+=2, ++j) {
+          code += ", " + tempBuffer[i].getTokenString();
+          RecordPtr record = g_SymbolTable[currentLevel]->lookup(
+              Entry::Variables, tempBuffer[i].getTokenString());
+          if (j >= paramTypes.size()) {
+            std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
+                      << " has too many parameters! \n" << std::endl;
+            std::exit(EXIT_FAILURE);          
+          }
+
+          if (record->getType() != paramTypes[j]) {
+            std::cerr << tempBuffer[i].getTokenString()
+                      << " is not defined before! \n" << std::endl;
+            std::exit(EXIT_FAILURE);
+          }
+        }
+        if (j != paramTypes.size()) {
+          std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
+                    << " parameter numbers is not matched! \n" << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+
+        if(record->getReturnType() == "-") {
+          std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
+                    << " does not have an return value! \n" << std::endl;
+          std::exit(EXIT_FAILURE);          
+        }
+        // save IR code
+        IR.push_back(code);
+      } else {
+        // assignment expression
+        std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 2);
+        evaPostfix(postExpr);
+      }
     }
   }
 }

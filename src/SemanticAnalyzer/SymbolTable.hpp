@@ -106,7 +106,7 @@ class SymbolTable {
                         std::vector<int> dims,
                         std::vector<std::string> paramTypes,
                         std::vector<std::string> params) {
-    SymbolTablePair idx(Entry::Functions, name);                      
+    SymbolTablePair idx(Entry::Functions, name);
     RecordPtr record = std::make_shared<Record>(scopeLevel);
 
     record->parameterTypes.reserve(paramTypes.size());
