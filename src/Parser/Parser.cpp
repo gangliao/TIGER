@@ -1002,8 +1002,11 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       auto& paramTypes = record->getParameterTypes();
 
       // semantic checking: param size
+      // IR: code
+      std::string code = "call, " + tempBuffer[0].getTokenString();
       size_t j = 0;
       for (size_t i = 2; i < tempBuffer.size() - 1; ++i, ++j) {
+        code += ", " + tempBuffer[i].getTokenString();
         RecordPtr record = g_SymbolTable[currentLevel]->lookup(
             Entry::Variables, tempBuffer[i].getTokenString());
         if (record->getType() != paramTypes[j]) {
@@ -1017,6 +1020,9 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
                   << " parametet numbers is not matched! \n";
         std::exit(EXIT_FAILURE);
       }
+
+      // Save IR code
+      IR.push_back(code);
     } else { /* assignment */
       std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 2);
       evaPostfix(postExpr);
