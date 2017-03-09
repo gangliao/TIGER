@@ -19,7 +19,7 @@ id-list-tail epsilon
 optional-init := const 
 optional-init epsilon 
 funct-declaration function id ( param-list ) ret-type begin stat-seq end ; 
-param-list param , param-list-tail 
+param-list param param-list-tail 
 param-list epsilon 
 param-list-tail , param param-list-tail 
 param-list-tail epsilon 
@@ -41,7 +41,7 @@ stat-if-tail endif ;
 stat-funct-or-assign lvalue-tail := stat-assign ; 
 stat-funct-or-assign ( expr-list ) ; 
 stat-assign id stat-assign-stuff 
-stat-assign ( expr ) stat-assign-tail   
+stat-assign ( expr ) stat-assign-tail 
 stat-assign const stat-assign-tail 
 stat-assign-stuff ( expr-list ) 
 stat-assign-stuff lvalue-tail stat-assign-tail 

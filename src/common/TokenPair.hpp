@@ -8,11 +8,11 @@
 
 #include "Symbol.hpp"
 class TokenPair {
-private:
+ private:
   Symbol tokenType;
   std::string tokenString;
 
-public:
+ public:
   TokenPair(int tokenType, std::string tokenString) {
     this->tokenType = tokenType;
     this->tokenString = tokenString;

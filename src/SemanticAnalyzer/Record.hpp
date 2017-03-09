@@ -5,9 +5,10 @@
 #include <vector>
 
 class Record {
-public:
+ public:
   int scopeLevel = 0;
   std::string type = "";
+  std::string name = "";
   int dimension;
   std::vector<std::string> parameters;
   std::vector<std::string> parameterTypes;

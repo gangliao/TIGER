@@ -16,10 +16,10 @@ class rule:
     def __init__(self):
         self.lhs = []
         self.rhs = []
-        
+
     def print_rule(self):
         print self.lhs,self.rhs
-        
+
 def read_input_file(filename):
     f = open(filename, 'r')
     line_num = 0
@@ -34,7 +34,7 @@ def read_input_file(filename):
             len_lsplit -=1
             i +=1
         ll[-1]=ll[-1].rstrip() #remove \n from the last word
-        
+
         if(line_num > 0):
             list_of_lhs = [r1.lhs for r1 in rule_list]
             result = [element for element in list_of_lhs if element[0] == ll[0]]
@@ -68,10 +68,12 @@ def create_terminal_list():
         for j in range(0,len(rhs)):
             for k in range(0,len(rhs[j])):
                 found =0
-                #print rhs[j][k]
+                #print rhs[j][k], lhs_list
                 for l in lhs_list:
+                    #print rhs[j][k], l
                     if(rhs[j][k] in l):
                         found = 1
+                        #print "making found 1"
                 if((found ==0)and((rhs[j][k] not in terminal_list))):
                     terminal_list.append(rhs[j][k])
                 if((found ==1)and((rhs[j][k] not in non_terminal_list))):
@@ -88,7 +90,7 @@ def check_has_epsilon(l):
     return got_epsilon, ret_index
 
 def find_first_set(element):
-
+    #print "input is ---------------", element
     if element in terminal_list:
         #print "This is terminal node ....",element,element
         return (element,[element])
@@ -153,6 +155,7 @@ def check_if_nullable(element):
 def find_follow_set(element):
     #print "input is ---------------", element
 
+
     if(element in terminal_list):
         return []
     if(follow_set_list):
@@ -167,8 +170,11 @@ def find_follow_set(element):
         list_rhs = t[i][1]
         lhs = t[i][0]
         for j in range(0,len(list_rhs)):
+            #print list_rhs
             for k in range(0,len(list_rhs[j])):
+                #print list_rhs[j]
                 if(list_rhs[j][k] == element):
+                    #print list_rhs[j][k]
                     got_epsilon = 0
                     if(k == (len(list_rhs[j]) -1)):
                         if(list_rhs[j][k] != lhs[0]):
@@ -177,7 +183,7 @@ def find_follow_set(element):
                         n = k+1
                         while(n < (len(list_rhs[j]))):
                             first_set = find_first_set(list_rhs[j][n])
-                            #print "first set ..........",first_set,len(first_set[1])
+                           # print "first set ..........",first_set,len(first_set[1])
                             got_epsilon = 0
                             for m in range(0,len(first_set[1])):
                                 if(first_set[1][m]!="epsilon"):
@@ -208,32 +214,41 @@ def find_predict():
     for i in range(0,len(t)):
         list_rhs = t[i][1]
         lhs = t[i][0]
-
+        #if(lhs[0] == 'stat-funct-or-assign'):
+            #print "Ia m here"
+        #print "RHS ", list_rhs
         for j in range(0,len(list_rhs)):
-            #print "starting................",list_rhs[j][0], t[i][0],t[i][1][j]
-            first_set = get_from_first_set(list_rhs[j][0])
             got_epsilon = 0
             local_list = []
-            #print "first set", first_set
-            if(first_set):
-                for sublist in first_set:
-                    if(sublist != "epsilon"):
-                        local_list.append(sublist)
-                        #print "local list is ", local_list
-                    else:
-                        got_epsilon = 1
+            #print "starting................",list_rhs[j][0], len(list_rhs), list_rhs[j]
+            for k in range(0,len(list_rhs[j])):
+                fs = find_first_set(list_rhs[j][k])
+                got_epsilon,ret_index = check_has_epsilon(fs)
+                if(got_epsilon == 0):
+                    fs_in = fs[1][:]
+                    for idx in range(0,len(fs_in)):
+                        local_list.append(fs_in[idx])
+                    break
+                else:
+                    fs_in = fs[1][:ret_index]
+                    for idx in range(0,len(fs_in)):
+                        local_list.append(fs_in[idx])
+
             if(got_epsilon==1):
-                follow_set = get_from_follow_set(lhs[0])
-                #print "follow set", follow_set
-                if(follow_set):
-                    for sublist in follow_set:
-                        local_list.append(sublist)
+                e,l = find_follow_set(lhs[0])
+                for m in range(0,len(l)):
+                    if(l[m] not in local_list):
+                        local_list.append(l[m])
+
+
             t1 = t[i][0]+t[i][1][j]
+            #print t[i][0], t[i][1][j], t1
             predicted.append((t1,local_list))
+            #print (t1,local_list)
             #print "At last--------------",(t1,local_list)
 
-    #print "Predicted set is :"
-    #print predicted
+    print "Predicted set is :"
+    print predicted
 
 def  get_from_first_set(element):
 
@@ -291,6 +306,7 @@ def generate_parser_table():
 if __name__ == '__main__':
 
     read_input_file("Tiger_grammar.txt")
+
     create_terminal_list()
     ntl = non_terminal_list[:]
     #ntl.reverse()

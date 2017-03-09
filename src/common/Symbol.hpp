@@ -20,75 +20,110 @@
 enum Entry { Variables, Constants, Types, Functions, Temporaries };
 
 class Symbol {
-public:
+ public:
   enum Terminal {
     // Keyword tokens
-    ARRAY = 0,
-    BREAK,
-    DO,
-    ELSE,
-    END,
-    FOR,
-    FUNCTION,
-    IF,
+    LET = 0,
     IN,
-    LET,
-    OF,
-    THEN,
-    TO,
+    END,
     TYPE,
-    VAR,
-    WHILE,
-    ENDIF,
-    BEGIN,
-    ENDDO,
-    RETURN,
+    ID,
+    EQ,
+    SEMI,
+    ARRAY,
+    LBRACK,  //[
+    INTLIT,
+    RBRACK,  //]
+    OF,
     INT,
     FLOAT,
-
-    // Regular tokens
-    COMMA,
+    VAR,
     COLON,
-    SEMI,
-    LPAREN,
-    RPAREN,
-    LBRACK,
-    RBRACK,
-    LBRACE,
-    RBRACE,
-    PERIOD,
+    COMMA,
+    ASSIGN,  //:=
+    FUNCTION,
+    LPAREN,  //(
+    RPAREN,  //)
+    BEGIN,
+    IF,
+    THEN,
+    WHILE,
+    DO,
+    ENDDO,
+    FOR,
+    TO,
+    BREAK,
+    RETURN,
+    ELSE,
+    ENDIF,
+    AND,
+    OR,
+    NEQ,
+    GREATER,
+    LESSER,
+    GREATEREQ,
+    LESSEREQ,
     PLUS,
     MINUS,
     MULT,
     DIV,
-    EQ,
-    NEQ,
-    LESSER,
-    GREATER,
-    LESSEREQ,
-    GREATEREQ,
-    AND,
-    OR,
-    ASSIGN,
-    //
-    // Type tokens
-    ID,
-    INTLIT,
     FLOATLIT,
-
-    // NULL token
-    NULLL,
-
     // End of file token
-    EOFF
+    EOFF,  //$
+    LBRACE,
+    RBRACE,
+    PERIOD,
+    // NULL token
+    NULLL
   };
 
   enum Nonterminal {
-    TIGER_PROGRAM,
+    TIGER_PROGRAM = 101,
     DECLARATION_SEGMENT,
     STAT_SEQ,
+    TYPE_DECLARATION_LIST,
+    VAR_DECLARATION_LIST,
+    FUNCT_DECLARATION_LIST,
+    TYPE_DECLARATION,
+    VAR_DECLARATION,
+    FUNCT_DECLARATION,
+    TYPE_NONTER,
+    TYPE_ID,
+    ID_LIST,
+    OPTIONAL_INIT,
+    ID_LIST_TAIL,
     CONST,
+    PARAM_LIST,
+    RET_TYPE,
+    PARAM,
+    PARAM_LIST_TAIL,
+    STAT,
+    STAT_SEQ_TAIL,
     EXPR,
+    STAT_IF_TAIL,
+    STAT_FUNCT_OR_ASSIGN,
+    LVALUE_TAIL,
+    STAT_ASSIGN,
+    EXPR_LIST,
+    STAT_ASSIGN_STUFF,
+    STAT_ASSIGN_TAIL,
+    EXPR_TAIL,
+    OR_EXPR_TAIL,
+    AND_EXPR_TAIL,
+    COMPARE_TAIL,
+    TERM_TAIL,
+    OR_EXPR,
+    OR_OP,
+    AND_EXPR,
+    AND_OP,
+    COMPARE,
+    COMPARE_OP,
+    TERM,
+    ADD_OP,
+    FACTOR,
+    MUL_OP,
+    LVALUE,
+    EXPR_LIST_TAIL
     // Fill in the required Non-Terminals
   };
 
@@ -111,6 +146,6 @@ public:
 
   int getValue() { return value; }
 
-private:
+ private:
   int value;
 };
