@@ -160,9 +160,12 @@ class Symbol {
     // expression
     MakeExprBegin,
     MakeExprEnd,
+    EmdExprBegin,
+    EmdExprEnd,
 
     // for statement
     MakeForBegin,
+    MakeForMid,
     MakeForEnd
   };
 

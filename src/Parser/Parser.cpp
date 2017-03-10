@@ -409,9 +409,9 @@ void Parser::initParseTable() {
   addToParseTable(Symbol::Nonterminal::STAT,       // NOLINT
                   {Symbol::Terminal::WHILE},       // NOLINT
                   {Symbol::Terminal::WHILE,        // NOLINT
-                   Symbol::Action::MakeExprBegin,  // NOLINT
+                   Symbol::Action::EmdExprBegin,   // NOLINT
                    Symbol::Nonterminal::EXPR,      // NOLINT
-                   Symbol::Action::MakeExprEnd,    // NOLINT
+                   Symbol::Action::EmdExprEnd,     // NOLINT
                    Symbol::Terminal::DO,           // NOLINT
                    Symbol::Nonterminal::STAT_SEQ,  // NOLINT
                    Symbol::Terminal::ENDDO,        // NOLINT
@@ -424,11 +424,14 @@ void Parser::initParseTable() {
                    Symbol::Terminal::FOR,          // NOLINT
                    Symbol::Terminal::ID,           // NOLINT
                    Symbol::Terminal::ASSIGN,       // NOLINT
+                   Symbol::Action::EmdExprBegin,   // NOLINT
                    Symbol::Nonterminal::EXPR,      // NOLINT
-                   Symbol::Action::MakeExprEnd,    // NOLINT
+                   Symbol::Action::EmdExprEnd,     // NOLINT
                    Symbol::Terminal::TO,           // NOLINT
-                   Symbol::Action::MakeExprBegin,  // NOLINT
+                   Symbol::Action::EmdExprBegin,   // NOLINT
                    Symbol::Nonterminal::EXPR,      // NOLINT
+                   Symbol::Action::EmdExprEnd,     // NOLINT
+                   Symbol::Action::MakeForMid,     // NOLINT
                    Symbol::Terminal::DO,           // NOLINT
                    Symbol::Nonterminal::STAT_SEQ,  // NOLINT
                    Symbol::Terminal::ENDDO,        // NOLINT
@@ -887,7 +890,7 @@ std::string Parser::getSymbolType(TokenPair A) {
   return typeA;
 }
 
-int Parser::evaPostfix(TokenPair var, std::vector<TokenPair>& expr) {
+TokenPair Parser::evaPostfix(std::vector<TokenPair>& expr) {
   std::stack<TokenPair> stack;
   for (size_t i = 0; i < expr.size(); ++i) {
     if (expr[i].getTokenType().getValue() == Symbol::Terminal::MULT ||
@@ -939,17 +942,21 @@ int Parser::evaPostfix(TokenPair var, std::vector<TokenPair>& expr) {
   TokenPair res = stack.top();
   stack.pop();
 
-  std::string code =
-      "    assgin, " + var.getTokenString() + ", " + res.getTokenString() + ",";
-  IR.push_back(code);
-  return res.getTokenType().getValue();
+  return res;
 }
 
 void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
-  for (auto& tokenPair : tempBuffer) {
-    std::cout << tokenPair.emit();
+  // for (auto& tokenPair : tempBuffer) {
+  //   std::cout << tokenPair.emit();
+  // }
+  // std::cout << std::endl;
+  if (expr == Symbol::Action::MakeExprEnd ||
+      expr == Symbol::Action::EmdExprEnd) {
+    // expression
+    std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 0);
+    auto res = evaPostfix(postExpr);
+    tempStack_.push(res);
   }
-  std::cout << std::endl;
   if (expr == Symbol::Action::MakeTypesEnd) {
     SymbolTablePair idx(Entry::Types, tempBuffer[1].getTokenString());
     if (tempBuffer.size() <= 5) {
@@ -1138,13 +1145,58 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       } else {
         // assignment expression
         std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 2);
-        evaPostfix(tempBuffer[0], postExpr);
+        auto res = evaPostfix(postExpr);
+        std::string code = "    assgin, " + tempBuffer[0].getTokenString() +
+                           ", " + res.getTokenString() + ",";
+        IR.push_back(code);
       }
     }
   }
 }
 
-bool Parser::detectAction(int symbol, bool& enable_buffer,
+void Parser::parseForActionEnd(std::vector<TokenPair>& blockBuffer) {
+  // generate label's IR code
+  // add, 0i, 1, 0i
+  // goto, loop_label0, ,
+  // loop_label1
+  // <5, "for"><45, "i"><44, ":="><46, "0"><12, "to"><46, "100">
+  std::string code = "    add, " + blockBuffer[1].getTokenString() + ", " +
+                     "1, " + blockBuffer[1].getTokenString();
+  IR.push_back(code);
+  auto labelPair = labelStack_.top();
+  code = "    goto, " + labelPair.first + ", ,";
+  IR.push_back(code);
+  IR.push_back(labelPair.second + ":");
+}
+
+void Parser::parseForAction(std::vector<TokenPair>& blockBuffer) {
+  // semantic checking for types
+  auto type1 = getSymbolType(blockBuffer[3]);
+  auto type2 = getSymbolType(blockBuffer[5]);
+  if (type1 != "int" || type2 != "int") {
+    std::cerr << "\nError: function begin value is not integer !\n"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  // generate IR code
+  std::string code = "    assign, " + blockBuffer[1].getTokenString() + ", " +
+                     blockBuffer[3].getTokenString() + ",";
+  IR.push_back(code);
+
+  currLoopLabel_ = std::make_pair<std::string, std::string>(new_loop_label(),
+                                                            new_loop_label());
+  labelStack_.push(currLoopLabel_);
+
+  IR.push_back(currLoopLabel_.first + ":");
+
+  code = "    brgt, " + blockBuffer[1].getTokenString() + "," +
+         blockBuffer[5].getTokenString() + ", " + currLoopLabel_.second;
+}
+
+bool Parser::detectAction(int symbol, bool& enable_block,
+                          std::vector<TokenPair>& blockBuffer,
+                          bool& enable_buffer,
                           std::vector<TokenPair>& tempBuffer) {
   // check symbol action: scoping
   if (symbol == Symbol::Action::InitializeScope) {
@@ -1160,12 +1212,40 @@ bool Parser::detectAction(int symbol, bool& enable_buffer,
     IR.push_back(code);
     return true;
   }
+  if (symbol == Symbol::Action::EmdExprBegin) {
+    enable_block = false;
+    enable_buffer = true;
+    return true;
+  }
+  if (symbol == Symbol::Action::EmdExprEnd) {
+    enable_block = true;
+    enable_buffer = false;
+    parseAction(symbol, tempBuffer);
+    blockBuffer.push_back(tempStack_.top());
+    tempStack_.pop();
+    tempBuffer.clear();
+    return true;
+  }
   if (symbol == Symbol::Action::MakeForBegin) {
-    // aScoping();
+    enable_block = true;
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeForMid) {
+    // parsing for x := t0 to t1
+    // assign, 0i, 0,
+    // loop_label0:
+    // brgt, 0i, 100, loop_label1
+    enable_block = false;
+    parseForAction(blockBuffer);
     return true;
   }
   if (symbol == Symbol::Action::MakeForEnd) {
-    // functionScoping();
+    // generate label's IR code
+    // add, 0i, 1, 0i
+    // goto, loop_label0, ,
+    // loop_label1:
+    parseForActionEnd(blockBuffer);
+    blockBuffer.clear();
     return true;
   }
   if (symbol == Symbol::Action::MakeTypesBegin ||
@@ -1198,11 +1278,20 @@ void Parser::parse() {
   }
 
   int focus;
-  bool enable_buffer = false;
-  std::vector<int> null = {Symbol::Terminal::NULLL};
-  std::vector<TokenPair> tempBuffer;
-  tempBuffer.reserve(100);
 
+  // NULL symbol
+  std::vector<int> null = {Symbol::Terminal::NULLL};
+
+  // temp buffer to expr, type, var declaration
+  bool enable_buffer = false;
+  std::vector<TokenPair> tempBuffer;
+
+  // temp buffer to for statement
+  bool enable_block = false;
+  std::vector<TokenPair> blockBuffer;
+
+  tempBuffer.reserve(100);
+  blockBuffer.reserve(300);
   while (true) {
     // get the token and parse
     // complete parsing before going to semantic analysis
@@ -1215,15 +1304,20 @@ void Parser::parse() {
     parseStack.pop();
 
     // detect action and its post process
-    if (detectAction(expr, enable_buffer, tempBuffer)) continue;
+    if (detectAction(expr, enable_block, blockBuffer, enable_buffer,
+                     tempBuffer))
+      continue;
 
     focus = word->getTokenType().getValue();
 
     if (expr == focus) {
-      if (enable_buffer == true) {
+      if (enable_block == true) {
+        blockBuffer.push_back(*word);
+      } else if (enable_buffer == true) {
         tempBuffer.push_back(*word);
       }
       if (focus == Symbol::Terminal::EOFF && parseStack.empty()) {
+        IR.push_back("    return, , ,");
         std::cout << "\n\n[ OK ] successful parse..." << std::endl;
         break;
       } else {
