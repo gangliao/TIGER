@@ -166,7 +166,11 @@ class Symbol {
     // for statement
     MakeForBegin,
     MakeForMid,
-    MakeForEnd
+    MakeForEnd,
+
+    // lvalue
+    MakeArrayBegin,
+    MakeArrayEnd
   };
 
   void operator=(int value) { this->value = value; }
