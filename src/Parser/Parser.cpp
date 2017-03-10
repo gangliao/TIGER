@@ -743,17 +743,19 @@ void Parser::initParseTable() {
                   {Symbol::Terminal::NULLL});           // NOLINT
 
   // 89: <lvalue> -> id <lvalue-tail>
-  addToParseTable(
-      Symbol::Nonterminal::LVALUE,                                // NOLINT
-      {Symbol::Terminal::ID},                                     // NOLINT
-      {Symbol::Terminal::ID, Symbol::Nonterminal::LVALUE_TAIL});  // NOLINT
+  addToParseTable(Symbol::Nonterminal::LVALUE,          // NOLINT
+                  {Symbol::Terminal::ID},               // NOLINT
+                  {Symbol::Terminal::ID,                // NOLINT
+                   Symbol::Nonterminal::LVALUE_TAIL});  // NOLINT
 
   // 90: <lvalue-tail> -> [<expr>]
   addToParseTable(Symbol::Nonterminal::LVALUE_TAIL,  // NOLINT
                   {Symbol::Terminal::LBRACK},        // NOLINT
-                  {Symbol::Terminal::LBRACK,         // NOLINT
+                  {Symbol::Action::MakeArrayBegin,     // NOLINT
+                   Symbol::Terminal::LBRACK,         // NOLINT
                    Symbol::Nonterminal::EXPR,        // NOLINT
-                   Symbol::Terminal::RBRACK});       // NOLINT
+                   Symbol::Terminal::RBRACK,         // NOLINT
+                   Symbol::Action::MakeArrayEnd});     // NOLINT
 
   // 91: <lvalue-tail> -> NULL
   addToParseTable(Symbol::Nonterminal::LVALUE_TAIL,  // NOLINT
@@ -946,10 +948,10 @@ TokenPair Parser::evaPostfix(std::vector<TokenPair>& expr) {
 }
 
 void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
-  // for (auto& tokenPair : tempBuffer) {
-  //   std::cout << tokenPair.emit();
-  // }
-  // std::cout << std::endl;
+  for (auto& tokenPair : tempBuffer) {
+    std::cout << tokenPair.emit();
+  }
+  std::cout << std::endl;
   if (expr == Symbol::Action::MakeExprEnd ||
       expr == Symbol::Action::EmdExprEnd) {
     // expression
@@ -1159,7 +1161,6 @@ void Parser::parseForActionEnd(std::vector<TokenPair>& blockBuffer) {
   // add, 0i, 1, 0i
   // goto, loop_label0, ,
   // loop_label1
-  // <5, "for"><45, "i"><44, ":="><46, "0"><12, "to"><46, "100">
   std::string code = "    add, " + blockBuffer[1].getTokenString() + ", " +
                      "1, " + blockBuffer[1].getTokenString();
   IR.push_back(code);
@@ -1192,6 +1193,16 @@ void Parser::parseForAction(std::vector<TokenPair>& blockBuffer) {
 
   code = "    brgt, " + blockBuffer[1].getTokenString() + "," +
          blockBuffer[5].getTokenString() + ", " + currLoopLabel_.second;
+}
+
+std::vector<TokenPair> Parser::subTokenPairs(
+    const std::vector<TokenPair>& buffer, size_t actBegin, size_t actEnd) {
+  std::vector<TokenPair> arr;
+  arr.reserve(actEnd - actBegin);
+  for (size_t i = actBegin; i < actEnd; ++i) {
+    arr.push_back(buffer[i]);
+  }
+  return arr;
 }
 
 bool Parser::detectAction(int symbol, bool& enable_block,
@@ -1246,6 +1257,42 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     // loop_label1:
     parseForActionEnd(blockBuffer);
     blockBuffer.clear();
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeArrayBegin) {  // [expr]
+    actBegin_ = tempBuffer.size() + 1;
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeArrayEnd) {  // [expr]
+    actEnd_ = tempBuffer.size() - 1;
+    std::vector<TokenPair> expr = subTokenPairs(tempBuffer, actBegin_, actEnd_);
+
+    std::vector<TokenPair> postExpr = cvt2PostExpr(expr, 0);
+    auto res = evaPostfix(postExpr);
+
+    // generate temp var
+    std::string temp = new_temp();
+    // define record
+    SymbolTablePair idx(Entry::Variables, temp);
+    RecordPtr record = std::make_shared<Record>(currentLevel);
+    // set record attributes
+    record->type = getSymbolType(tempBuffer[actBegin_ - 2]);
+    record->dimension = 0;
+    // insert into symbol table
+    g_SymbolTable[currentLevel]->insert(idx, record);
+
+    // generate IR code
+    std::string code = "    array_load, " + temp + ", " +
+                       tempBuffer[actBegin_ - 2].getTokenString() + ", " +
+                       res.getTokenString();
+    IR.push_back(code);
+
+    // push it into temp buffer
+    tempBuffer.erase(tempBuffer.begin() + actBegin_ - 2,
+                     tempBuffer.begin() + actEnd_ + 1);
+
+    TokenPair tempPair(Symbol::Terminal::ID, temp);
+    tempBuffer.push_back(tempPair);
     return true;
   }
   if (symbol == Symbol::Action::MakeTypesBegin ||

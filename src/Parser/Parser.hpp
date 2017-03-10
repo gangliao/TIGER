@@ -120,6 +120,10 @@ class Parser final {
     return "loop_label" + std::to_string(numLoops++);
   }
 
+  /// get sub token pairs buffer
+  inline std::vector<TokenPair> subTokenPairs(
+      const std::vector<TokenPair> &buffer, size_t actBegin, size_t actEnd);
+
   /// get terminal symbol type
   std::string getSymbolType(TokenPair A);
 
@@ -155,4 +159,8 @@ class Parser final {
 
   /// temp symbol table to the function
   SymbolTablePtr tempSymbolTable_;
+
+  /// current action begin and end postion in temp buffer
+  size_t actBegin_;
+  size_t actEnd_;
 };
