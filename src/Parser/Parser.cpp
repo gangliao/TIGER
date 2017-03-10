@@ -970,20 +970,28 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
     for (size_t j = 1; j < i; j += 2) {
       if (tempBuffer.size() <= i + 5) { /* var a : id := 10; */
         SymbolTablePair idx(Entry::Variables, tempBuffer[j].getTokenString());
+
+        // insert var into symbol table
         g_SymbolTable[currentLevel]->insertVariables(
             idx, tempBuffer[i + 1].getTokenString());
 
-        auto type =
-            g_SymbolTable[currentLevel]
-                ->lookup(Entry::Types, tempBuffer[i + 1].getTokenString())
-                ->getType();
+        // generate IR code
+        auto record = g_SymbolTable[currentLevel]->lookup(
+            Entry::Types, tempBuffer[i + 1].getTokenString());
+        auto type = record->getType();
+        int dims = record->getDimension();
+
+        // get the init value
+        std::string code = "assign, " + tempBuffer[j].getTokenString() + ", ";
         std::string value = tempBuffer[tempBuffer.size() - 2].getTokenString();
         if (tempBuffer.size() <= i + 3) {
           value = (type == "int") ? "0" : "0.0";
         }
-        // generate IR code
-        std::string code =
-            "assign, " + tempBuffer[j].getTokenString() + ", " + value + ",";
+        if (dims > 0) {
+          code += std::to_string(dims) + ", " + value;
+        } else {
+          code += value + ",";
+        }
         IR.push_back(code);
       } else { /* var a : array[100] of id := 10; */
         SymbolTablePair idx(Entry::Variables, tempBuffer[j].getTokenString());
