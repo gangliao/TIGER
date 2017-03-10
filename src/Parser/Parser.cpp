@@ -1023,8 +1023,6 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       }
     }
   } else if (expr == Symbol::Action::MakeAssignEnd) {
-    std::cout << "mmemem";
-    g_SymbolTable[currentLevel]->dump();
     if (tempBuffer[1].getTokenString() == "(") { /* function */
       RecordPtr record = g_SymbolTable[currentLevel]->lookup(
           Entry::Functions, tempBuffer[0].getTokenString());
