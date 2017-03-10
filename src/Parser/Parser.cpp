@@ -1193,6 +1193,7 @@ void Parser::parseForAction(std::vector<TokenPair>& blockBuffer) {
 
   code = "    brgt, " + blockBuffer[1].getTokenString() + "," +
          blockBuffer[5].getTokenString() + ", " + currLoopLabel_.second;
+  IR.push_back(code);
 }
 
 std::vector<TokenPair> Parser::subTokenPairs(
