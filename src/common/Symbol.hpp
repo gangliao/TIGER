@@ -151,6 +151,7 @@ class Symbol {
 
     // function
     MakeFunctionsBegin,
+    MakeFunctionsMid,
     MakeFunctionsEnd,
 
     // assign

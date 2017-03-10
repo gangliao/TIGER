@@ -192,9 +192,10 @@ void Parser::initParseTable() {
                    Symbol::Nonterminal::PARAM_LIST,        // NOLINT
                    Symbol::Terminal::RPAREN,               // NOLINT
                    Symbol::Nonterminal::RET_TYPE,          // NOLINT
-                   Symbol::Action::MakeFunctionsEnd,       // NOLINT
+                   Symbol::Action::MakeFunctionsMid,       // NOLINT
                    Symbol::Terminal::BEGIN,                // NOLINT
                    Symbol::Nonterminal::STAT_SEQ,          // NOLINT
+                   Symbol::Action::MakeFunctionsEnd,       // NOLINT
                    Symbol::Terminal::END,                  // NOLINT
                    Symbol::Terminal::SEMI});               // NOLINT
 
@@ -751,11 +752,11 @@ void Parser::initParseTable() {
   // 90: <lvalue-tail> -> [<expr>]
   addToParseTable(Symbol::Nonterminal::LVALUE_TAIL,  // NOLINT
                   {Symbol::Terminal::LBRACK},        // NOLINT
-                  {Symbol::Action::MakeArrayBegin,     // NOLINT
+                  {Symbol::Action::MakeArrayBegin,   // NOLINT
                    Symbol::Terminal::LBRACK,         // NOLINT
                    Symbol::Nonterminal::EXPR,        // NOLINT
                    Symbol::Terminal::RBRACK,         // NOLINT
-                   Symbol::Action::MakeArrayEnd});     // NOLINT
+                   Symbol::Action::MakeArrayEnd});   // NOLINT
 
   // 91: <lvalue-tail> -> NULL
   addToParseTable(Symbol::Nonterminal::LVALUE_TAIL,  // NOLINT
@@ -791,8 +792,6 @@ void Parser::error(int expr, TokenPair* word) {
 
 std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
                                             size_t index) {
-  // TODO(gangliao): consider array
-  // have a bug when expr includes ()
   auto prec = [&](int op) -> int {
     switch (op) {
       case Symbol::Terminal::PLUS:
@@ -1023,30 +1022,6 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
         IR.push_back(code);
       }
     }
-  } else if (expr == Symbol::Action::MakeFunctionsEnd) {
-    SymbolTablePair idx(Entry::Functions, tempBuffer[1].getTokenString());
-    std::vector<std::string> params;
-    std::vector<std::string> paramTypes;
-    size_t paramBeginIdx, paramEndIdx;
-    std::string retType;
-    for (size_t i = 0; i < tempBuffer.size(); ++i) {
-      if (tempBuffer[i].getTokenString() == "(") {
-        paramBeginIdx = i;
-      } else if (tempBuffer[i].getTokenString() == ")") {
-        paramEndIdx = i;
-      }
-    }
-    if (paramEndIdx + 1 == tempBuffer.size()) {
-      retType = "-";
-    } else {
-      retType = tempBuffer[paramEndIdx + 1].getTokenString();
-    }
-    for (size_t i = paramBeginIdx + 1; i < paramEndIdx; i += 4) {
-      params.push_back(tempBuffer[i].getTokenString());
-      paramTypes.push_back(tempBuffer[i + 2].getTokenString());
-    }
-    g_SymbolTable[currentLevel]->insertFunctions(idx, retType, paramTypes,
-                                                 params);
   } else if (expr == Symbol::Action::MakeAssignEnd) {
     if (tempBuffer[1].getTokenString() == "(") { /* function */
       RecordPtr record = g_SymbolTable[currentLevel]->lookup(
@@ -1060,8 +1035,7 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       size_t j = 0;
       for (size_t i = 2; i < tempBuffer.size() - 1; i += 2, ++j) {
         code += ", " + tempBuffer[i].getTokenString();
-        RecordPtr record = g_SymbolTable[currentLevel]->lookup(
-            Entry::Variables, tempBuffer[i].getTokenString());
+        auto type = getSymbolType(tempBuffer[i]);
         if (j >= paramTypes.size()) {
           std::cerr << "\nError: function " << tempBuffer[0].getTokenString()
                     << " has too many parameters! \n"
@@ -1069,7 +1043,7 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
           std::exit(EXIT_FAILURE);
         }
 
-        if (record->getType() != paramTypes[j]) {
+        if (type != paramTypes[j]) {
           std::cerr << tempBuffer[i].getTokenString()
                     << " is not defined before! \n"
                     << std::endl;
@@ -1196,6 +1170,62 @@ void Parser::parseForAction(std::vector<TokenPair>& blockBuffer) {
   IR.push_back(code);
 }
 
+void Parser::parseFuncAction(std::vector<TokenPair>& tempBuffer) {
+  for (auto& tokenPair : tempBuffer) {
+    std::cout << tokenPair.emit();
+  }
+  std::cout << std::endl;
+
+  SymbolTablePair idx(Entry::Functions, tempBuffer[1].getTokenString());
+  std::vector<std::string> params;
+  std::vector<std::string> paramTypes;
+  size_t paramBeginIdx, paramEndIdx;
+  std::string retType;
+  for (size_t i = 0; i < tempBuffer.size(); ++i) {
+    if (tempBuffer[i].getTokenString() == "(") {
+      paramBeginIdx = i;
+    } else if (tempBuffer[i].getTokenString() == ")") {
+      paramEndIdx = i;
+    }
+  }
+
+  if (paramEndIdx + 1 == tempBuffer.size()) {
+    retType = "-";
+  } else {
+    retType = getSymbolType(tempBuffer[paramEndIdx + 2]);
+  }
+  for (size_t i = paramBeginIdx + 1; i < paramEndIdx; i += 4) {
+    params.push_back(tempBuffer[i].getTokenString());
+    paramTypes.push_back(tempBuffer[i + 2].getTokenString());
+  }
+  g_SymbolTable[currentLevel]->insertFunctions(idx, retType, paramTypes,
+                                               params);
+
+  // insert var into function symbol table
+  for (size_t i = 0; i < params.size(); ++i) {
+    std::string varName = params[i];
+    std::string varType = g_SymbolTable[currentLevel]
+                              ->lookup(Entry::Types, paramTypes[i])
+                              ->getType();
+    int varDim = g_SymbolTable[currentLevel]
+                     ->lookup(Entry::Types, paramTypes[i])
+                     ->getDimension();
+
+    // insert function parameters as function symbol table elems
+    // define record
+    SymbolTablePair idx(Entry::Variables, varName);
+    RecordPtr record = std::make_shared<Record>(currentLevel + 1);
+    // set record attributes
+    record->type = varType;
+    record->dimension = varDim;
+    // insert into symbol table
+    g_SymbolTable[currentLevel + 1]->insert(idx, record);
+  }
+  // function print ( n : int, me : ArrayInt)
+  std::string code = tempBuffer[1].getTokenString() + ":";
+  IR.push_back(code);
+}
+
 std::vector<TokenPair> Parser::subTokenPairs(
     const std::vector<TokenPair>& buffer, size_t actBegin, size_t actEnd) {
   std::vector<TokenPair> arr;
@@ -1222,6 +1252,35 @@ bool Parser::detectAction(int symbol, bool& enable_block,
   if (symbol == Symbol::Action::MakeMainLabel) {
     std::string code = "main:";
     IR.push_back(code);
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeFunctionsBegin) {
+    enable_buffer = true;
+    currentLevel++;
+    SymbolTablePtr st = std::make_shared<SymbolTable>(currentLevel);
+    g_SymbolTable[currentLevel] = st;
+    currentLevel--;
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeFunctionsMid) {
+    // init sepcial symbol table for function
+    enable_buffer = false;
+    parseFuncAction(tempBuffer);
+    currentLevel++;
+    tempBuffer.clear();
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeFunctionsEnd) {
+  // if (tempBuffer[tempBuffer.size() - 1] == ")") {
+  //   // no return type
+  //   code = "    return, , ,";
+  // } else { /* have an return type */
+  //   tempBuffer[tempBuffer.size() - 1]
+  //   code = "    return, " + tempBuffer[tempBuffer.size() - 1] + ", ,";
+  // }    
+    std::string code = "    return, , ,";
+    IR.push_back(code);
+    currentLevel--;
     return true;
   }
   if (symbol == Symbol::Action::EmdExprBegin) {
@@ -1298,7 +1357,6 @@ bool Parser::detectAction(int symbol, bool& enable_block,
   }
   if (symbol == Symbol::Action::MakeTypesBegin ||
       symbol == Symbol::Action::MakeVariablesBegin ||
-      symbol == Symbol::Action::MakeFunctionsBegin ||
       symbol == Symbol::Action::MakeExprBegin ||
       symbol == Symbol::Action::MakeAssignBegin) {
     enable_buffer = true;
@@ -1306,7 +1364,6 @@ bool Parser::detectAction(int symbol, bool& enable_block,
   }
   if (symbol == Symbol::Action::MakeTypesEnd ||
       symbol == Symbol::Action::MakeVariablesEnd ||
-      symbol == Symbol::Action::MakeFunctionsEnd ||
       symbol == Symbol::Action::MakeExprEnd ||
       symbol == Symbol::Action::MakeAssignEnd) {
     enable_buffer = false;

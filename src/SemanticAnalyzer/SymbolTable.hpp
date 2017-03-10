@@ -78,7 +78,7 @@ class SymbolTable {
           lookup(Entry::Types, paramType)->getDimension());
     }
     // assign parameters
-    record->parameters = std::move(params);
+    record->parameters = params;
 
     // assign return type
     record->returnType = retType;
