@@ -26,7 +26,7 @@ void Parser::addToParseTable(const int nonterm,
                              const std::vector<int>& expand_rule) {
   for (auto& term : terminals) {
     SymbolTerminalPair stp(nonterm, term);
-    parseTable[stp] = expand_rule;
+    parseTable_[stp] = expand_rule;
   }
 }
 
@@ -42,6 +42,7 @@ void Parser::initParseTable() {
                    Symbol::Terminal::LET,                     // NOLINT
                    Symbol::Nonterminal::DECLARATION_SEGMENT,  // NOLINT
                    Symbol::Terminal::IN,                      // NOLINT
+                   Symbol::Action::MakeMainLabel,             // NOLINT
                    Symbol::Nonterminal::STAT_SEQ,             // NOLINT
                    Symbol::Terminal::END,                     // NOLINT
                    Symbol::Action::FinalizeScope});           // NOLINT
@@ -419,20 +420,20 @@ void Parser::initParseTable() {
   // 49: <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
   addToParseTable(Symbol::Nonterminal::STAT,       // NOLINT
                   {Symbol::Terminal::FOR},         // NOLINT
-                  {Symbol::Terminal::FOR,          // NOLINT
+                  {Symbol::Action::MakeForBegin,   // NOLINT
+                   Symbol::Terminal::FOR,          // NOLINT
                    Symbol::Terminal::ID,           // NOLINT
                    Symbol::Terminal::ASSIGN,       // NOLINT
-                   Symbol::Action::MakeExprBegin,  // NOLINT
                    Symbol::Nonterminal::EXPR,      // NOLINT
                    Symbol::Action::MakeExprEnd,    // NOLINT
                    Symbol::Terminal::TO,           // NOLINT
                    Symbol::Action::MakeExprBegin,  // NOLINT
                    Symbol::Nonterminal::EXPR,      // NOLINT
-                   Symbol::Action::MakeExprEnd,    // NOLINT
                    Symbol::Terminal::DO,           // NOLINT
                    Symbol::Nonterminal::STAT_SEQ,  // NOLINT
                    Symbol::Terminal::ENDDO,        // NOLINT
-                   Symbol::Terminal::SEMI});       // NOLINT
+                   Symbol::Terminal::SEMI,         // NOLINT
+                   Symbol::Action::MakeForEnd});   // NOLINT
 
   // 50: <stat> -> break;
   addToParseTable(Symbol::Nonterminal::STAT,  // NOLINT
@@ -918,9 +919,9 @@ int Parser::evaPostfix(TokenPair var, std::vector<TokenPair>& expr) {
       g_SymbolTable[currentLevel]->insert(idx, record);
 
       // generate IR: op A B temp
-      std::string code = OperatorMapped[expr[i].getTokenType().getValue()] +
-                         ", " + A.getTokenString() + ", " + B.getTokenString() +
-                         ", " + temp;
+      std::string code =
+          "    " + OperatorMapped[expr[i].getTokenType().getValue()] + ", " +
+          A.getTokenString() + ", " + B.getTokenString() + ", " + temp;
       IR.push_back(code);
 
       // push temp var into stack
@@ -939,7 +940,7 @@ int Parser::evaPostfix(TokenPair var, std::vector<TokenPair>& expr) {
   stack.pop();
 
   std::string code =
-      "assgin, " + var.getTokenString() + ", " + res.getTokenString() + ",";
+      "    assgin, " + var.getTokenString() + ", " + res.getTokenString() + ",";
   IR.push_back(code);
   return res.getTokenType().getValue();
 }
@@ -970,20 +971,29 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
     for (size_t j = 1; j < i; j += 2) {
       if (tempBuffer.size() <= i + 5) { /* var a : id := 10; */
         SymbolTablePair idx(Entry::Variables, tempBuffer[j].getTokenString());
+
+        // insert var into symbol table
         g_SymbolTable[currentLevel]->insertVariables(
             idx, tempBuffer[i + 1].getTokenString());
 
-        auto type =
-            g_SymbolTable[currentLevel]
-                ->lookup(Entry::Types, tempBuffer[i + 1].getTokenString())
-                ->getType();
+        // generate IR code
+        auto record = g_SymbolTable[currentLevel]->lookup(
+            Entry::Types, tempBuffer[i + 1].getTokenString());
+        auto type = record->getType();
+        int dims = record->getDimension();
+
+        // get the init value
+        std::string code =
+            "    assign, " + tempBuffer[j].getTokenString() + ", ";
         std::string value = tempBuffer[tempBuffer.size() - 2].getTokenString();
         if (tempBuffer.size() <= i + 3) {
           value = (type == "int") ? "0" : "0.0";
         }
-        // generate IR code
-        std::string code =
-            "assign, " + tempBuffer[j].getTokenString() + ", " + value + ",";
+        if (dims > 0) {
+          code += std::to_string(dims) + ", " + value;
+        } else {
+          code += value + ",";
+        }
         IR.push_back(code);
       } else { /* var a : array[100] of id := 10; */
         SymbolTablePair idx(Entry::Variables, tempBuffer[j].getTokenString());
@@ -998,8 +1008,9 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
         } else if (value == "float") {
           value = "0.0";
         }
-        std::string code = "assign, " + tempBuffer[j].getTokenString() + ", " +
-                           tempBuffer[i + 3].getTokenString() + ", " + value;
+        std::string code = "    assign, " + tempBuffer[j].getTokenString() +
+                           ", " + tempBuffer[i + 3].getTokenString() + ", " +
+                           value;
         IR.push_back(code);
       }
     }
@@ -1036,7 +1047,7 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
 
       // semantic checking: param size
       // IR: code
-      std::string code = "call, " + tempBuffer[0].getTokenString();
+      std::string code = "    call, " + tempBuffer[0].getTokenString();
       size_t j = 0;
       for (size_t i = 2; i < tempBuffer.size() - 1; i += 2, ++j) {
         code += ", " + tempBuffer[i].getTokenString();
@@ -1076,8 +1087,8 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
 
         // semantic checking: param size
         // IR: code
-        std::string code = "callr, " + tempBuffer[0].getTokenString() + ", " +
-                           tempBuffer[2].getTokenString();
+        std::string code = "    callr, " + tempBuffer[0].getTokenString() +
+                           ", " + tempBuffer[2].getTokenString();
         size_t j = 0;
         for (size_t i = 4; i < tempBuffer.size() - 1; i += 2, ++j) {
           code += ", " + tempBuffer[i].getTokenString();
@@ -1144,6 +1155,19 @@ bool Parser::detectAction(int symbol, bool& enable_buffer,
     finalizeScoping();
     return true;
   }
+  if (symbol == Symbol::Action::MakeMainLabel) {
+    std::string code = "main:";
+    IR.push_back(code);
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeForBegin) {
+    // aScoping();
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeForEnd) {
+    // functionScoping();
+    return true;
+  }
   if (symbol == Symbol::Action::MakeTypesBegin ||
       symbol == Symbol::Action::MakeVariablesBegin ||
       symbol == Symbol::Action::MakeFunctionsBegin ||
@@ -1170,7 +1194,7 @@ void Parser::parse() {
   TokenPair* word = scanner.getToken();
   std::cout << "\n\n[ RUN ] parsing code... \n\n";
   if (printDebug == true) {
-    std::cout << terminalMapped[word->getTokenType().getValue()] << " ";
+    std::cout << terminalMapped_[word->getTokenType().getValue()] << " ";
   }
 
   int focus;
@@ -1205,12 +1229,12 @@ void Parser::parse() {
       } else {
         word = scanner.getToken();
         if (printDebug == true) {
-          std::cout << terminalMapped[word->getTokenType().getValue()] << " ";
+          std::cout << terminalMapped_[word->getTokenType().getValue()] << " ";
         }
       }
     } else {
-      auto it = parseTable.find(SymbolTerminalPair(expr, focus));
-      if (it != parseTable.end()) {
+      auto it = parseTable_.find(SymbolTerminalPair(expr, focus));
+      if (it != parseTable_.end()) {
         auto& rule = it->second;
         if (rule != null) {
           for (auto& word : reverse_iterate(rule)) {
@@ -1221,7 +1245,7 @@ void Parser::parse() {
         numErrors++;
         error(expr, word);
         break;
-      } /* it != parseTable.end() */
+      } /* it != parseTable_.end() */
     }   /* expr != word->getTokenType().getValue() */
   }     /* while */
 }
@@ -1231,7 +1255,7 @@ void Parser::ir_code() {
   std::cout << "Generate IR CODE ..." << std::endl;
   std::cout << "----------------------------------------" << std::endl;
   for (size_t i = 0; i < IR.size(); ++i) {
-    std::cout << "    " << IR[i] << std::endl;
+    std::cout << IR[i] << std::endl;
   }
   std::cout << "----------------------------------------\n" << std::endl;
 }
@@ -1260,56 +1284,56 @@ void Parser::initializeIRMapped() {
 }
 
 void Parser::initializeTerminalMapped() {
-  terminalMapped[Symbol::Terminal::ARRAY] = "array";
-  terminalMapped[Symbol::Terminal::BREAK] = "break";
-  terminalMapped[Symbol::Terminal::DO] = "do";
-  terminalMapped[Symbol::Terminal::ELSE] = "else";
-  terminalMapped[Symbol::Terminal::END] = "end";
-  terminalMapped[Symbol::Terminal::FOR] = "for";
-  terminalMapped[Symbol::Terminal::FUNCTION] = "function";
-  terminalMapped[Symbol::Terminal::IF] = "if";
-  terminalMapped[Symbol::Terminal::IN] = "in";
-  terminalMapped[Symbol::Terminal::LET] = "let";
-  terminalMapped[Symbol::Terminal::OF] = "of";
-  terminalMapped[Symbol::Terminal::THEN] = "then";
-  terminalMapped[Symbol::Terminal::TO] = "to";
-  terminalMapped[Symbol::Terminal::TYPE] = "type";
-  terminalMapped[Symbol::Terminal::VAR] = "var";
-  terminalMapped[Symbol::Terminal::WHILE] = "while";
-  terminalMapped[Symbol::Terminal::ENDIF] = "endif";
-  terminalMapped[Symbol::Terminal::BEGIN] = "begin";
-  terminalMapped[Symbol::Terminal::ENDDO] = "enddo";
-  terminalMapped[Symbol::Terminal::RETURN] = "return";
-  terminalMapped[Symbol::Terminal::INT] = "int";
-  terminalMapped[Symbol::Terminal::FLOAT] = "float";
-  terminalMapped[Symbol::Terminal::COMMA] = ",";
-  terminalMapped[Symbol::Terminal::COLON] = ":";
-  terminalMapped[Symbol::Terminal::SEMI] = ";";
-  terminalMapped[Symbol::Terminal::LPAREN] = "(";
-  terminalMapped[Symbol::Terminal::RPAREN] = ")";
-  terminalMapped[Symbol::Terminal::LBRACK] = "[";
-  terminalMapped[Symbol::Terminal::RBRACK] = "]";
-  terminalMapped[Symbol::Terminal::LBRACE] = "{";
-  terminalMapped[Symbol::Terminal::RBRACE] = "}";
-  terminalMapped[Symbol::Terminal::PERIOD] = ".";
-  terminalMapped[Symbol::Terminal::PLUS] = "+";
-  terminalMapped[Symbol::Terminal::MINUS] = "-";
-  terminalMapped[Symbol::Terminal::MULT] = "*";
-  terminalMapped[Symbol::Terminal::DIV] = "/";
-  terminalMapped[Symbol::Terminal::EQ] = "=";
-  terminalMapped[Symbol::Terminal::NEQ] = "<>";
-  terminalMapped[Symbol::Terminal::LESSER] = "<";
-  terminalMapped[Symbol::Terminal::GREATER] = ">";
-  terminalMapped[Symbol::Terminal::LESSEREQ] = "<=";
-  terminalMapped[Symbol::Terminal::GREATEREQ] = ">=";
-  terminalMapped[Symbol::Terminal::AND] = "&";
-  terminalMapped[Symbol::Terminal::OR] = "|";
-  terminalMapped[Symbol::Terminal::ASSIGN] = ":=";
-  terminalMapped[Symbol::Terminal::ID] = "id";
-  terminalMapped[Symbol::Terminal::INTLIT] = "intlit";
-  terminalMapped[Symbol::Terminal::FLOATLIT] = "floatlit";
-  terminalMapped[Symbol::Terminal::NULLL] = "epsilon";
-  terminalMapped[Symbol::Terminal::EOFF] = "";
+  terminalMapped_[Symbol::Terminal::ARRAY] = "array";
+  terminalMapped_[Symbol::Terminal::BREAK] = "break";
+  terminalMapped_[Symbol::Terminal::DO] = "do";
+  terminalMapped_[Symbol::Terminal::ELSE] = "else";
+  terminalMapped_[Symbol::Terminal::END] = "end";
+  terminalMapped_[Symbol::Terminal::FOR] = "for";
+  terminalMapped_[Symbol::Terminal::FUNCTION] = "function";
+  terminalMapped_[Symbol::Terminal::IF] = "if";
+  terminalMapped_[Symbol::Terminal::IN] = "in";
+  terminalMapped_[Symbol::Terminal::LET] = "let";
+  terminalMapped_[Symbol::Terminal::OF] = "of";
+  terminalMapped_[Symbol::Terminal::THEN] = "then";
+  terminalMapped_[Symbol::Terminal::TO] = "to";
+  terminalMapped_[Symbol::Terminal::TYPE] = "type";
+  terminalMapped_[Symbol::Terminal::VAR] = "var";
+  terminalMapped_[Symbol::Terminal::WHILE] = "while";
+  terminalMapped_[Symbol::Terminal::ENDIF] = "endif";
+  terminalMapped_[Symbol::Terminal::BEGIN] = "begin";
+  terminalMapped_[Symbol::Terminal::ENDDO] = "enddo";
+  terminalMapped_[Symbol::Terminal::RETURN] = "return";
+  terminalMapped_[Symbol::Terminal::INT] = "int";
+  terminalMapped_[Symbol::Terminal::FLOAT] = "float";
+  terminalMapped_[Symbol::Terminal::COMMA] = ",";
+  terminalMapped_[Symbol::Terminal::COLON] = ":";
+  terminalMapped_[Symbol::Terminal::SEMI] = ";";
+  terminalMapped_[Symbol::Terminal::LPAREN] = "(";
+  terminalMapped_[Symbol::Terminal::RPAREN] = ")";
+  terminalMapped_[Symbol::Terminal::LBRACK] = "[";
+  terminalMapped_[Symbol::Terminal::RBRACK] = "]";
+  terminalMapped_[Symbol::Terminal::LBRACE] = "{";
+  terminalMapped_[Symbol::Terminal::RBRACE] = "}";
+  terminalMapped_[Symbol::Terminal::PERIOD] = ".";
+  terminalMapped_[Symbol::Terminal::PLUS] = "+";
+  terminalMapped_[Symbol::Terminal::MINUS] = "-";
+  terminalMapped_[Symbol::Terminal::MULT] = "*";
+  terminalMapped_[Symbol::Terminal::DIV] = "/";
+  terminalMapped_[Symbol::Terminal::EQ] = "=";
+  terminalMapped_[Symbol::Terminal::NEQ] = "<>";
+  terminalMapped_[Symbol::Terminal::LESSER] = "<";
+  terminalMapped_[Symbol::Terminal::GREATER] = ">";
+  terminalMapped_[Symbol::Terminal::LESSEREQ] = "<=";
+  terminalMapped_[Symbol::Terminal::GREATEREQ] = ">=";
+  terminalMapped_[Symbol::Terminal::AND] = "&";
+  terminalMapped_[Symbol::Terminal::OR] = "|";
+  terminalMapped_[Symbol::Terminal::ASSIGN] = ":=";
+  terminalMapped_[Symbol::Terminal::ID] = "id";
+  terminalMapped_[Symbol::Terminal::INTLIT] = "intlit";
+  terminalMapped_[Symbol::Terminal::FLOATLIT] = "floatlit";
+  terminalMapped_[Symbol::Terminal::NULLL] = "epsilon";
+  terminalMapped_[Symbol::Terminal::EOFF] = "";
 }
 
 /**
