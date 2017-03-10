@@ -748,9 +748,7 @@ void Parser::initParseTable() {
   addToParseTable(Symbol::Nonterminal::LVALUE_TAIL,  // NOLINT
                   {Symbol::Terminal::LBRACK},        // NOLINT
                   {Symbol::Terminal::LBRACK,         // NOLINT
-                   Symbol::Action::MakeExprBegin,    // NOLINT
                    Symbol::Nonterminal::EXPR,        // NOLINT
-                   Symbol::Action::MakeExprEnd,      // NOLINT
                    Symbol::Terminal::RBRACK});       // NOLINT
 
   // 91: <lvalue-tail> -> NULL
@@ -968,17 +966,41 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
         break;
       }
     }
+
     for (size_t j = 1; j < i; j += 2) {
-      if (tempBuffer.size() <= i + 4) {
+      if (tempBuffer.size() <= i + 5) { /* var a : id := 10; */
         SymbolTablePair idx(Entry::Variables, tempBuffer[j].getTokenString());
         g_SymbolTable[currentLevel]->insertVariables(
             idx, tempBuffer[i + 1].getTokenString());
-      } else {
+
+        auto type =
+            g_SymbolTable[currentLevel]
+                ->lookup(Entry::Types, tempBuffer[i + 1].getTokenString())
+                ->getType();
+        std::string value = tempBuffer[tempBuffer.size() - 2].getTokenString();
+        if (tempBuffer.size() <= i + 3) {
+          value = (type == "int") ? "0" : "0.0";
+        }
+        // generate IR code
+        std::string code =
+            "assign, " + tempBuffer[j].getTokenString() + ", " + value + ",";
+        IR.push_back(code);
+      } else { /* var a : array[100] of id := 10; */
         SymbolTablePair idx(Entry::Variables, tempBuffer[j].getTokenString());
         g_SymbolTable[currentLevel]->insertVariables(
             idx, tempBuffer[i + 1].getTokenString(),
             tempBuffer[i + 3].getTokenString(),
             tempBuffer[i + 6].getTokenString());
+        // generate IR code
+        std::string value = tempBuffer[tempBuffer.size() - 2].getTokenString();
+        if (value == "int") {
+          value = "0";
+        } else if (value == "float") {
+          value = "0.0";
+        }
+        std::string code = "assign, " + tempBuffer[j].getTokenString() + ", " +
+                           tempBuffer[i + 3].getTokenString() + ", " + value;
+        IR.push_back(code);
       }
     }
   } else if (expr == Symbol::Action::MakeFunctionsEnd) {
@@ -1096,7 +1118,8 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
         if (record->getReturnType() != retType) {
           std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
                     << " return type is different to var: "
-                    << tempBuffer[0].getTokenString() << " !\n" << std::endl;
+                    << tempBuffer[0].getTokenString() << " !\n"
+                    << std::endl;
           std::exit(EXIT_FAILURE);
         }
         // save IR code
