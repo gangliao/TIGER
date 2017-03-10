@@ -159,7 +159,11 @@ class Symbol {
 
     // expression
     MakeExprBegin,
-    MakeExprEnd
+    MakeExprEnd,
+
+    // for statement
+    MakeForBegin,
+    MakeForEnd
   };
 
   void operator=(int value) { this->value = value; }

@@ -129,8 +129,11 @@ class Parser final {
   std::vector<std::string> IR;  /// IR container
 
   /// terminal symbol's string output for error info
-  std::unordered_map<int, std::string> terminalMapped;
+  std::unordered_map<int, std::string> terminalMapped_;
 
   /// parse table for parsing
-  std::map<SymbolTerminalPair, std::vector<int>> parseTable;
+  std::map<SymbolTerminalPair, std::vector<int>> parseTable_;
+
+  /// temp symbol table to the function
+  SymbolTablePtr tempSymbolTable_;
 };
