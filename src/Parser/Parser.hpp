@@ -5,12 +5,12 @@
  */
 #pragma once
 
+#include <cstring>
+#include <unordered_map>
+
 #include "../Scanner/Scanner.hpp"
 #include "../SemanticAnalyzer/SymbolTable.hpp"
 #include "../SemanticAnalyzer/SymbolTerminalPair.hpp"
-
-#include <cstring>
-#include <unordered_map>
 
 /**
  * Disable copy macro.
@@ -82,6 +82,11 @@ class Parser final {
   /// parse action like TYPES, VARIABLES, FUNCTIONS declaration
   void parseAction(int expr, std::vector<TokenPair> &tempBuffer);
 
+  /// parse for action
+  void parseForAction(std::vector<TokenPair> &blockBuffer);
+
+  void parseForActionEnd(std::vector<TokenPair> &blockBuffer);
+
   /**
    * @brief parse expression from infix to postfix expression.
    *
@@ -92,7 +97,7 @@ class Parser final {
                                       size_t index);
 
   /// generate IR and symbol table elements from postfix expression
-  int evaPostfix(TokenPair var, std::vector<TokenPair> &expr);
+  TokenPair evaPostfix(std::vector<TokenPair> &expr);
 
   /// initialize Scop
   inline void initScoping() {
@@ -110,18 +115,26 @@ class Parser final {
 
   /// generate new temp name
   inline std::string new_temp() { return "$t" + std::to_string(numTemps++); }
+  /// generate new loop label name
+  inline std::string new_loop_label() {
+    return "loop_label" + std::to_string(numLoops++);
+  }
 
   /// get terminal symbol type
   std::string getSymbolType(TokenPair A);
 
   /// detect action
-  bool detectAction(int symbol, bool &enable_buffer,
+  bool detectAction(int symbol, bool &enable_block,
+                    std::vector<TokenPair> &blockBuffer, bool &enable_buffer,
                     std::vector<TokenPair> &tempBuffer);
 
-  Scanner scanner;             /// code scanner
-  int numErrors = 0;           /// how many errors detected
-  int currentLevel = -1;       /// current paser code's scope level
+  Scanner scanner;        /// code scanner
+  int numErrors = 0;      /// how many errors detected
+  int currentLevel = -1;  /// current paser code's scope level
+  std::pair<std::string, std::string>
+      currLoopLabel_;          /// current loop label name
   int numTemps = 0;            /// generate temp variable for IR
+  int numLoops = 0;            /// generate loop label name for IR
   std::string globalFileName;  /// global file name
   std::stack<int> parseStack;  /// parse stack
 
@@ -132,7 +145,13 @@ class Parser final {
   std::unordered_map<int, std::string> terminalMapped_;
 
   /// parse table for parsing
-  std::map<SymbolTerminalPair, std::vector<int>> parseTable_;
+  std::map<SymbolTerminalPair, std::vector<int> > parseTable_;
+
+  /// for begin and end expr stack
+  std::stack<TokenPair> tempStack_;
+
+  /// loop label stack
+  std::stack<std::pair<std::string, std::string> > labelStack_;
 
   /// temp symbol table to the function
   SymbolTablePtr tempSymbolTable_;
