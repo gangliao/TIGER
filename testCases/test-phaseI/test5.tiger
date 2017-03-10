@@ -9,6 +9,6 @@ in
 						  a := 2;
                                                   b := a | b;
         endif;
-                c := not(a);
+                not(a);
         printi(a);
 end
