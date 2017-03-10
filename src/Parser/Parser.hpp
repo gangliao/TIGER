@@ -85,7 +85,11 @@ class Parser final {
   /// parse for action
   void parseForAction(std::vector<TokenPair> &blockBuffer);
 
+  /// parse for statement end
   void parseForActionEnd(std::vector<TokenPair> &blockBuffer);
+
+  /// parse function action: function name (x:int) : return-type
+  void parseFuncAction(std::vector<TokenPair> &tempBuffer);
 
   /**
    * @brief parse expression from infix to postfix expression.
@@ -156,9 +160,6 @@ class Parser final {
 
   /// loop label stack
   std::stack<std::pair<std::string, std::string> > labelStack_;
-
-  /// temp symbol table to the function
-  SymbolTablePtr tempSymbolTable_;
 
   /// current action begin and end postion in temp buffer
   size_t actBegin_;
