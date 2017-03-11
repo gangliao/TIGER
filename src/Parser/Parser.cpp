@@ -1239,7 +1239,7 @@ void Parser::parseForAction(std::vector<TokenPair>& blockBuffer) {
   auto type1 = getSymbolType(blockBuffer[3]);
   auto type2 = getSymbolType(blockBuffer[5]);
   if (type1 != "int" || type2 != "int") {
-    std::cerr << "\nError: function begin value is not integer !\n"
+    std::cerr << "\nError: for statement begin or end value is not int type!\n"
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
