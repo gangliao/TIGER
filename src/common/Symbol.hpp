@@ -135,7 +135,6 @@ class Symbol {
   enum Action {
     // Dealing with main
     MakeMainLabel = 200,
-    MakeReturn,
 
     // Scope
     InitializeScope,
@@ -177,7 +176,11 @@ class Symbol {
     MakeIfBegin,
     MakeIfMid,
     MakeElseLabel,
-    MakeIfEnd
+    MakeIfEnd,
+
+    // return statement
+    MakeReturnBegin,
+    MakeReturnEnd
   };
 
   void operator=(int value) { this->value = value; }

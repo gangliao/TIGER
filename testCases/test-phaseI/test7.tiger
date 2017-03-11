@@ -6,5 +6,5 @@ let
 				return 10.0;
         end;
 in
-        x = print(5);					 /* return value is captured in int variable*/
+        x := print(5);					 /* return value is captured in int variable*/
 end
