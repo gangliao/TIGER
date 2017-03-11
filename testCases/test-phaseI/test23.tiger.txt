@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code... 
+[ RUN ] parsing code...
 
-let type id = array [ intlit ] of int ; var id : id ; var id : int := intlit ; var id : int := intlit ; function id ( id : int , id : int ) begin id [ intlit ] := id ; id [ intlit ] := id ; end ; in id ( id , id ) ; id [ intlit ] := id [ intlit + intlit + intlit * intlit - intlit ] * id [ intlit ] ; id ( id [ intlit ] ) ; id ( id [ intlit ] ) ; end  
+let type id = array [ intlit ] of int ; var id : id ; var id : int := intlit ; var id : int := intlit ; function id ( id : int , id : int ) begin id [ intlit ] := id ; id [ intlit ] := id ; end ; in id ( id , id ) ; id [ intlit ] := id [ intlit + intlit + intlit * intlit - intlit ] * id [ intlit ] ; id ( id [ intlit ] ) ; id ( id [ intlit ] ) ; end
 
 ----------------------------------------
 Table: Variables
@@ -295,4 +295,3 @@ main:
     call, printi, $t8
     return, , ,
 ----------------------------------------
-

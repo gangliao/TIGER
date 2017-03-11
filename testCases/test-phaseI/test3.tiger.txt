@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code... 
+[ RUN ] parsing code...
 
-let var id , id : float := floatlit ; function id ( id : int ) begin id ( id ) ; end ; in id ( intlit ) ; id := floatlit ; end  
+let var id , id : float := floatlit ; function id ( id : int ) begin id ( id ) ; end ; in id ( intlit ) ; id := floatlit ; end
 
 ----------------------------------------
 Table: Variables
@@ -139,4 +139,3 @@ main:
     assgin, X, 1.0,
     return, , ,
 ----------------------------------------
-

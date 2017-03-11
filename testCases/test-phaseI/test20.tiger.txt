@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code... 
+[ RUN ] parsing code...
 
-let var id , id : int := intlit ; var id : int := intlit ; in if ( id & id ) then id := id | intlit ; else id := intlit ; endif ; id ( id ) ; end  
+let var id , id : int := intlit ; var id : int := intlit ; in if ( id & id ) then id := id | intlit ; else id := intlit ; endif ; id ( id ) ; end
 
 ----------------------------------------
 Table: Variables
@@ -187,4 +187,3 @@ if_label2:
     call, printi, a
     return, , ,
 ----------------------------------------
-

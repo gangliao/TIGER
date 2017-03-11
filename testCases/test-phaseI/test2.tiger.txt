@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code... 
+[ RUN ] parsing code...
 
-let type id = array [ intlit ] of int ; function id ( id : int ) begin id ( id ) ; end ; in id ( intlit ) ; end  
+let type id = array [ intlit ] of int ; function id ( id : int ) begin id ( id ) ; end ; in id ( intlit ) ; end
 
 ----------------------------------------
 Table: Types
@@ -123,4 +123,3 @@ main:
     call, print, 5
     return, , ,
 ----------------------------------------
-

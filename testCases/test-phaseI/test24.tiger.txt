@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code... 
+[ RUN ] parsing code...
 
-let type id = array [ intlit ] of int ; var id : id ; var id : int := intlit ; var id : int := intlit ; var id : int := intlit ; var id : int ; var id : int ; var id : float := floatlit ; function id ( id : int ) : int begin return id + id ; end ; function id ( id : int ) : int begin id := id ( id ) ; id := id ( id ) ; return id ; end ; in for id := intlit + intlit to intlit + intlit do if ( id & intlit ) then id := id + id ; id := id / floatlit ; else id := id + id ; id := id / floatlit ; id := id - id ; id := id + id ; id := id + id ; for id := intlit to intlit do id := id + id ; enddo ; endif ; enddo ; id := id ( id ) ; id := id * intlit ; id ( id ) ; end  
+let type id = array [ intlit ] of int ; var id : id ; var id : int := intlit ; var id : int := intlit ; var id : int := intlit ; var id : int ; var id : int ; var id : float := floatlit ; function id ( id : int ) : int begin return id + id ; end ; function id ( id : int ) : int begin id := id ( id ) ; id := id ( id ) ; return id ; end ; in for id := intlit + intlit to intlit + intlit do if ( id & intlit ) then id := id + id ; id := id / floatlit ; else id := id + id ; id := id / floatlit ; id := id - id ; id := id + id ; id := id + id ; for id := intlit to intlit do id := id + id ; enddo ; endif ; enddo ; id := id ( id ) ; id := id * intlit ; id ( id ) ; end
 
 ----------------------------------------
 Table: Variables
@@ -449,4 +449,3 @@ loop_label1:
     call, printi, x
     return, , ,
 ----------------------------------------
-
