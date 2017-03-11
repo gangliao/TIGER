@@ -1,0 +1,14 @@
+/* test case for array store operation */
+let
+        type ArrayInt = array [100] of int; /* Declare ArrayInt as a new type */
+        var X, Y : ArrayInt := 100; /* Declare vars X and Y as arrays with initialization */
+		    var sum :  ArrayInt := 0; /* Declare out array*/
+        var i : int := 0;
+in
+        for i := 0 to 100 do /* for loop for dot product */
+                sum[i] := X[i] * Y [i];
+        enddo;
+		for i := 0 to 100 do /* for loop for print */
+			printi(sum[i]); /* library call to printi to print the dot product */
+		enddo;
+end
