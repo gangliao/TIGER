@@ -1,0 +1,7 @@
+
+
+[ RUN ] parsing code... 
+
+let var id , id : int := intlit ; in id := id ( id ) ; id ( id ) ; if ( id = intlit ) then id ( ) ; 
+Error: function exit parameter numbers is not matched! 
+

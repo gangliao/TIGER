@@ -1,0 +1,6 @@
+
+
+[ RUN ] parsing code... 
+
+let var id , id , id , id , id : float ; in id := floatlit ; id := floatlit ; id := floatlit ; id := floatlit ; id := floatlit ; id ( id ) ; 
+ Error: A: float mismatched to function printi parameter: int

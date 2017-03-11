@@ -1,0 +1,7 @@
+
+
+[ RUN ] parsing code... 
+
+let var id : int ; function id ( id : int , id : int ) : int begin id ( id ) ; id ( id ) ; return intlit ; end ; in id := id ( intlit ) ; 
+Error: function print parameter numbers is not matched! 
+
