@@ -1,7 +1,6 @@
-/* testing complex expression of mixed types, int and float */
+/* testing complex expression */
 let
-        var a, b, : int := 0;
-		var c, d  : float := 0;
+        var a, b, c, d : int := 0;
 in
         if(a = b) then
                 a := b + ( 5 * a) - ( 3 + c);
