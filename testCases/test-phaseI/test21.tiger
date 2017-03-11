@@ -8,6 +8,7 @@ in
                 sum := sum + X[i] * Y [i];
 			     if(i = 50) then
 				      break;
+		             endif;
         enddo;
         printi(sum); /* library call to printi to print the dot product */
 end
