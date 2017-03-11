@@ -180,7 +180,12 @@ class Symbol {
 
     // return statement
     MakeReturnBegin,
-    MakeReturnEnd
+    MakeReturnEnd,
+
+    // while statment
+    MakeWhileBegin,
+    MakeWhileMid,
+    MakeWhileEnd
   };
 
   void operator=(int value) { this->value = value; }

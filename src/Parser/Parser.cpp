@@ -409,16 +409,17 @@ void Parser::initParseTable() {
                   {Symbol::Nonterminal::TERM_TAIL});      // NOLINT
 
   // 48: <stat> -> while <expr> do <stat-seq> enddo;
-  addToParseTable(Symbol::Nonterminal::STAT,       // NOLINT
-                  {Symbol::Terminal::WHILE},       // NOLINT
-                  {Symbol::Terminal::WHILE,        // NOLINT
-                   Symbol::Action::EmdExprBegin,   // NOLINT
-                   Symbol::Nonterminal::EXPR,      // NOLINT
-                   Symbol::Action::EmdExprEnd,     // NOLINT
-                   Symbol::Terminal::DO,           // NOLINT
-                   Symbol::Nonterminal::STAT_SEQ,  // NOLINT
-                   Symbol::Terminal::ENDDO,        // NOLINT
-                   Symbol::Terminal::SEMI});       // NOLINT
+  addToParseTable(Symbol::Nonterminal::STAT,        // NOLINT
+                  {Symbol::Terminal::WHILE},        // NOLINT
+                  {Symbol::Terminal::WHILE,         // NOLINT
+                   Symbol::Action::MakeWhileBegin,  // NOLINT
+                   Symbol::Nonterminal::EXPR,       // NOLINT
+                   Symbol::Action::MakeWhileMid,    // NOLINT
+                   Symbol::Terminal::DO,            // NOLINT
+                   Symbol::Nonterminal::STAT_SEQ,   // NOLINT
+                   Symbol::Terminal::ENDDO,         // NOLINT
+                   Symbol::Action::MakeWhileEnd,    // NOLINT
+                   Symbol::Terminal::SEMI});        // NOLINT
 
   // 49: <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
   addToParseTable(Symbol::Nonterminal::STAT,       // NOLINT
@@ -995,9 +996,7 @@ TokenPair Parser::evaPostfix(std::vector<TokenPair>& expr) {
         std::string code = "    assign, " + temp + ", 0,";
         IR.push_back(code);
 
-        auto ifLabel = std::make_pair<std::string, std::string>(new_if_label(),
-                                                                new_if_label());
-        labelStack_.push(ifLabel);
+        auto ifLabel = labelStack_.top();
 
         code = "    " + OperatorMapped[expr[i].getTokenType().getValue()] +
                ", " + A.getTokenString() + ", " + B.getTokenString() + ", " +
@@ -1025,10 +1024,10 @@ TokenPair Parser::evaPostfix(std::vector<TokenPair>& expr) {
 }
 
 void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
-  for (auto& tokenPair : tempBuffer) {
-    std::cout << tokenPair.emit();
-  }
-  std::cout << std::endl;
+  // for (auto& tokenPair : tempBuffer) {
+  //   std::cout << tokenPair.emit();
+  // }
+  // std::cout << std::endl;
   if (expr == Symbol::Action::MakeExprEnd ||
       expr == Symbol::Action::EmdExprEnd) {
     // expression
@@ -1243,9 +1242,7 @@ void Parser::parseForAction(std::vector<TokenPair>& blockBuffer) {
                      blockBuffer[3].getTokenString() + ",";
   IR.push_back(code);
 
-  auto loopLabel = std::make_pair<std::string, std::string>(new_loop_label(),
-                                                            new_loop_label());
-  labelStack_.push(loopLabel);
+  auto loopLabel =labelStack_.top();
 
   IR.push_back(loopLabel.first + ":");
 
@@ -1324,10 +1321,7 @@ void Parser::parseIfAction(std::vector<TokenPair>& tempBuffer) {
     std::string code = "    assign, " + temp + ", 0,";
     IR.push_back(code);
 
-    auto ifLabel = std::make_pair<std::string, std::string>(new_if_label(),
-                                                            new_if_label());
-    labelStack_.push(ifLabel);
-
+    auto ifLabel = labelStack_.top();
     code = "    brneq, " + res.getTokenString() + ", 0, " + ifLabel.first;
     IR.push_back(code);
 
@@ -1371,6 +1365,35 @@ void Parser::parseReturnAction(std::vector<TokenPair>& tempBuffer) {
   isFuncRet_ = true;
 }
 
+void Parser::parseWhileAction(std::vector<TokenPair>& tempBuffer) {
+  std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 0);
+  auto res = evaPostfix(postExpr);
+  if (res.getTokenString() != "unkown") {
+    std::string temp = new_temp();
+    RecordPtr record = std::make_shared<Record>(currentLevel);
+    SymbolTablePair idx(Entry::Variables, temp);
+    record->type = "int";
+    record->dimension = 0;
+    g_SymbolTable[currentLevel]->insert(idx, record);
+
+    std::string code = "    assign, " + temp + ", 0,";
+    IR.push_back(code);
+
+    auto ifLabel = labelStack_.top();
+    code = "    brneq, " + res.getTokenString() + ", 0, " + ifLabel.first;
+    IR.push_back(code);
+
+    code = "    assign, " + temp + ", 1,";
+    IR.push_back(code);
+
+    code = ifLabel.first + ":";
+    IR.push_back(code);
+
+    code = "    breq, " + temp + ", 0, " + ifLabel.second;
+    IR.push_back(code);
+  }  
+}
+
 std::vector<TokenPair> Parser::subTokenPairs(
     const std::vector<TokenPair>& buffer, size_t actBegin, size_t actEnd) {
   std::vector<TokenPair> arr;
@@ -1399,6 +1422,31 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     IR.push_back(code);
     return true;
   }
+  if (symbol == Symbol::Action::MakeWhileBegin) {
+    enable_buffer = true;
+    auto labels = std::make_pair<std::string, std::string>(new_loop_label(),
+                                                           new_loop_label());
+    currLoopLabel_ = labels;
+    IR.push_back(labels.first + ":");
+
+    labels.first = labels.second;
+    labels.second = new_loop_label();
+    labelStack_.push(labels);
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeWhileMid) {
+    enable_buffer = false;
+    parseWhileAction(tempBuffer);
+    tempBuffer.clear();
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeWhileEnd) {
+    auto labels = labelStack_.top();
+    IR.push_back("    goto, " + currLoopLabel_.first + ", ,");
+    IR.push_back(labels.second + ":");
+    labelStack_.pop();
+    return true;
+  }
   if (symbol == Symbol::Action::MakeReturnBegin) {
     enable_buffer = true;
     return true;
@@ -1411,6 +1459,9 @@ bool Parser::detectAction(int symbol, bool& enable_block,
   }
   if (symbol == Symbol::Action::MakeIfBegin) {
     enable_buffer = true;
+    auto ifLabel = std::make_pair<std::string, std::string>(new_if_label(),
+                                                            new_if_label());
+    labelStack_.push(ifLabel);
     return true;
   }
   if (symbol == Symbol::Action::MakeIfMid) {
@@ -1484,6 +1535,10 @@ bool Parser::detectAction(int symbol, bool& enable_block,
   }
   if (symbol == Symbol::Action::MakeForBegin) {
     enable_block = true;
+    auto loopLabel = std::make_pair<std::string, std::string>(new_loop_label(),
+                                                              new_loop_label());
+    labelStack_.push(loopLabel);
+
     return true;
   }
   if (symbol == Symbol::Action::MakeForMid) {
