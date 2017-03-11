@@ -1305,7 +1305,34 @@ void Parser::parseFuncAction(std::vector<TokenPair>& tempBuffer) {
 
 void Parser::parseIfAction(std::vector<TokenPair>& tempBuffer) {
   std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 0);
-  evaPostfix(postExpr);
+  auto res = evaPostfix(postExpr);
+  if (res.getTokenString() != "unkown") {
+    std::string temp = new_temp();
+    RecordPtr record = std::make_shared<Record>(currentLevel);
+    SymbolTablePair idx(Entry::Variables, temp);
+    record->type = "int";
+    record->dimension = 0;
+    g_SymbolTable[currentLevel]->insert(idx, record);
+
+    std::string code = "    assign, " + temp + ", 0,";
+    IR.push_back(code);
+
+    auto ifLabel = std::make_pair<std::string, std::string>(new_if_label(),
+                                                            new_if_label());
+    labelStack_.push(ifLabel);
+
+    code = "    brneq, " + res.getTokenString() + ", 0, " + ifLabel.first;
+    IR.push_back(code);
+
+    code = "    assign, " + temp + ", 1,";
+    IR.push_back(code);
+
+    code = ifLabel.first + ":";
+    IR.push_back(code);
+
+    code = "    breq, " + temp + ", 0, " + ifLabel.second;
+    IR.push_back(code);
+  }
 }
 
 void Parser::parseReturnAction(std::vector<TokenPair>& tempBuffer) {
