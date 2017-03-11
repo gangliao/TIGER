@@ -182,6 +182,9 @@ class Parser final {
 
   /// inside a function return type
   bool isInside_func_ = false;
+  bool isInside_while_ = false;
+  bool isInside_for_ = false;
+  std::stack<std::pair<std::string, std::string> > blockStack_;
   /// tracking funcRetType if inside a function
   std::string funcRetType_;
   bool isFuncRet_ = false;
