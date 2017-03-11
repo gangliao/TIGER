@@ -448,13 +448,13 @@ void Parser::initParseTable() {
                    Symbol::Terminal::SEMI});  // NOLINT
 
   // 51: <stat> -> return <expr>;
-  addToParseTable(Symbol::Nonterminal::STAT,       // NOLINT
-                  {Symbol::Terminal::RETURN},      // NOLINT
-                  {Symbol::Terminal::RETURN,       // NOLINT
-                   Symbol::Action::MakeExprBegin,  // NOLINT
-                   Symbol::Nonterminal::EXPR,      // NOLINT
-                   Symbol::Action::MakeExprEnd,    // NOLINT
-                   Symbol::Terminal::SEMI});       // NOLINT
+  addToParseTable(Symbol::Nonterminal::STAT,         // NOLINT
+                  {Symbol::Terminal::RETURN},        // NOLINT
+                  {Symbol::Terminal::RETURN,         // NOLINT
+                   Symbol::Action::MakeReturnBegin,  // NOLINT
+                   Symbol::Nonterminal::EXPR,        // NOLINT
+                   Symbol::Action::MakeReturnEnd,    // NOLINT
+                   Symbol::Terminal::SEMI});         // NOLINT
 
   // 52: <stat> -> let <declaration-segment> in <stat-seq> end
   addToParseTable(Symbol::Nonterminal::STAT,                  // NOLINT
@@ -1153,8 +1153,7 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
         size_t j = 0;
         for (size_t i = 4; i < tempBuffer.size() - 1; i += 2, ++j) {
           code += ", " + tempBuffer[i].getTokenString();
-          RecordPtr record = g_SymbolTable[currentLevel]->lookup(
-              Entry::Variables, tempBuffer[i].getTokenString());
+          auto type = getSymbolType(tempBuffer[i]);
           if (j >= paramTypes.size()) {
             std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
                       << " has too many parameters! \n"
@@ -1162,13 +1161,14 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
             std::exit(EXIT_FAILURE);
           }
 
-          if (record->getType() != paramTypes[j]) {
+          if (type != paramTypes[j]) {
             std::cerr << tempBuffer[i].getTokenString()
                       << " is not defined before! \n"
                       << std::endl;
             std::exit(EXIT_FAILURE);
           }
         }
+
         if (j != paramTypes.size()) {
           std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
                     << " parameter numbers is not matched! \n"
@@ -1182,12 +1182,8 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
                     << std::endl;
           std::exit(EXIT_FAILURE);
         }
-
-        auto retType = g_SymbolTable[currentLevel]  // NOLINT
-                           ->lookup(Entry::Variables,
-                                    tempBuffer[0].getTokenString())  // NOLINT
-                           ->getReturnType();                        // NOLINT
-        if (record->getReturnType() != retType) {
+        std::string type = getSymbolType(tempBuffer[0]);
+        if (record->getReturnType() != type) {
           std::cerr << "\nError: function " << tempBuffer[2].getTokenString()
                     << " return type is different to var: "
                     << tempBuffer[0].getTokenString() << " !\n"
@@ -1266,8 +1262,13 @@ void Parser::parseFuncAction(std::vector<TokenPair>& tempBuffer) {
   if (paramEndIdx + 1 == tempBuffer.size()) {
     retType = "-";
   } else {
-    retType = getSymbolType(tempBuffer[paramEndIdx + 2]);
+    retType =
+        g_SymbolTable[currentLevel]
+            ->lookup(Entry::Types, tempBuffer[paramEndIdx + 2].getTokenString())
+            ->getType();
   }
+  funcRetType_ = retType;
+
   for (size_t i = paramBeginIdx + 1; i < paramEndIdx; i += 4) {
     params.push_back(tempBuffer[i].getTokenString());
     paramTypes.push_back(tempBuffer[i + 2].getTokenString());
@@ -1305,6 +1306,35 @@ void Parser::parseIfAction(std::vector<TokenPair>& tempBuffer) {
   evaPostfix(postExpr);
 }
 
+void Parser::parseReturnAction(std::vector<TokenPair>& tempBuffer) {
+  std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 0);
+  auto res = evaPostfix(postExpr);
+
+  // semantic checking return type
+  if (isInside_func_) {
+    std::cout << funcRetType_ << "##";
+    if (funcRetType_ == "-") {
+      std::cerr << "\nError: this function is no return !\n" << std::endl;
+      std::exit(EXIT_FAILURE);
+    } else if (getSymbolType(res) != funcRetType_) {
+      std::cerr << "\nError: return type in function should be " << funcRetType_
+                << "!\n"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  } else {
+    if (getSymbolType(res) != "int") {
+      std::cerr << "\nError: main function return type must be an integer !\n"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
+  // generate code
+  std::string code = "    return, " + res.getTokenString() + ", ,";
+  IR.push_back(code);
+  isFuncRet_ = true;
+}
+
 std::vector<TokenPair> Parser::subTokenPairs(
     const std::vector<TokenPair>& buffer, size_t actBegin, size_t actEnd) {
   std::vector<TokenPair> arr;
@@ -1331,6 +1361,16 @@ bool Parser::detectAction(int symbol, bool& enable_block,
   if (symbol == Symbol::Action::MakeMainLabel) {
     std::string code = "main:";
     IR.push_back(code);
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeReturnBegin) {
+    enable_buffer = true;
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeReturnEnd) {
+    parseReturnAction(tempBuffer);
+    tempBuffer.clear();
+    enable_buffer = false;
     return true;
   }
   if (symbol == Symbol::Action::MakeIfBegin) {
@@ -1376,21 +1416,19 @@ bool Parser::detectAction(int symbol, bool& enable_block,
   if (symbol == Symbol::Action::MakeFunctionsMid) {
     // init sepcial symbol table for function
     enable_buffer = false;
+    isInside_func_ = true;
     parseFuncAction(tempBuffer);
     currentLevel++;
     tempBuffer.clear();
     return true;
   }
   if (symbol == Symbol::Action::MakeFunctionsEnd) {
-    // if (tempBuffer[tempBuffer.size() - 1] == ")") {
-    //   // no return type
-    //   code = "    return, , ,";
-    // } else { /* have an return type */
-    //   tempBuffer[tempBuffer.size() - 1]
-    //   code = "    return, " + tempBuffer[tempBuffer.size() - 1] + ", ,";
-    // }
-    std::string code = "    return, , ,";
-    IR.push_back(code);
+    if (isFuncRet_ == false) {
+      // no return type
+      IR.push_back("    return, , ,");
+    }
+    isFuncRet_ = false;
+    isInside_func_ = false;
     currentLevel--;
     return true;
   }
@@ -1533,7 +1571,6 @@ void Parser::parse() {
         tempBuffer.push_back(*word);
       }
       if (focus == Symbol::Terminal::EOFF && parseStack.empty()) {
-        IR.push_back("    return, , ,");
         std::cout << "\n\n[ OK ] successful parse..." << std::endl;
         break;
       } else {

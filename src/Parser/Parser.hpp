@@ -94,6 +94,9 @@ class Parser final {
   /// parse if statement action
   void parseIfAction(std::vector<TokenPair> &tempBuffer);
 
+  /// parse return statement action
+  void parseReturnAction(std::vector<TokenPair> &tempBuffer);
+
   /**
    * @brief parse expression from infix to postfix expression.
    *
@@ -173,4 +176,10 @@ class Parser final {
   /// current action begin and end postion in temp buffer
   size_t actBegin_;
   size_t actEnd_;
+
+  /// inside a function return type
+  bool isInside_func_ = false;
+  /// tracking funcRetType if inside a function
+  std::string funcRetType_;
+  bool isFuncRet_ = false;
 };
