@@ -171,7 +171,13 @@ class Symbol {
 
     // lvalue
     MakeArrayBegin,
-    MakeArrayEnd
+    MakeArrayEnd,
+
+    // if statement
+    MakeIfBegin,
+    MakeIfMid,
+    MakeElseLabel,
+    MakeIfEnd
   };
 
   void operator=(int value) { this->value = value; }

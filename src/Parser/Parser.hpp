@@ -91,6 +91,9 @@ class Parser final {
   /// parse function action: function name (x:int) : return-type
   void parseFuncAction(std::vector<TokenPair> &tempBuffer);
 
+  /// parse if statement action
+  void parseIfAction(std::vector<TokenPair> &tempBuffer);
+
   /**
    * @brief parse expression from infix to postfix expression.
    *
@@ -119,9 +122,14 @@ class Parser final {
 
   /// generate new temp name
   inline std::string new_temp() { return "$t" + std::to_string(numTemps++); }
+
   /// generate new loop label name
   inline std::string new_loop_label() {
     return "loop_label" + std::to_string(numLoops++);
+  }
+  /// generate new if label name
+  inline std::string new_if_label() {
+    return "if_label" + std::to_string(numIfs++);
   }
 
   /// get sub token pairs buffer
@@ -141,6 +149,7 @@ class Parser final {
   int currentLevel = -1;  /// current paser code's scope level
   std::pair<std::string, std::string>
       currLoopLabel_;          /// current loop label name
+  int numIfs = 0;              /// generate if labels for IR
   int numTemps = 0;            /// generate temp variable for IR
   int numLoops = 0;            /// generate loop label name for IR
   std::string globalFileName;  /// global file name

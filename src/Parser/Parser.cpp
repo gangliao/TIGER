@@ -275,20 +275,22 @@ void Parser::initParseTable() {
 
   // # stat
   // 32: <stat> -> if <expr> then <stat-seq> <stat-if-tail>
-  addToParseTable(Symbol::Nonterminal::STAT,             // NOLINT
-                  {Symbol::Terminal::IF},                // NOLINT
-                  {Symbol::Terminal::IF,                 // NOLINT
-                   Symbol::Action::MakeExprBegin,        // NOLINT
-                   Symbol::Nonterminal::EXPR,            // NOLINT
-                   Symbol::Action::MakeExprEnd,          // NOLINT
-                   Symbol::Terminal::THEN,               // NOLINT
-                   Symbol::Nonterminal::STAT_SEQ,        // NOLINT
-                   Symbol::Nonterminal::STAT_IF_TAIL});  // NOLINT
+  addToParseTable(Symbol::Nonterminal::STAT,           // NOLINT
+                  {Symbol::Terminal::IF},              // NOLINT
+                  {Symbol::Terminal::IF,               // NOLINT
+                   Symbol::Action::MakeIfBegin,        // NOLINT
+                   Symbol::Nonterminal::EXPR,          // NOLINT
+                   Symbol::Action::MakeIfMid,          // NOLINT
+                   Symbol::Terminal::THEN,             // NOLINT
+                   Symbol::Nonterminal::STAT_SEQ,      // NOLINT
+                   Symbol::Nonterminal::STAT_IF_TAIL,  // NOLINT
+                   Symbol::Action::MakeIfEnd});        // NOLINT
 
   // 33: <stat-if-tail> -> else <stat-seq> endif;
   addToParseTable(Symbol::Nonterminal::STAT_IF_TAIL,  // NOLINT
                   {Symbol::Terminal::ELSE},           // NOLINT
                   {Symbol::Terminal::ELSE,            // NOLINT
+                   Symbol::Action::MakeElseLabel,     // NOLINT
                    Symbol::Nonterminal::STAT_SEQ,     // NOLINT
                    Symbol::Terminal::ENDIF,           // NOLINT
                    Symbol::Terminal::SEMI});          // NOLINT
@@ -794,6 +796,13 @@ std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
                                             size_t index) {
   auto prec = [&](int op) -> int {
     switch (op) {
+      case Symbol::Terminal::LESSER:
+      case Symbol::Terminal::LESSEREQ:
+      case Symbol::Terminal::GREATER:
+      case Symbol::Terminal::GREATEREQ:
+      case Symbol::Terminal::EQ:
+      case Symbol::Terminal::NEQ:
+        return 0;
       case Symbol::Terminal::PLUS:
       case Symbol::Terminal::MINUS:
         return 1;
@@ -804,7 +813,7 @@ std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
       case Symbol::Terminal::OR:
         return 3;
       default:
-        return 0;
+        return -1;
     }
   };
 
@@ -847,7 +856,19 @@ std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
                tempBuffer[i].getTokenType().getValue() ==
                    Symbol::Terminal::AND ||
                tempBuffer[i].getTokenType().getValue() ==
-                   Symbol::Terminal::OR) {
+                   Symbol::Terminal::OR ||
+               tempBuffer[i].getTokenType().getValue() ==
+                   Symbol::Terminal::LESSER ||
+               tempBuffer[i].getTokenType().getValue() ==
+                   Symbol::Terminal::LESSEREQ ||
+               tempBuffer[i].getTokenType().getValue() ==
+                   Symbol::Terminal::GREATER ||
+               tempBuffer[i].getTokenType().getValue() ==
+                   Symbol::Terminal::GREATEREQ ||
+               tempBuffer[i].getTokenType().getValue() ==
+                   Symbol::Terminal::EQ ||
+               tempBuffer[i].getTokenType().getValue() ==
+                   Symbol::Terminal::NEQ) {
       if (stack.empty() ||
           stack.top().getTokenType().getValue() == Symbol::Terminal::LPAREN) {
         stack.push(tempBuffer[i]);
@@ -936,6 +957,63 @@ TokenPair Parser::evaPostfix(std::vector<TokenPair>& expr) {
                expr[i].getTokenType().getValue() ==
                    Symbol::Terminal::FLOATLIT) {
       stack.push(expr[i]);
+    } else if (expr[i].getTokenType().getValue() == Symbol::Terminal::LESSER ||
+               expr[i].getTokenType().getValue() ==
+                   Symbol::Terminal::LESSEREQ ||
+               expr[i].getTokenType().getValue() == Symbol::Terminal::GREATER ||
+               expr[i].getTokenType().getValue() ==
+                   Symbol::Terminal::GREATEREQ ||
+               expr[i].getTokenType().getValue() == Symbol::Terminal::EQ ||
+               expr[i].getTokenType().getValue() == Symbol::Terminal::NEQ) {
+      if (i != expr.size() - 1) {
+        std::cerr << "\nError: if boolean operation exists in if or while "
+                     "condition statement, "
+                  << " it must be the last operation in this expression!"
+                  << " for example, if (a + b >= c * d) is correct."
+                  << std::endl;
+        std::exit(EXIT_FAILURE);
+      } else {
+        TokenPair A = stack.top();
+        std::string typeA;
+        stack.pop();
+        TokenPair B = stack.top();
+        std::string typeB;
+        stack.pop();
+        //     assign, $t0, 0,
+        //     brneq, 0a, 0b, if_label0
+        //     assign, $t0, 1,
+        // if_label0:
+        //     breq, $t0, 0, if_label1
+        // generate cmp IR code
+        std::string temp = new_temp();
+        RecordPtr record = std::make_shared<Record>(currentLevel);
+        SymbolTablePair idx(Entry::Variables, temp);
+        record->type = "int";
+        record->dimension = 0;
+        g_SymbolTable[currentLevel]->insert(idx, record);
+
+        std::string code = "    assign, " + temp + ", 0,";
+        IR.push_back(code);
+
+        auto ifLabel = std::make_pair<std::string, std::string>(new_if_label(),
+                                                                new_if_label());
+        labelStack_.push(ifLabel);
+
+        code = "    " + OperatorMapped[expr[i].getTokenType().getValue()] +
+               ", " + A.getTokenString() + ", " + B.getTokenString() + ", " +
+               ifLabel.first;
+        IR.push_back(code);
+
+        code = "    assign, " + temp + ", 1,";
+        IR.push_back(code);
+
+        code = ifLabel.first + ":";
+        IR.push_back(code);
+
+        code = "    breq, " + temp + ", 0, " + ifLabel.second;
+        IR.push_back(code);
+        return TokenPair(Symbol::Terminal::VAR, "unkown");
+      }
     }
   }
 
@@ -1142,6 +1220,7 @@ void Parser::parseForActionEnd(std::vector<TokenPair>& blockBuffer) {
   code = "    goto, " + labelPair.first + ", ,";
   IR.push_back(code);
   IR.push_back(labelPair.second + ":");
+  labelStack_.pop();
 }
 
 void Parser::parseForAction(std::vector<TokenPair>& blockBuffer) {
@@ -1159,23 +1238,18 @@ void Parser::parseForAction(std::vector<TokenPair>& blockBuffer) {
                      blockBuffer[3].getTokenString() + ",";
   IR.push_back(code);
 
-  currLoopLabel_ = std::make_pair<std::string, std::string>(new_loop_label(),
+  auto loopLabel = std::make_pair<std::string, std::string>(new_loop_label(),
                                                             new_loop_label());
-  labelStack_.push(currLoopLabel_);
+  labelStack_.push(loopLabel);
 
-  IR.push_back(currLoopLabel_.first + ":");
+  IR.push_back(loopLabel.first + ":");
 
   code = "    brgt, " + blockBuffer[1].getTokenString() + ", " +
-         blockBuffer[5].getTokenString() + ", " + currLoopLabel_.second;
+         blockBuffer[5].getTokenString() + ", " + loopLabel.second;
   IR.push_back(code);
 }
 
 void Parser::parseFuncAction(std::vector<TokenPair>& tempBuffer) {
-  for (auto& tokenPair : tempBuffer) {
-    std::cout << tokenPair.emit();
-  }
-  std::cout << std::endl;
-
   SymbolTablePair idx(Entry::Functions, tempBuffer[1].getTokenString());
   std::vector<std::string> params;
   std::vector<std::string> paramTypes;
@@ -1226,6 +1300,11 @@ void Parser::parseFuncAction(std::vector<TokenPair>& tempBuffer) {
   IR.push_back(code);
 }
 
+void Parser::parseIfAction(std::vector<TokenPair>& tempBuffer) {
+  std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 0);
+  evaPostfix(postExpr);
+}
+
 std::vector<TokenPair> Parser::subTokenPairs(
     const std::vector<TokenPair>& buffer, size_t actBegin, size_t actEnd) {
   std::vector<TokenPair> arr;
@@ -1254,6 +1333,38 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     IR.push_back(code);
     return true;
   }
+  if (symbol == Symbol::Action::MakeIfBegin) {
+    enable_buffer = true;
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeIfMid) {
+    parseIfAction(tempBuffer);
+    tempBuffer.clear();
+    enable_buffer = false;
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeElseLabel) {
+    // goto, if_label2, ,
+    // if_label1:
+    std::string new_label = new_if_label();
+    std::string code = "    goto, " + new_label + ", ,";
+    IR.push_back(code);
+
+    auto lblStack = labelStack_.top();
+    labelStack_.pop();
+    code = lblStack.second + ":";
+    IR.push_back(code);
+
+    lblStack.second = new_label;
+    labelStack_.push(lblStack);
+    return true;
+  }
+  if (symbol == Symbol::Action::MakeIfEnd) {
+    auto lblStack = labelStack_.top();
+    labelStack_.pop();
+    IR.push_back(lblStack.second + ":");
+    return true;
+  }
   if (symbol == Symbol::Action::MakeFunctionsBegin) {
     enable_buffer = true;
     currentLevel++;
@@ -1271,13 +1382,13 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     return true;
   }
   if (symbol == Symbol::Action::MakeFunctionsEnd) {
-  // if (tempBuffer[tempBuffer.size() - 1] == ")") {
-  //   // no return type
-  //   code = "    return, , ,";
-  // } else { /* have an return type */
-  //   tempBuffer[tempBuffer.size() - 1]
-  //   code = "    return, " + tempBuffer[tempBuffer.size() - 1] + ", ,";
-  // }    
+    // if (tempBuffer[tempBuffer.size() - 1] == ")") {
+    //   // no return type
+    //   code = "    return, , ,";
+    // } else { /* have an return type */
+    //   tempBuffer[tempBuffer.size() - 1]
+    //   code = "    return, " + tempBuffer[tempBuffer.size() - 1] + ", ,";
+    // }
     std::string code = "    return, , ,";
     IR.push_back(code);
     currentLevel--;
