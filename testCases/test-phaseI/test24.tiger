@@ -49,4 +49,3 @@ in
 	myFloat := myFloat * 2;
 
 	printi(x);
-	printf(myFloat);

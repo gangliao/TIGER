@@ -6,9 +6,9 @@ in
 	C := 3.5;
 	D := 4.5;
 	E := 5.5;
-	printf(A);
-	printf(B);
-	printf(C);
-	printf(D);
-	printf(E);
+	printi(A);  /* Error only support print integer */
+	printi(B);
+	printi(C);
+	printi(D);
+	printi(E);
 end
