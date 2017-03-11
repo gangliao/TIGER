@@ -1057,6 +1057,13 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       if (tempBuffer.size() <= i + 5) { /* var a : id := 10; */
         SymbolTablePair idx(Entry::Variables, tempBuffer[j].getTokenString());
 
+        if (g_SymbolTable[currentLevel]->find(
+                Entry::Variables, tempBuffer[j].getTokenString())) {
+          std::cout << "\n\nError: Redeclaration of the same name in the same "
+                       "scope is illegal.\n"
+                    << std::endl;
+          exit(EXIT_FAILURE);          
+        }
         // insert var into symbol table
         g_SymbolTable[currentLevel]->insertVariables(
             idx, tempBuffer[i + 1].getTokenString());
@@ -1242,7 +1249,7 @@ void Parser::parseForAction(std::vector<TokenPair>& blockBuffer) {
                      blockBuffer[3].getTokenString() + ",";
   IR.push_back(code);
 
-  auto loopLabel =labelStack_.top();
+  auto loopLabel = labelStack_.top();
 
   IR.push_back(loopLabel.first + ":");
 
@@ -1391,7 +1398,7 @@ void Parser::parseWhileAction(std::vector<TokenPair>& tempBuffer) {
 
     code = "    breq, " + temp + ", 0, " + ifLabel.second;
     IR.push_back(code);
-  }  
+  }
 }
 
 std::vector<TokenPair> Parser::subTokenPairs(

@@ -149,6 +149,20 @@ class SymbolTable {
     std::exit(EXIT_FAILURE);
   }
 
+  bool find(Entry entry, std::string name) {
+    SymbolTablePair idx(entry, name);
+    bool found = false;
+    int32_t level;
+    for (level = scopeLevel; level >= 0; --level) {
+      auto table = g_SymbolTable[level]->getTable();
+      if (table.find(idx) != table.end()) {
+        found = true;
+        break;
+      }
+    }
+    return found;
+  }
+
   const RecordPtr lookup(Entry entry, std::string name) {
     SymbolTablePair idx(entry, name);
     bool found = false;
