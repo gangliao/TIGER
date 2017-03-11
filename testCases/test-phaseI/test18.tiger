@@ -1,7 +1,7 @@
 /* testing redeclaration of same variable name */
 let
         var a, b : int := 0;
-		var a int := 0;
+		var a : int := 0;
 in
         while(a = b) 
 		do
