@@ -1,0 +1,15 @@
+/* test multiple let-in-end  */
+let
+        var a, b : int := 0;
+in
+	   printi(a);
+			
+end
+
+let
+        var c, d : int := 0;
+		
+in
+	   printi(d);
+	   
+end
