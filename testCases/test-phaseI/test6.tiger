@@ -1,11 +1,10 @@
 let
-	type First_Int = int;
-	type Second_Int = First_Int;
-	var X : First_Int := 0;
-	var Y : Second_Int;
-	var A : int := 0;
-	var B : float := 0.1;
+		var x : int;
+        function print ( n : int ) int   /* integer return type */
+		begin
+                printi(n);
+				return 10;
+        end;
 in
-	Y := Y + X;
-	A := A + B;
+        x = print(5);					/* return value is captured in integer variable */
 end

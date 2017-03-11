@@ -1,0 +1,9 @@
+/* testing if-then statement */
+let
+        var a, b : int := 0;
+in
+        if(a = b) then
+                a := b + 2;
+        endif;
+        printi(a);
+end
