@@ -6,5 +6,5 @@ in
         while(a = b) 
 		do
             a := b + 2;
-       
+       enddo;
 end
