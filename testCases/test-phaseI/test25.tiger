@@ -1,0 +1,14 @@
+let
+	var A, B, C, D, E : float;
+in
+	A := 1.5;
+	B := 2.5;
+	C := 3.5;
+	D := 4.5;
+	E := 5.5;
+	printf(A);
+	printf(B);
+	printf(C);
+	printf(D);
+	printf(E);
+end
