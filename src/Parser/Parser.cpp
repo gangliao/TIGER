@@ -1122,9 +1122,10 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
         }
 
         if (type != paramTypes[j]) {
-          std::cerr << tempBuffer[i].getTokenString()
-                    << " is not defined before! \n"
-                    << std::endl;
+          std::cerr << "\n Error: " << tempBuffer[i].getTokenString() << ": "
+                    << type << " mismatched to function "
+                    << tempBuffer[0].getTokenString()
+                    << " parameter: " << paramTypes[j] << std::endl;
           std::exit(EXIT_FAILURE);
         }
       }
@@ -1162,9 +1163,10 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
           }
 
           if (type != paramTypes[j]) {
-            std::cerr << tempBuffer[i].getTokenString()
-                      << " is not defined before! \n"
-                      << std::endl;
+            std::cerr << "\n Error: " << tempBuffer[i].getTokenString() << ": "
+                      << type << " mismatched to function "
+                      << tempBuffer[2].getTokenString()
+                      << " parameter: " << paramTypes[j] << std::endl;
             std::exit(EXIT_FAILURE);
           }
         }
