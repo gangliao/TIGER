@@ -1198,6 +1198,13 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
         // assignment expression
         std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 2);
         auto res = evaPostfix(postExpr);
+
+        if (getSymbolType(tempBuffer[0]) != getSymbolType(res)) {
+          std::cout << "Error: left and right type between assignment is "
+                       "mismatched!\n"
+                    << std::endl;
+        }
+
         std::string code = "    assgin, " + tempBuffer[0].getTokenString() +
                            ", " + res.getTokenString() + ",";
         IR.push_back(code);
