@@ -1,6 +1,6 @@
 let
 		var x : int;
-        function print ( n : int ) float   /* return type is float, this should generate return type mismatch error */
+        function print ( n : int ) : float   /* return type is float, this should generate return type mismatch error */
 		begin
                 printi(n);
 				return 10.0;

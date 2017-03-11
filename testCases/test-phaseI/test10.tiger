@@ -1,6 +1,6 @@
 let
 		var x : int;
-        function print ( n : int, m: int ) int   /* integer return type; with multiple function arguments */
+        function print ( n : int, m: int ) : int   /* integer return type; with multiple function arguments */
 		begin
                 printi(n);
 				printi(m);

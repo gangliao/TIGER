@@ -1,6 +1,6 @@
 let
 		var x : int;
-        function print ( n : int ) int   /* integer return type */
+        function print ( n : int ) : int   /* integer return type */
 		begin
                 printi(n);
 				return 10;
