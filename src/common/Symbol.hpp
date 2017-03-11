@@ -188,7 +188,9 @@ class Symbol {
     MakeWhileEnd,
 
     // break
-    MakeBreak
+    MakeBreak,
+    BeforeAssignLabel,
+    EndAssignLabel
   };
 
   void operator=(int value) { this->value = value; }

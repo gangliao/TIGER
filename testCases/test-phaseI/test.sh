@@ -5,6 +5,3 @@ do
     echo "Parsing ${f}"
     ../../bin/parser "${f}" -d > "${f}".txt 2>&1
 done
-
-
-

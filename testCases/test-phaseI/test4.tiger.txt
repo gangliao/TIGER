@@ -1,10 +1,10 @@
 
 
-[ RUN ] parsing code... 
+[ RUN ] parsing code...
 
 let type id = int ; type id = id ; var id : id := intlit ; var id : id ; var id : int := intlit ; var id : float := floatlit ; in id := id + id ; id := id + id ; Error: left and right type between assignment is mismatched!
 
-end  
+end
 
 ----------------------------------------
 Table: Variables
@@ -207,4 +207,3 @@ main:
     assgin, A, $t1,
     return, , ,
 ----------------------------------------
-

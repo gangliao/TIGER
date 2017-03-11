@@ -1,12 +1,12 @@
 
 
-[ RUN ] parsing code... 
+[ RUN ] parsing code...
 
 let var id , id : int := intlit ; var id , id : float := intlit ; in if ( id = id ) then id := id + ( intlit * id ) - ( intlit + id ) ; Error: left and right type between assignment is mismatched!
 
 else id := ( id / intlit ) + ( id * intlit ) ; Error: left and right type between assignment is mismatched!
 
-endif ; id ( id ) ; end  
+endif ; id ( id ) ; end
 
 ----------------------------------------
 Table: Variables
@@ -275,4 +275,3 @@ if_label2:
     call, printi, a
     return, , ,
 ----------------------------------------
-

@@ -180,6 +180,10 @@ class Parser final {
   size_t actBegin_;
   size_t actEnd_;
 
+  /// left side array in assignment
+  size_t is_arr_ = -1;
+  std::string array_store_;
+
   /// inside a function return type
   bool isInside_func_ = false;
   bool isInside_while_ = false;

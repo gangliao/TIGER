@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code... 
+[ RUN ] parsing code...
 
-let type id = array [ intlit ] of int ; var id , id : id := intlit ; var id : id := intlit ; var id : int := intlit ; in for id := intlit to intlit do id [ id ] := id [ id ] * id [ id ] ; enddo ; for id := intlit to intlit do id ( id [ id ] ) ; enddo ; end  
+let type id = array [ intlit ] of int ; var id , id : id := intlit ; var id : id := intlit ; var id : int := intlit ; in for id := intlit to intlit do id [ id ] := id [ id ] * id [ id ] ; enddo ; for id := intlit to intlit do id ( id [ id ] ) ; enddo ; end
 
 ----------------------------------------
 Table: Variables
@@ -46,19 +46,6 @@ Return type: -
 ----------------------------------------
 Table: Variables
 Name: $t3
-----------------------------------------
-Scope: 0
-Type: int
-Dimension: 0
-Parameters: -
-Parameter types: -
-Parameter dimensions: -
-Return type: -
-
-
-----------------------------------------
-Table: Variables
-Name: $t4
 ----------------------------------------
 Scope: 0
 Type: int
@@ -228,22 +215,20 @@ main:
     assign, i, 0,
 loop_label0:
     brgt, i, 100, loop_label1
-    array_load, $t0, sum, i
-    array_load, $t1, X, i
-    array_load, $t2, Y, i
-    mult, $t2, $t1, $t3
-    assgin, $t0, $t3,
+    array_load, $t0, X, i
+    array_load, $t1, Y, i
+    mult, $t1, $t0, $t2
+    array_store, sum, i, $t2
     add, i, 1, i
     goto, loop_label0, ,
 loop_label1:
     assign, i, 0,
 loop_label2:
     brgt, i, 100, loop_label3
-    array_load, $t4, sum, i
-    call, printi, $t4
+    array_load, $t3, sum, i
+    call, printi, $t3
     add, i, 1, i
     goto, loop_label2, ,
 loop_label3:
     return, , ,
 ----------------------------------------
-

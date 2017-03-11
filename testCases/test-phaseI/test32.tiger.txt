@@ -1,7 +1,6 @@
 
 
-[ RUN ] parsing code... 
+[ RUN ] parsing code...
 
-let type id = array [ intlit ] of int ; var id , id : id := intlit ; var id , id : int := intlit ; var id : float := floatlit ; in for id := id to id do 
+let type id = array [ intlit ] of int ; var id , id : id := intlit ; var id , id : int := intlit ; var id : float := floatlit ; in for id := id to id do
 Error: for statement begin or end value is not int type!
-

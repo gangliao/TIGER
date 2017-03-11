@@ -1,7 +1,6 @@
 
 
-[ RUN ] parsing code... 
+[ RUN ] parsing code...
 
-let var id : int ; function id ( id : int ) : float begin id ( id ) ; return floatlit ; end ; in id := id ( intlit ) ; 
+let var id : int ; function id ( id : int ) : float begin id ( id ) ; return floatlit ; end ; in id := id ( intlit ) ;
 Error: function print return type is different to var: x !
-
