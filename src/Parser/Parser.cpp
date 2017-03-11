@@ -305,6 +305,7 @@ void Parser::initParseTable() {
   addToParseTable(Symbol::Nonterminal::STAT,                     // NOLINT
                   {Symbol::Terminal::ID},                        // NOLINT
                   {Symbol::Action::MakeAssignBegin,              // NOLINT
+                   Symbol::Action::BeforeAssignLabel,            // NOLINT
                    Symbol::Terminal::ID,                         // NOLINT
                    Symbol::Nonterminal::STAT_FUNCT_OR_ASSIGN});  // NOLINT
 
@@ -313,6 +314,7 @@ void Parser::initParseTable() {
                   {Symbol::Terminal::LBRACK,                  // NOLINT
                    Symbol::Terminal::ASSIGN},                 // NOLINT
                   {Symbol::Nonterminal::LVALUE_TAIL,          // NOLINT
+                   Symbol::Action::BeforeAssignLabel,         // NOLINT
                    Symbol::Terminal::ASSIGN,                  // NOLINT
                    Symbol::Nonterminal::STAT_ASSIGN,          // NOLINT
                    Symbol::Action::MakeAssignEnd,             // NOLINT
@@ -321,7 +323,8 @@ void Parser::initParseTable() {
   // 37: <stat-funct-or-assign> -> (<expr-list>);
   addToParseTable(Symbol::Nonterminal::STAT_FUNCT_OR_ASSIGN,  // NOLINT
                   {Symbol::Terminal::LPAREN},                 // NOLINT
-                  {Symbol::Terminal::LPAREN,                  // NOLINT
+                  {Symbol::Action::EndAssignLabel,            // NOLINT
+                   Symbol::Terminal::LPAREN,                  // NOLINT
                    Symbol::Nonterminal::EXPR_LIST,            // NOLINT
                    Symbol::Terminal::RPAREN,                  // NOLINT
                    Symbol::Action::MakeAssignEnd,             // NOLINT
@@ -1205,16 +1208,20 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
         // assignment expression
         std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 2);
         auto res = evaPostfix(postExpr);
+        if (is_arr_ == 1 && !array_store_.empty()) {
+          IR.push_back(array_store_ + res.getTokenString());
+          array_store_.clear();
+        } else {
+          if (getSymbolType(tempBuffer[0]) != getSymbolType(res)) {
+            std::cout << "Error: left and right type between assignment is "
+                         "mismatched!\n"
+                      << std::endl;
+          }
 
-        if (getSymbolType(tempBuffer[0]) != getSymbolType(res)) {
-          std::cout << "Error: left and right type between assignment is "
-                       "mismatched!\n"
-                    << std::endl;
+          std::string code = "    assgin, " + tempBuffer[0].getTokenString() +
+                             ", " + res.getTokenString() + ",";
+          IR.push_back(code);
         }
-
-        std::string code = "    assgin, " + tempBuffer[0].getTokenString() +
-                           ", " + res.getTokenString() + ",";
-        IR.push_back(code);
       }
     }
   }
@@ -1596,29 +1603,35 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     std::vector<TokenPair> postExpr = cvt2PostExpr(expr, 0);
     auto res = evaPostfix(postExpr);
 
-    // generate temp var
-    std::string temp = new_temp();
-    // define record
-    SymbolTablePair idx(Entry::Variables, temp);
-    RecordPtr record = std::make_shared<Record>(currentLevel);
-    // set record attributes
-    record->type = getSymbolType(tempBuffer[actBegin_ - 2]);
-    record->dimension = 0;
-    // insert into symbol table
-    g_SymbolTable[currentLevel]->insert(idx, record);
+    if (is_arr_ == 0) {
+      array_store_ = "    array_store, " +
+                     tempBuffer[actBegin_ - 2].getTokenString() + ", " +
+                     res.getTokenString() + ", ";
+    } else {
+      // generate temp var
+      std::string temp = new_temp();
+      // define record
+      SymbolTablePair idx(Entry::Variables, temp);
+      RecordPtr record = std::make_shared<Record>(currentLevel);
+      // set record attributes
+      record->type = getSymbolType(tempBuffer[actBegin_ - 2]);
+      record->dimension = 0;
+      // insert into symbol table
+      g_SymbolTable[currentLevel]->insert(idx, record);
 
-    // generate IR code
-    std::string code = "    array_load, " + temp + ", " +
-                       tempBuffer[actBegin_ - 2].getTokenString() + ", " +
-                       res.getTokenString();
-    IR.push_back(code);
+      // generate IR code
+      std::string code = "    array_load, " + temp + ", " +
+                         tempBuffer[actBegin_ - 2].getTokenString() + ", " +
+                         res.getTokenString();
+      IR.push_back(code);
 
-    // push it into temp buffer
-    tempBuffer.erase(tempBuffer.begin() + actBegin_ - 2,
-                     tempBuffer.begin() + actEnd_ + 1);
+      // push it into temp buffer
+      tempBuffer.erase(tempBuffer.begin() + actBegin_ - 2,
+                       tempBuffer.begin() + actEnd_ + 1);
 
-    TokenPair tempPair(Symbol::Terminal::ID, temp);
-    tempBuffer.push_back(tempPair);
+      TokenPair tempPair(Symbol::Terminal::ID, temp);
+      tempBuffer.push_back(tempPair);
+    }
     return true;
   }
   if (symbol == Symbol::Action::MakeTypesBegin ||
@@ -1635,9 +1648,17 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     enable_buffer = false;
     parseAction(symbol, tempBuffer);
     tempBuffer.clear();
+    is_arr_ = -1;
     return true;
   }
-
+  if (symbol == Symbol::Action::BeforeAssignLabel) {
+    is_arr_++;
+    return true;
+  }
+  if (symbol == Symbol::Action::EndAssignLabel) {
+    is_arr_ = -1;
+    return true;
+  }
   return false;
 }
 

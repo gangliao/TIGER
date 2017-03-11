@@ -6,7 +6,7 @@ let type id = array [ intlit ] of int ; var id : id ; var id : int := intlit ; v
 
 ----------------------------------------
 Table: Variables
-Name: $t10
+Name: $t0
 ----------------------------------------
 Scope: 0
 Type: int
@@ -19,7 +19,7 @@ Return type: -
 
 ----------------------------------------
 Table: Variables
-Name: $t11
+Name: $t1
 ----------------------------------------
 Scope: 0
 Type: int
@@ -111,19 +111,6 @@ Return type: -
 ----------------------------------------
 Table: Variables
 Name: $t8
-----------------------------------------
-Scope: 0
-Type: int
-Dimension: 0
-Parameters: -
-Parameter types: -
-Parameter dimensions: -
-Return type: -
-
-
-----------------------------------------
-Table: Variables
-Name: $t9
 ----------------------------------------
 Scope: 0
 Type: int
@@ -289,26 +276,23 @@ Generate IR CODE ...
     assign, y, 7,
     assign, z, 20,
 fillArray:
-    array_load, $t0, buffer, 0
-    assgin, $t0, firstInt,
-    array_load, $t1, buffer, 1
-    assgin, $t1, secondInt,
+    array_store, buffer, 0, firstInt
+    array_store, buffer, 1, secondInt
     return, , ,
 main:
     call, fillArray, y, z
-    array_load, $t2, buffer, 1
-    add, 1, 0, $t3
-    mult, 2, 9, $t4
-    add, $t4, $t3, $t5
-    sub, 19, $t5, $t6
-    array_load, $t7, buffer, $t6
+    add, 1, 0, $t0
+    mult, 2, 9, $t1
+    add, $t1, $t0, $t2
+    sub, 19, $t2, $t3
+    array_load, $t4, buffer, $t3
+    array_load, $t5, buffer, 1
+    mult, $t5, $t4, $t6
+    array_store, buffer, 1, $t6
+    array_load, $t7, buffer, 0
+    call, printi, $t7
     array_load, $t8, buffer, 1
-    mult, $t8, $t7, $t9
-    assgin, $t2, $t9,
-    array_load, $t10, buffer, 0
-    call, printi, $t10
-    array_load, $t11, buffer, 1
-    call, printi, $t11
+    call, printi, $t8
     return, , ,
 ----------------------------------------
 
