@@ -1,11 +1,11 @@
 let
-		var x : int;
-        function print ( n : int, m: int ) : int   /* integer return type; with multiple function arguments */
-		begin
-                printi(n);
-				printi(m);
-				return 10;
-        end;
+        var a : int := 0;
+		var b : float := 0;
 in
-        x := print(5,6);					/* return value is captured in integer variable */
+        if(a = b) then                     /* this should generate error a is int and b is float*/
+                a := b + 2;
+				else
+				a := 2;
+        endif;
+        printi(a);
 end
