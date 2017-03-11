@@ -1,0 +1,452 @@
+
+
+[ RUN ] parsing code... 
+
+let type id = array [ intlit ] of int ; var id : id ; var id : int := intlit ; var id : int := intlit ; var id : int := intlit ; var id : int ; var id : int ; var id : float := floatlit ; function id ( id : int ) : int begin return id + id ; end ; function id ( id : int ) : int begin id := id ( id ) ; id := id ( id ) ; return id ; end ; in for id := intlit + intlit to intlit + intlit do if ( id & intlit ) then id := id + id ; id := id / floatlit ; else id := id + id ; id := id / floatlit ; id := id - id ; id := id + id ; id := id + id ; for id := intlit to intlit do id := id + id ; enddo ; endif ; enddo ; id := id ( id ) ; id := id * intlit ; id ( id ) ; end  
+
+----------------------------------------
+Table: Variables
+Name: $t1
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t10
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t11
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t12
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t13
+----------------------------------------
+Scope: 0
+Type: float
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t2
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t3
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t4
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t5
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t6
+----------------------------------------
+Scope: 0
+Type: float
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t7
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t8
+----------------------------------------
+Scope: 0
+Type: float
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t9
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: loopCounter
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: loopCounter2
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: myArray
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 100
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: myFloat
+----------------------------------------
+Scope: 0
+Type: float
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: x
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: y
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: z
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Types
+Name: ArrayInt
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 100
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Types
+Name: float
+----------------------------------------
+Scope: 0
+Type: float
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Types
+Name: int
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: doubleMe
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [input]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: int
+
+
+----------------------------------------
+Table: Functions
+Name: exit
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: flush
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: []
+Parameter types: []
+Parameter dimensions: []
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: not
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: int
+
+
+----------------------------------------
+Table: Functions
+Name: printi
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: quadrupleMe
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [input]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: int
+----------------------------------------
+
+
+
+[ OK ] successful parse...
+
+
+----------------------------------------
+Generate IR CODE ...
+----------------------------------------
+    assign, myArray, 100, 0
+    assign, x, 0,
+    assign, y, 7,
+    assign, z, 20,
+    assign, loopCounter, 0,
+    assign, loopCounter2, 0,
+    assign, myFloat, 3.5,
+doubleMe:
+    add, input, input, $t0
+    return, $t0, ,
+quadrupleMe:
+    callr, input, doubleMe, input
+    callr, input, doubleMe, input
+    return, input, ,
+main:
+    add, 3, 1, $t1
+    add, 7, 6, $t2
+    assign, loopCounter, $t1,
+loop_label0:
+    brgt, loopCounter, $t2, loop_label1
+    and, 1, loopCounter, $t3
+    assign, $t4, 0,
+    brneq, $t3, 0, if_label0
+    assign, $t4, 1,
+if_label0:
+    breq, $t4, 0, if_label1
+    add, y, x, $t5
+    assgin, x, $t5,
+    div, 1.5, x, $t6
+    assgin, myFloat, $t6,
+    goto, if_label2, ,
+if_label1:
+    add, z, x, $t7
+    assgin, x, $t7,
+    div, 1.5, x, $t8
+    assgin, myFloat, $t8,
+    sub, loopCounter, x, $t9
+    assgin, x, $t9,
+    add, loopCounter, x, $t10
+    assgin, x, $t10,
+    add, loopCounter, x, $t11
+    assgin, x, $t11,
+    assign, loopCounter, $t1,
+loop_label2:
+    brgt, loopCounter, $t2, loop_label3
+    add, loopCounter, x, $t12
+    assgin, x, $t12,
+    add, loopCounter, 1, loopCounter
+    goto, loop_label2, ,
+loop_label3:
+if_label2:
+    add, loopCounter, 1, loopCounter
+    goto, loop_label0, ,
+loop_label1:
+    callr, x, quadrupleMe, x
+    mult, 2, myFloat, $t13
+    assgin, myFloat, $t13,
+    call, printi, x
+    return, , ,
+----------------------------------------
+

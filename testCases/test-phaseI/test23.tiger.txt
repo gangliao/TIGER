@@ -1,0 +1,314 @@
+
+
+[ RUN ] parsing code... 
+
+let type id = array [ intlit ] of int ; var id : id ; var id : int := intlit ; var id : int := intlit ; function id ( id : int , id : int ) begin id [ intlit ] := id ; id [ intlit ] := id ; end ; in id ( id , id ) ; id [ intlit ] := id [ intlit + intlit + intlit * intlit - intlit ] * id [ intlit ] ; id ( id [ intlit ] ) ; id ( id [ intlit ] ) ; end  
+
+----------------------------------------
+Table: Variables
+Name: $t10
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t11
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t2
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t3
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t4
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t5
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t6
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t7
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t8
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t9
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: buffer
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 2
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: y
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: z
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Types
+Name: ArrayInt
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 2
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Types
+Name: float
+----------------------------------------
+Scope: 0
+Type: float
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Types
+Name: int
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: exit
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: fillArray
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [firstInt,secondInt]
+Parameter types: [int,int]
+Parameter dimensions: [0,0]
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: flush
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: []
+Parameter types: []
+Parameter dimensions: []
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: not
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: int
+
+
+----------------------------------------
+Table: Functions
+Name: printi
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: -
+----------------------------------------
+
+
+
+[ OK ] successful parse...
+
+
+----------------------------------------
+Generate IR CODE ...
+----------------------------------------
+    assign, buffer, 2, 0
+    assign, y, 7,
+    assign, z, 20,
+fillArray:
+    array_load, $t0, buffer, 0
+    assgin, $t0, firstInt,
+    array_load, $t1, buffer, 1
+    assgin, $t1, secondInt,
+    return, , ,
+main:
+    call, fillArray, y, z
+    array_load, $t2, buffer, 1
+    add, 1, 0, $t3
+    mult, 2, 9, $t4
+    add, $t4, $t3, $t5
+    sub, 19, $t5, $t6
+    array_load, $t7, buffer, $t6
+    array_load, $t8, buffer, 1
+    mult, $t8, $t7, $t9
+    assgin, $t2, $t9,
+    array_load, $t10, buffer, 0
+    call, printi, $t10
+    array_load, $t11, buffer, 1
+    call, printi, $t11
+    return, , ,
+----------------------------------------
+
