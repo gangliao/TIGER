@@ -443,10 +443,11 @@ void Parser::initParseTable() {
                    Symbol::Action::MakeForEnd});   // NOLINT
 
   // 50: <stat> -> break;
-  addToParseTable(Symbol::Nonterminal::STAT,  // NOLINT
-                  {Symbol::Terminal::BREAK},  // NOLINT
-                  {Symbol::Terminal::BREAK,   // NOLINT
-                   Symbol::Terminal::SEMI});  // NOLINT
+  addToParseTable(Symbol::Nonterminal::STAT,   // NOLINT
+                  {Symbol::Terminal::BREAK},   // NOLINT
+                  {Symbol::Terminal::BREAK,    // NOLINT
+                   Symbol::Action::MakeBreak,  // NOLINT
+                   Symbol::Terminal::SEMI});   // NOLINT
 
   // 51: <stat> -> return <expr>;
   addToParseTable(Symbol::Nonterminal::STAT,         // NOLINT
@@ -1057,12 +1058,12 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
       if (tempBuffer.size() <= i + 5) { /* var a : id := 10; */
         SymbolTablePair idx(Entry::Variables, tempBuffer[j].getTokenString());
 
-        if (g_SymbolTable[currentLevel]->find(
-                Entry::Variables, tempBuffer[j].getTokenString())) {
+        if (g_SymbolTable[currentLevel]->find(Entry::Variables,
+                                              tempBuffer[j].getTokenString())) {
           std::cout << "\n\nError: Redeclaration of the same name in the same "
                        "scope is illegal.\n"
                     << std::endl;
-          exit(EXIT_FAILURE);          
+          exit(EXIT_FAILURE);
         }
         // insert var into symbol table
         g_SymbolTable[currentLevel]->insertVariables(
@@ -1231,7 +1232,6 @@ void Parser::parseForActionEnd(std::vector<TokenPair>& blockBuffer) {
   code = "    goto, " + labelPair.first + ", ,";
   IR.push_back(code);
   IR.push_back(labelPair.second + ":");
-  labelStack_.pop();
 }
 
 void Parser::parseForAction(std::vector<TokenPair>& blockBuffer) {
@@ -1429,8 +1429,20 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     IR.push_back(code);
     return true;
   }
+  if (symbol == Symbol::Action::MakeBreak) {
+    if (isInside_for_) {
+      IR.push_back("    goto, " + blockStack_.top().second + ", ,");
+    } else if (isInside_while_) {
+      IR.push_back("    goto, " + blockStack_.top().first + ", ,");
+    } else {
+      std::cout << "\nError: break is not inside a for or while block!\n"
+                << std::endl;
+    }
+    return true;
+  }
   if (symbol == Symbol::Action::MakeWhileBegin) {
     enable_buffer = true;
+    isInside_while_ = true;
     auto labels = std::make_pair<std::string, std::string>(new_loop_label(),
                                                            new_loop_label());
     currLoopLabel_ = labels;
@@ -1439,6 +1451,7 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     labels.first = labels.second;
     labels.second = new_loop_label();
     labelStack_.push(labels);
+    blockStack_.push(labels);
     return true;
   }
   if (symbol == Symbol::Action::MakeWhileMid) {
@@ -1448,10 +1461,12 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     return true;
   }
   if (symbol == Symbol::Action::MakeWhileEnd) {
+    isInside_while_ = false;
     auto labels = labelStack_.top();
     IR.push_back("    goto, " + currLoopLabel_.first + ", ,");
     IR.push_back(labels.second + ":");
     labelStack_.pop();
+    blockStack_.pop();
     return true;
   }
   if (symbol == Symbol::Action::MakeReturnBegin) {
@@ -1541,11 +1556,12 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     return true;
   }
   if (symbol == Symbol::Action::MakeForBegin) {
+    isInside_for_ = true;
     enable_block = true;
     auto loopLabel = std::make_pair<std::string, std::string>(new_loop_label(),
                                                               new_loop_label());
     labelStack_.push(loopLabel);
-
+    blockStack_.push(loopLabel);
     return true;
   }
   if (symbol == Symbol::Action::MakeForMid) {
@@ -1562,7 +1578,10 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     // add, 0i, 1, 0i
     // goto, loop_label0, ,
     // loop_label1:
+    isInside_for_ = false;
     parseForActionEnd(blockBuffer);
+    labelStack_.pop();
+    blockStack_.pop();
     blockBuffer.clear();
     return true;
   }

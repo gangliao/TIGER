@@ -185,7 +185,10 @@ class Symbol {
     // while statment
     MakeWhileBegin,
     MakeWhileMid,
-    MakeWhileEnd
+    MakeWhileEnd,
+
+    // break
+    MakeBreak
   };
 
   void operator=(int value) { this->value = value; }
