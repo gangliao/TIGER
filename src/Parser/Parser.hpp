@@ -182,4 +182,5 @@ class Parser final {
   /// tracking funcRetType if inside a function
   std::string funcRetType_;
   bool isFuncRet_ = false;
+  bool isMainRet_ = false;
 };

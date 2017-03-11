@@ -1312,7 +1312,6 @@ void Parser::parseReturnAction(std::vector<TokenPair>& tempBuffer) {
 
   // semantic checking return type
   if (isInside_func_) {
-    std::cout << funcRetType_ << "##";
     if (funcRetType_ == "-") {
       std::cerr << "\nError: this function is no return !\n" << std::endl;
       std::exit(EXIT_FAILURE);
@@ -1328,6 +1327,7 @@ void Parser::parseReturnAction(std::vector<TokenPair>& tempBuffer) {
                 << std::endl;
       std::exit(EXIT_FAILURE);
     }
+    isMainRet_ = true;
   }
   // generate code
   std::string code = "    return, " + res.getTokenString() + ", ,";
@@ -1571,6 +1571,9 @@ void Parser::parse() {
         tempBuffer.push_back(*word);
       }
       if (focus == Symbol::Terminal::EOFF && parseStack.empty()) {
+        if (isMainRet_ == false) {
+          IR.push_back("    return, , ,");
+        }
         std::cout << "\n\n[ OK ] successful parse..." << std::endl;
         break;
       } else {
