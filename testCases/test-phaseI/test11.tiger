@@ -7,5 +7,5 @@ let
 				return 10;
         end;
 in
-        x = print(5);					/* this should generate error.  Number of Function parameters are different */
+        x := print(5);					/* this should generate error.  Number of Function parameters are different */
 end
