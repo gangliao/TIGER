@@ -1,14 +1,11 @@
 let
         var a, b : int := 0;
-        var c : float := 1.0;
 in
 
         if(a = b) then
-                a := b + (2 + a) * b + (5 / b);
+                a := b + 2;
 				else
 						  a := 2;
-                                                  b := a | b;
         endif;
-                not(a);
         printi(a);
 end
