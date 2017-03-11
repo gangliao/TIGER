@@ -97,6 +97,9 @@ class Parser final {
   /// parse return statement action
   void parseReturnAction(std::vector<TokenPair> &tempBuffer);
 
+  /// parse while statement action
+  void parseWhileAction(std::vector<TokenPair> &tempBuffer);
+
   /**
    * @brief parse expression from infix to postfix expression.
    *
