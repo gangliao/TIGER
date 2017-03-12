@@ -36,7 +36,7 @@
 
 ### Demo
 
-<a href="https://asciinema.org/a/89pja97rl0kb6s49iejc47lm"><img src="https://asciinema.org/a/89pja97rl0kb6s49iejc47lm.png" width="836"/></a>
+<a href="https://asciinema.org/a/89pja97rl0kb6s49iejc47lmn" target="_blank"><img src="https://asciinema.org/a/89pja97rl0kb6s49iejc47lmn.png" width="600" /></a>
 
 ### Desgin Internals
 
