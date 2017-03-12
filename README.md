@@ -51,20 +51,22 @@
 
 	First, we need to rewrite the grammar given in the Tiger language specification to remove the ambiguity by enforcing operator precedences and left associativity. This part is to be done by hand. You can check out our [modified grammar file](https://github.com/gangliao/Tiger-Compiler/blob/master/phase1/part1/gang/grammar.md) in this repo.
 
-2. Hand-written parser table
+2. Hand-written parse table
 
 	Modifying the grammar obtained in step 1 to support LL(1) parsing. This could include removing left recursion and performing left factoring on the grammar obtained in step 1 above. Creating the LL(1) parser table for Tiger. This will drive the decision-making process for the parser. This part is to be done by hand by using the theory of LL parsing by finding the first(), follow() sets that help you develop the parser table (please check out [parser table file](https://github.com/gangliao/Tiger-Compiler/blob/master/phase1/part1/gang/parser_table.md) in this repo.
 
 3. Parser code
 
-	After hand-written parser table is created, it should be hand-code into our program. we create a data structure - hash table:
+	After hand-written parser table is created, it should be hand-coded into our program. we create a data structure - hash table:
 	
 	```c++
 	std::map<SymbolTerminalPair, std::vector<int> > parseTable_;
 	```
 
-	Here, class `SymbolTerminalPair` includes a pair members `(Entry entry, std::string name)`, `std::vector<int>` in `parseTable_` is
-	the actual expansion grammar rules. To build a parse table, we can simply insert all rules into hash table.
+	Here, class `SymbolTerminalPair` includes a pair members `(Entry entry, std::string name)`, `std::vector<int>` in `parseTable_` is the actual expansion grammar rules.
+	
+	To build a parse table, we can simply insert all next terminals with their grammer rules **include action symbol** into hash table `parseTable_`.
+
 	As a simple example, consider the following:
 
 	```c++
@@ -85,6 +87,8 @@
 					 Symbol::Action::FinalizeScope});           // NOLINT
 	...				
 	```
+
+	The next terminals are inside `std::vector<int> &terminals`, their grammar rules **include action symbol** are inside the third parameter `std::vector<int> &expand_rule` in `addToParseTable`.
 
 	In general, combining `addToParseTable` and hand-written parse table, we can embed parse table into program before it starts parsing.
 
