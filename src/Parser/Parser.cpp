@@ -828,10 +828,10 @@ TokenPair Parser::evaPostfix(std::vector<TokenPair>& expr) {
         expr[i].getTokenType().getValue() == Symbol::Terminal::MINUS ||
         expr[i].getTokenType().getValue() == Symbol::Terminal::AND ||
         expr[i].getTokenType().getValue() == Symbol::Terminal::OR) {
-      TokenPair A = stack.top();
+      TokenPair B = stack.top();
       std::string typeA;
       stack.pop();
-      TokenPair B = stack.top();
+      TokenPair A = stack.top();
       std::string typeB;
       stack.pop();
 
@@ -880,10 +880,10 @@ TokenPair Parser::evaPostfix(std::vector<TokenPair>& expr) {
                   << std::endl;
         std::exit(EXIT_FAILURE);
       } else {
-        TokenPair A = stack.top();
+        TokenPair B = stack.top();
         std::string typeA;
         stack.pop();
-        TokenPair B = stack.top();
+        TokenPair A = stack.top();
         std::string typeB;
         stack.pop();
         //     assign, $t0, 0,
