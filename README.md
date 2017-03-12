@@ -58,7 +58,7 @@
 	std::map<SymbolTerminalPair, std::vector<int> > parseTable_;
 	```
 
-	Here, class `SymbolTerminalPair` includes a pair members (Entry entry, std::string name), std::vector<int> is
+	Here, class `SymbolTerminalPair` includes a pair members `(Entry entry, std::string name)`, `std::vector<int>` in `parseTable_` is
 	the actual expansion grammar rules. To build a parse table, we can simply insert all rules into hash table.
 	As a simple example, consider the following:
 
@@ -71,19 +71,20 @@
 	addToParseTable(Symbol::Nonterminal::TIGER_PROGRAM,         // NOLINT
 					{Symbol::Terminal::LET},                    // NOLINT
 					{Symbol::Action::InitializeScope,           // NOLINT
-					Symbol::Terminal::LET,                     // NOLINT
-					Symbol::Nonterminal::DECLARATION_SEGMENT,  // NOLINT
-					Symbol::Terminal::IN,                      // NOLINT
-					Symbol::Action::MakeMainLabel,             // NOLINT
-					Symbol::Nonterminal::STAT_SEQ,             // NOLINT
-					Symbol::Terminal::END,                     // NOLINT
-					Symbol::Action::FinalizeScope});           // NOLINT
+					 Symbol::Terminal::LET,                     // NOLINT
+					 Symbol::Nonterminal::DECLARATION_SEGMENT,  // NOLINT
+					 Symbol::Terminal::IN,                      // NOLINT
+					 Symbol::Action::MakeMainLabel,             // NOLINT
+					 Symbol::Nonterminal::STAT_SEQ,             // NOLINT
+					 Symbol::Terminal::END,                     // NOLINT
+					 Symbol::Action::FinalizeScope});           // NOLINT
 	...				
 	```
 
 	In general, combining `addToParseTable` and hand-written parse table, we can embed parse table into program before it starts parsing.
 
 #### Symbol Table
+
 
 
 
