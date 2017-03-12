@@ -97,7 +97,7 @@
 <a href="https://github.com/gangliao/Tiger-Compiler/blob/master/img/symbol_table.png" target="_blank"><img src="https://github.com/gangliao/Tiger-Compiler/blob/master/img/symbol_table.png" width="500" /></a>
 
 Since `let` statements can be nested as per the grammar, **Scoping-sensitive** data structure is required to
-store the different levels' symbol table. For convenience and simplicity, we create an global data structure
+store the different level symbol tables. For convenience and simplicity, we create a global data structure
 `g_SymbolTable`: `int` is the current scoping level and `SymbolTablePtr` is a c++11 shared ptr to the corresponding symbol table.
 
 ```c++
