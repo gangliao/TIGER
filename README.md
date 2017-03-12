@@ -269,10 +269,24 @@ To generate intermediate code, we need helper functions like `new_temp()`, `new_
 	includes `+, -, *, /, &, |` and `(, )`.
 
 	For instance, how to generate IR code for `a := (b + 2) / 5 * a`? We use the postfix expression to 
-	generate IR code: http://faculty.cs.niu.edu/~hutchins/csci241/eval.html
+	generate IR code: http://faculty.cs.niu.edu/~hutchins/csci241/eval.htm
 
 		1. convert infix expression to postfix expression
 		2. evaluate postfix expression to semantic checking and IR code generation
+
+		```c++
+		/**
+		* @brief parse expression from infix to postfix expression.
+		*
+		* @note  posifix expression is convenient way to do semantic
+		*        check and generate IR.
+		*/
+		std::vector<TokenPair> cvt2PostExpr(std::vector<TokenPair> &tempBuffer,
+											size_t index);
+
+		/// generate IR and symbol table elements from postfix expression
+		TokenPair evaPostfix(std::vector<TokenPair> &expr);
+		```
 
 	Finally, we can generate the code as follows:
 
