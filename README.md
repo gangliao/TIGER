@@ -94,7 +94,7 @@
 
 #### Symbol Table
 
-
+<a href="https://github.com/gangliao/Tiger-Compiler/blob/master/img/symbol_table.png" target="_blank"><img src="https://github.com/gangliao/Tiger-Compiler/blob/master/img/symbol_table.png" width="300" /></a
 
 
 #### Semantic Checking
