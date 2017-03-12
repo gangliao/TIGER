@@ -211,16 +211,16 @@ Generate IR CODE ...
     assign, b, 0,
 main:
     assign, $t0, 0,
-    brneq, b, a, if_label0
+    brneq, a, b, if_label0
     assign, $t0, 1,
 if_label0:
     breq, $t0, 0, if_label1
-    add, 2, b, $t1
-    div, 5, $t1, $t2
-    mult, b, a, $t3
-    sub, $t3, $t2, $t4
-    sub, 5, $t4, $t5
-    add, b, $t5, $t6
+    add, b, 2, $t1
+    div, $t1, 5, $t2
+    mult, a, b, $t3
+    sub, $t2, $t3, $t4
+    sub, $t4, 5, $t5
+    add, $t5, b, $t6
     assgin, a, $t6,
     goto, if_label2, ,
 if_label1:

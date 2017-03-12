@@ -252,20 +252,20 @@ Generate IR CODE ...
     assign, d, 0,
 main:
     assign, $t0, 0,
-    brneq, b, a, if_label0
+    brneq, a, b, if_label0
     assign, $t0, 1,
 if_label0:
     breq, $t0, 0, if_label1
-    mult, a, 5, $t1
-    add, $t1, b, $t2
-    add, c, 3, $t3
-    sub, $t3, $t2, $t4
+    mult, 5, a, $t1
+    add, b, $t1, $t2
+    add, 3, c, $t3
+    sub, $t2, $t3, $t4
     assgin, a, $t4,
     goto, if_label2, ,
 if_label1:
-    div, 2, b, $t5
-    mult, 3, d, $t6
-    add, $t6, $t5, $t7
+    div, b, 2, $t5
+    mult, d, 3, $t6
+    add, $t5, $t6, $t7
     assgin, a, $t7,
 if_label2:
     call, printi, a

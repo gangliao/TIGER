@@ -147,11 +147,11 @@ Generate IR CODE ...
 main:
 loop_label0:
     assign, $t0, 0,
-    brneq, b, a, loop_label1
+    brneq, a, b, loop_label1
     assign, $t0, 1,
 loop_label1:
     breq, $t0, 0, loop_label2
-    add, 2, b, $t1
+    add, b, 2, $t1
     assgin, a, $t1,
     goto, loop_label0, ,
 loop_label2:

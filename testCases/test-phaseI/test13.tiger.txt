@@ -173,16 +173,16 @@ Generate IR CODE ...
     assign, c, 0,
 main:
     assign, $t0, 0,
-    brneq, b, a, if_label0
+    brneq, a, b, if_label0
     assign, $t0, 1,
 if_label0:
     breq, $t0, 0, if_label1
     assign, $t1, 0,
-    brleq, 0, a, if_label2
+    brleq, a, 0, if_label2
     assign, $t1, 1,
 if_label2:
     breq, $t1, 0, if_label3
-    add, 2, b, $t2
+    add, b, 2, $t2
     assgin, a, $t2,
     goto, if_label4, ,
 if_label3:

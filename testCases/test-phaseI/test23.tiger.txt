@@ -281,13 +281,13 @@ fillArray:
     return, , ,
 main:
     call, fillArray, y, z
-    add, 1, 0, $t0
-    mult, 2, 9, $t1
-    add, $t1, $t0, $t2
-    sub, 19, $t2, $t3
+    add, 0, 1, $t0
+    mult, 9, 2, $t1
+    add, $t0, $t1, $t2
+    sub, $t2, 19, $t3
     array_load, $t4, buffer, $t3
     array_load, $t5, buffer, 1
-    mult, $t5, $t4, $t6
+    mult, $t4, $t5, $t6
     array_store, buffer, 1, $t6
     array_load, $t7, buffer, 0
     call, printi, $t7

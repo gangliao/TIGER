@@ -172,13 +172,13 @@ Generate IR CODE ...
     assign, b, 0,
     assign, c, 0,
 main:
-    and, c, a, $t0
+    and, a, c, $t0
     assign, $t1, 0,
     brneq, $t0, 0, if_label0
     assign, $t1, 1,
 if_label0:
     breq, $t1, 0, if_label1
-    or, 2, b, $t2
+    or, b, 2, $t2
     assgin, a, $t2,
     goto, if_label2, ,
 if_label1:

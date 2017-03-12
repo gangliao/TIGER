@@ -404,37 +404,37 @@ quadrupleMe:
     callr, input, doubleMe, input
     return, input, ,
 main:
-    add, 3, 1, $t1
-    add, 7, 6, $t2
+    add, 1, 3, $t1
+    add, 6, 7, $t2
     assign, loopCounter, $t1,
 loop_label0:
     brgt, loopCounter, $t2, loop_label1
-    and, 1, loopCounter, $t3
+    and, loopCounter, 1, $t3
     assign, $t4, 0,
     brneq, $t3, 0, if_label0
     assign, $t4, 1,
 if_label0:
     breq, $t4, 0, if_label1
-    add, y, x, $t5
+    add, x, y, $t5
     assgin, x, $t5,
-    div, 1.5, x, $t6
+    div, x, 1.5, $t6
     assgin, myFloat, $t6,
     goto, if_label2, ,
 if_label1:
-    add, z, x, $t7
+    add, x, z, $t7
     assgin, x, $t7,
-    div, 1.5, x, $t8
+    div, x, 1.5, $t8
     assgin, myFloat, $t8,
-    sub, loopCounter, x, $t9
+    sub, x, loopCounter, $t9
     assgin, x, $t9,
-    add, loopCounter, x, $t10
+    add, x, loopCounter, $t10
     assgin, x, $t10,
-    add, loopCounter, x, $t11
+    add, x, loopCounter, $t11
     assgin, x, $t11,
     assign, loopCounter, $t1,
 loop_label2:
     brgt, loopCounter, $t2, loop_label3
-    add, loopCounter, x, $t12
+    add, x, loopCounter, $t12
     assgin, x, $t12,
     add, loopCounter, 1, loopCounter
     goto, loop_label2, ,
@@ -444,7 +444,7 @@ if_label2:
     goto, loop_label0, ,
 loop_label1:
     callr, x, quadrupleMe, x
-    mult, 2, myFloat, $t13
+    mult, myFloat, 2, $t13
     assgin, myFloat, $t13,
     call, printi, x
     return, , ,

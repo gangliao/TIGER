@@ -149,7 +149,7 @@ main:
     assign, loopCounter, 1,
 loop_label0:
     brgt, loopCounter, number, loop_label1
-    mult, loopCounter, result, $t0
+    mult, result, loopCounter, $t0
     assgin, result, $t0,
     add, loopCounter, 1, loopCounter
     goto, loop_label0, ,

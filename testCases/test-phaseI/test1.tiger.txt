@@ -230,8 +230,8 @@ loop_label0:
     brgt, i, 100, loop_label1
     array_load, $t0, X, i
     array_load, $t1, Y, i
-    mult, $t1, $t0, $t2
-    add, $t2, sum, $t3
+    mult, $t0, $t1, $t2
+    add, sum, $t2, $t3
     assgin, sum, $t3,
     add, i, 1, i
     goto, loop_label0, ,
