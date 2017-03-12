@@ -49,11 +49,11 @@
 
 1. Hand-modified Tiger grammars
 
-	First, we need to rewrite the grammar given in the Tiger language specification to remove the ambiguity by enforcing operator precedences and left associativity. This part is to be done by hand. You can check out our [modified grammar file](https://github.com/gangliao/Tiger-Compiler/blob/master/phase1/part1/gang/grammar.md) in this repo.
+	First, we need to rewrite the grammar given in the Tiger language specification to remove the ambiguity by enforcing operator precedences and left associativity. This part is done by hand. You can check out our [modified grammar file](https://github.com/gangliao/Tiger-Compiler/blob/master/phase1/part1/gang/grammar.md) in this repo.
 
 2. Hand-written parse table
 
-	Modifying the grammar obtained in step 1 to support LL(1) parsing. This could include removing left recursion and performing left factoring on the grammar obtained in step 1 above. Creating the LL(1) parser table for Tiger. This will drive the decision-making process for the parser. This part is to be done by hand by using the theory of LL parsing by finding the first(), follow() sets that help you develop the parser table (please check out [parser table file](https://github.com/gangliao/Tiger-Compiler/blob/master/phase1/part1/gang/parser_table.md) in this repo.)
+	Modifying the grammar obtained in step 1 to support LL(1) parsing. This could include removing left recursion and performing left factoring on the grammar obtained in step 1 above. Creating the LL(1) parser table for Tiger. This will drive the decision-making process for the parser. This part is also done by hand by using the theory of LL parsing and finding the first(), follow() sets that help you develop the parser table (please check out [parser table file](https://github.com/gangliao/Tiger-Compiler/blob/master/phase1/part1/gang/parser_table.md) in this repo.)
 
 3. Parser code
 
@@ -65,7 +65,7 @@
 
 	Here, class `SymbolTerminalPair` includes a pair members `(Entry entry, std::string name)`, `std::vector<int>` in `parseTable_` is the actual expansion grammar rules.
 	
-	To build a parse table, we can simply insert all next terminals with their grammer rules **include action symbol** into hash table `parseTable_`.
+	To build a parse table, we can simply insert all next terminals with their grammer rules **with action symbol** into hash table `parseTable_`.
 
 	As a simple example, consider the following:
 
@@ -88,7 +88,7 @@
 	...				
 	```
 
-	The next terminals are inside `std::vector<int> &terminals`, their grammar rules **include action symbol** are inside the third parameter `std::vector<int> &expand_rule` in `addToParseTable`.
+	The next terminals are inside `std::vector<int> &terminals`, their grammar rules **with action symbol** are part of third parameter `std::vector<int> &expand_rule` in `addToParseTable`.
 
 	In general, combining `addToParseTable` and hand-written parse table, we can embed parse table into program before it starts parsing.
 
@@ -96,9 +96,9 @@
 
 <a href="https://github.com/gangliao/Tiger-Compiler/blob/master/img/symbol_table.png" target="_blank"><img src="https://github.com/gangliao/Tiger-Compiler/blob/master/img/symbol_table.png" width="500" /></a>
 
-Since `let` statements can be nested as per the grammar, **Scoping-sensitive** data structure is required to
-store the different level symbol tables. For convenience and simplicity, we create a global data structure
-`g_SymbolTable`: `int` is the current scoping level and `SymbolTablePtr` is a c++11 shared ptr which refers to the corresponding symbol table.
+Since `let` statements can be nested as per the grammar, **Scoping-sensitive** data structure is required to be 
+stored in the different level symbol tables. For convenience and simplicity, we create a global data structure
+`g_SymbolTable`: `int`, which is the current scoping level and `SymbolTablePtr` is a c++11 shared ptr which refers to the corresponding symbol table.
 
 ```c++
 /// global symbol table <level, symbol table>
@@ -120,10 +120,10 @@ inline void finalizeScoping() {
 ```
 
 Each `let` statement opens a new scope which ends at the corresponding end of the `let` statement. When a new
-scope is opened, new symbol table based on incremental level will be also initlized. Since current Tiger grammar
+scope is opened, new symbol table based on incremental level will be initlized. Since current Tiger grammar
 rules only support `int` and `float`, we only embed `int`, `float` and the related standard functions like `printi`, `flush`, `exit`, `not` into symbol table.
 
-When you execute `bin/parser <filename> -d`, the symbol table will be generated into your screen.
+When you execute `bin/parser <filename> -d`, the symbol table will be generated on your screen.
 
 For example, issue the command `./bin/parser testCases/test-phaseI/test1.tiger -d`:
 
@@ -178,7 +178,7 @@ Return type: -
 
 #### Semantic Checking
 
-In our implementation, it consists of semantic checks. It leverages action symbols, semantic records on
+In our implementation, semantic checks are also performed. It leverages action symbols, semantic records on
 the stack and symbol table.
 
 There are several cases in Tiger where type checking must occur:
@@ -195,7 +195,7 @@ There are several cases in Tiger where type checking must occur:
 
 We already added these negative test cases in directory `/testCases/test-phaseI`, please refer to our [Phase1-Testing and Output](https://github.com/gangliao/Tiger-Compiler/blob/master/Phase1-Testing%20and%20Output.pdf) to find more details.
 
-As a simple example, consider `test32.tiger` in directory `/testCases/test-phaseI`, Its tiger code as follows:
+As a simple example, consider `test32.tiger` in directory `/testCases/test-phaseI`, Its tiger code is as follows:
 
 ```c++
 /* test for loop expression type as float, this should generate error */
@@ -212,7 +212,7 @@ in
 end
 ```
 
-After issue the command `./bin/parser testCases/test-phaseI/test32.tiger -d`:
+After issuing the command `./bin/parser testCases/test-phaseI/test32.tiger -d`:
 
 ```bash
 [ RUN ] parsing code...
@@ -226,10 +226,10 @@ Error: for statement begin or end value is not int type!
 
 #### Intermediate Code
 
-To generate intermediate code, we need some tiny functions like `new_temp()`, `new_loop_label()` and `new_if_label()` to generate unique labels in IR code.
+To generate intermediate code, we need helper functions like `new_temp()`, `new_loop_label()` and `new_if_label()` to generate unique labels in IR code.
 
-Program starts parsing tiger code, when it occurs **action symbols**, it will trigger the corresponding
-functions to do semantic checking and generate IR code.
+Program starts parsing tiger code, when **action symbols** are detected, corresponding
+functions to do semantic checking and generate IR code generation are triggered.
 
 Here is some action functions:
 
