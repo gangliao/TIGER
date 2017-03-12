@@ -274,19 +274,20 @@ To generate intermediate code, we need helper functions like `new_temp()`, `new_
 		1. convert infix expression to postfix expression
 		2. evaluate postfix expression to semantic checking and IR code generation
 
-		```c++
-		/**
-		* @brief parse expression from infix to postfix expression.
-		*
-		* @note  posifix expression is convenient way to do semantic
-		*        check and generate IR.
-		*/
-		std::vector<TokenPair> cvt2PostExpr(std::vector<TokenPair> &tempBuffer,
-											size_t index);
 
-		/// generate IR and symbol table elements from postfix expression
-		TokenPair evaPostfix(std::vector<TokenPair> &expr);
-		```
+	```c++
+	/**
+	* @brief parse expression from infix to postfix expression.
+	*
+	* @note  posifix expression is convenient way to do semantic
+	*        check and generate IR.
+	*/
+	std::vector<TokenPair> cvt2PostExpr(std::vector<TokenPair> &tempBuffer,
+										size_t index);
+
+	/// generate IR and symbol table elements from postfix expression
+	TokenPair evaPostfix(std::vector<TokenPair> &expr);
+	```
 
 	Finally, we can generate the code as follows:
 
