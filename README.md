@@ -179,7 +179,7 @@ There are several cases in Tiger where type checking must occur:
 	8. Multiple let-in-end test.
 	10. For loop expression with float parameter.
 
-We alreay added these negative test cases in directory `/testCases/test-phaseI`, please refer to our [Phase1-Testing and Output](https://github.com/gangliao/Tiger-Compiler/blob/master/Phase1-Testing%20and%20Output.pdf) to find more details.
+We already added these negative test cases in directory `/testCases/test-phaseI`, please refer to our [Phase1-Testing and Output](https://github.com/gangliao/Tiger-Compiler/blob/master/Phase1-Testing%20and%20Output.pdf) to find more details.
 
 As a simple example, consider `test32.tiger` in directory `/testCases/test-phaseI`, Its tiger code as follows:
 
