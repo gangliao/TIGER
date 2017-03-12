@@ -34,4 +34,21 @@
 	sh ./test.sh
 	```
 
-### Desgin Docs
+### Demo
+
+<a href="https://asciinema.org/a/89pja97rl0kb6s49iejc47lm"><img src="https://asciinema.org/a/89pja97rl0kb6s49iejc47lm.png" width="836"/></a>
+
+### Desgin Internals
+
+#### Design LL(1) Parse Table
+
+1. Hand-modified Tiger grammars
+2. Hand-written parser table
+3. Parser code
+
+#### Symbol Table
+
+#### Semantic Checking
+
+#### Intermediate Code
+
