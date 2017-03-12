@@ -98,13 +98,69 @@
 
 Since `let` statements can be nested as per the grammar, **Scoping-sensitive** data structure is required to
 store the different level symbol tables. For convenience and simplicity, we create a global data structure
-`g_SymbolTable`: `int` is the current scoping level and `SymbolTablePtr` is a c++11 shared ptr to the corresponding symbol table.
+`g_SymbolTable`: `int` is the current scoping level and `SymbolTablePtr` is a c++11 shared ptr which refers to the corresponding symbol table.
 
 ```c++
 /// global symbol table <level, symbol table>
 std::unordered_map<int, SymbolTablePtr> g_SymbolTable;
 ```
 
+Each `let` statement opens a new scope which ends at the corresponding end of the `let` statement. When a new
+scope is opened, new symbol table based on incremental level will be also initlized. Since current Tiger grammar
+rules only support `int` and `float`, we only embed `int`, `float` and the related standard functions like `printi`, `flush`, `exit`, `not` into symbol table.
+
+When you execute `bin/parser <filename> -d`, the symbol table will be generated into your screen.
+
+For example, issue the command `./bin/parser testCases/test-phaseI/test1.tiger -d`:
+
+the symbol table is shown as follows:
+
+```bash
+[ RUN ] parsing code...
+
+----------------------------------------
+Table: Variables
+Name: $t0
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t1
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+...
+
+----------------------------------------
+Table: Functions
+Name: printi
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: -
+----------------------------------------
+
+[ OK ] successful parse...
+
+```
 
 #### Semantic Checking
 
