@@ -113,7 +113,7 @@ When you execute `bin/parser <filename> -d`, the symbol table will be generated 
 
 For example, issue the command `./bin/parser testCases/test-phaseI/test1.tiger -d`:
 
-the symbol table is shown as follows:
+The symbol table is shown as follows:
 
 ```bash
 [ RUN ] parsing code...
@@ -163,6 +163,13 @@ Return type: -
 ```
 
 #### Semantic Checking
+
+In our implementation, it consists of semantic checks. It leverages action symbols, semantic records on
+the stack and symbol table.
+
+There are several cases in Tiger where type checking must occur:
+
+
 
 #### Intermediate Code
 

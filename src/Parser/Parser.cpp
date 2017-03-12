@@ -1216,6 +1216,7 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
             std::cout << "Error: left and right type between assignment is "
                          "mismatched!\n"
                       << std::endl;
+            exit(EXIT_FAILURE);
           }
 
           std::string code = "    assgin, " + tempBuffer[0].getTokenString() +
