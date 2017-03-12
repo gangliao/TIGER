@@ -69,55 +69,55 @@
 45: <stat-assign-tail> -> <compare-op> <compare> <stat-assign-tail>
 46: <stat-assign-tail> -> <add-op> <term> <compare-tail> <stat-assign-tail>
 47: <stat-assign-tail> -> <mul-op> <factor> <stat-assign-tail>
-47: <stat-assign-tail> -> NULL
+48: <stat-assign-tail> -> NULL
 
-48: <stat> -> while <expr> do <stat-seq> enddo;
-49: <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
+49: <stat> -> while <expr> do <stat-seq> enddo;
+50: <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
 
 
-50: <stat> -> break;
-51: <stat> -> return <expr>;
+51: <stat> -> break;
+52: <stat> -> return <expr>;
 
-52: <stat> -> let <declaration-segment> in <stat-seq> end
+53: <stat> -> let <declaration-segment> in <stat-seq> end
 
 # expr
-53: <expr> -> <OR-expr> <stat-assign-tail>
-56: <OR-expr> -> <AND-expr> <stat-assign-tail>
-59: <AND-expr> -> <compare> <stat-assign-tail>
-62: <compare> -> <term> <stat-assign-tail>
-65: <term> -> <factor> <stat-assign-tail>
+54: <expr> -> <OR-expr> <stat-assign-tail>
+55: <OR-expr> -> <AND-expr> <stat-assign-tail>
+56: <AND-expr> -> <compare> <stat-assign-tail>
+57: <compare> -> <term> <stat-assign-tail>
+58: <term> -> <factor> <stat-assign-tail>
 
 
-68: <factor> -> (<expr>)
-69: <factor> -> <const>
-70: <factor> -> <lvalue>
+59: <factor> -> (<expr>)
+60: <factor> -> <const>
+61: <factor> -> <lvalue>
 
 # const
-71: <const> -> INTLIT
-72: <const> -> FLOATLIT
+62: <const> -> INTLIT
+63: <const> -> FLOATLIT
 
 # binary-operator
-73: <OR-op> -> |
-74: <AND-op> -> &
-75: <compare-op> -> <=
-76: <compare-op> -> >=
-77: <compare-op> -> <
-78: <compare-op> -> >
-79: <compare-op> -> <>
-80: <compare-op> -> =
-81: <add-op> -> -
-82: <add-op> -> +
-83: <mul-op> -> /
-84: <mul-op> -> *
+64: <OR-op> -> |
+65: <AND-op> -> &
+66: <compare-op> -> <=
+67: <compare-op> -> >=
+68: <compare-op> -> <
+69: <compare-op> -> >
+70: <compare-op> -> <>
+71: <compare-op> -> =
+72: <add-op> -> -
+73: <add-op> -> +
+74: <mul-op> -> /
+75: <mul-op> -> *
 
-85: <expr-list> -> NULL
-86: <expr-list> -> <expr> <expr-list-tail>
-87: <expr-list-tail> -> , <expr> <expr-list-tail>
-88: <expr-list-tail> -> NULL
+76: <expr-list> -> NULL
+77: <expr-list> -> <expr> <expr-list-tail>
+78: <expr-list-tail> -> , <expr> <expr-list-tail>
+79: <expr-list-tail> -> NULL
 
-89: <lvalue> -> id <lvalue-tail>
-90: <lvalue-tail> -> [<expr>]
-91: <lvalue-tail> -> NULL
+80: <lvalue> -> id <lvalue-tail>
+81: <lvalue-tail> -> [<expr>]
+82: <lvalue-tail> -> NULL
 ```
 
 
