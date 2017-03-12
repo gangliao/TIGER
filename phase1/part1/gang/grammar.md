@@ -203,7 +203,7 @@ Follow(<stat-if-tail>) = {if id while for break return let end endif else enddo}
 Follow(<stat-funct-or-assign>) = {if id while for break return let end endif else enddo}
 Follow(<stat-assign>) = {;}
 Follow(<stat-assign-stuff>) = {;}
-Follow(<stat-assign-tail>) = {;}
+Follow(<stat-assign-tail>) = {then ) do to ; ] ,}
 Follow(<expr>) = {then ) do to ; ] ,}
 Follow(<OR-expr>) = {| & <= >= < > <> = - + / * then ) do to ; ] ,}
 Follow(<AND-expr>) = {| & <= >= < > <> = - + / *  then ) do to ; ] ,}

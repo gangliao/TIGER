@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code...
+[ RUN ] parsing code... 
 
-let var id : int := intlit ; var id : int ; var id : int := intlit ; in for id := intlit to id do id := id * id ; enddo ; id ( id ) ; end
+let var id : int := intlit ; var id : int ; var id : int := intlit ; in for id := intlit to id do id := id * id ; enddo ; id ( id ) ; end  
 
 ----------------------------------------
 Table: Variables
@@ -157,3 +157,4 @@ loop_label1:
     call, printi, result
     return, , ,
 ----------------------------------------
+

@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code...
+[ RUN ] parsing code... 
 
-let type id = array [ intlit ] of int ; var id , id : id := intlit ; var id : id := intlit ; var id : int := intlit ; in for id := intlit to intlit do id [ id ] := id [ id ] * id [ id ] ; enddo ; for id := intlit to intlit do id ( id [ id ] ) ; enddo ; end
+let type id = array [ intlit ] of int ; var id , id : id := intlit ; var id : id := intlit ; var id : int := intlit ; in for id := intlit to intlit do id [ id ] := id [ id ] * id [ id ] ; enddo ; for id := intlit to intlit do id ( id [ id ] ) ; enddo ; end  
 
 ----------------------------------------
 Table: Variables
@@ -232,3 +232,4 @@ loop_label2:
 loop_label3:
     return, , ,
 ----------------------------------------
+

@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code...
+[ RUN ] parsing code... 
 
-let var id , id : int := intlit ; in id ( id ) ; end let
+let var id , id : int := intlit ; in id ( id ) ; end let 
 
 ----------------------------------------
 Table: Variables
@@ -119,3 +119,4 @@ Generate IR CODE ...
 main:
     call, printi, a
 ----------------------------------------
+

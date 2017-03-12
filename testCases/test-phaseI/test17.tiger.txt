@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code...
+[ RUN ] parsing code... 
 
-let var id , id : int := intlit ; in while ( id = id ) do id := id + intlit ; enddo ; end
+let var id , id : int := intlit ; in while ( id = id ) do id := id + intlit ; enddo ; end  
 
 ----------------------------------------
 Table: Variables
@@ -157,3 +157,4 @@ loop_label1:
 loop_label2:
     return, , ,
 ----------------------------------------
+
