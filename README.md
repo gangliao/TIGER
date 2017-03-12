@@ -123,7 +123,7 @@ Each `let` statement opens a new scope which ends at the corresponding end of th
 scope is opened, new symbol table based on incremental level will be also initlized. Since current Tiger grammar
 rules only support `int` and `float`, we only embed `int`, `float` and the related standard functions like `printi`, `flush`, `exit`, `not` into symbol table.
 
-When you execute `bin/parser <filename> -d`, the symbol table will be generated into your screen.
+When you execute `bin/parser <filename> -d`, the symbol table will be generated on your screen.
 
 For example, issue the command `./bin/parser testCases/test-phaseI/test1.tiger -d`:
 
@@ -226,35 +226,61 @@ Error: for statement begin or end value is not int type!
 
 #### Intermediate Code
 
-To generate intermediate code, we need some tiny functions like `new_temp()`, `new_loop_label()` and `new_if_label()` to generate unique labels in IR code.
+1. new labels
 
-Program starts parsing tiger code, when it occurs **action symbols**, it will trigger the corresponding
-functions to do semantic checking and generate IR code.
+	To generate intermediate code, we need some tiny functions like `new_temp()`, `new_loop_label()` and `new_if_label()` to generate unique labels in IR code.
 
-Here is some action functions:
+2. action fuctions
 
-```c++
-/// parse action like TYPES, VARIABLES, FUNCTIONS declaration
-void parseAction(int expr, std::vector<TokenPair> &tempBuffer);
+	Program starts parsing tiger code, when it occurs **action symbols**, it will trigger the corresponding
+	functions to do semantic checking and generate IR code.
 
-/// parse for statement action
-void parseForAction(std::vector<TokenPair> &blockBuffer);
+	Here is some action functions:
 
-/// parse for statement end action
-void parseForActionEnd(std::vector<TokenPair> &blockBuffer);
+	```c++
+	/// parse action like TYPES, VARIABLES, FUNCTIONS declaration
+	void parseAction(int expr, std::vector<TokenPair> &tempBuffer);
 
-/// parse function action: function name (x:int) : return-type
-void parseFuncAction(std::vector<TokenPair> &tempBuffer);
+	/// parse for statement action
+	void parseForAction(std::vector<TokenPair> &blockBuffer);
 
-/// parse if statement action
-void parseIfAction(std::vector<TokenPair> &tempBuffer);
+	/// parse for statement end action
+	void parseForActionEnd(std::vector<TokenPair> &blockBuffer);
 
-/// parse return statement action
-void parseReturnAction(std::vector<TokenPair> &tempBuffer);
+	/// parse function action: function name (x:int) : return-type
+	void parseFuncAction(std::vector<TokenPair> &tempBuffer);
 
-/// parse while statement action
-void parseWhileAction(std::vector<TokenPair> &tempBuffer);
+	/// parse if statement action
+	void parseIfAction(std::vector<TokenPair> &tempBuffer);
 
-...
+	/// parse return statement action
+	void parseReturnAction(std::vector<TokenPair> &tempBuffer);
 
-```
+	/// parse while statement action
+	void parseWhileAction(std::vector<TokenPair> &tempBuffer);
+
+	...
+
+	```
+
+3. evaluate expression
+
+	The toughest part is to generate IR code for expression or expression assignment. Because it could
+	includes `+, -, *, /, &, |` and `(, )`.
+
+	For instance, how to generate IR code for `a := (b + 2) / 5 * a`? We use the postfix expression to 
+	generate IR code: http://faculty.cs.niu.edu/~hutchins/csci241/eval.html
+
+		1. convert infix expression to postfix expression
+		2. evaluate postfix expression to semantic checking and IR code generation
+
+	Finally, we can generate the code as follows:
+
+	```c++
+		add, 2, b, $t0
+		div, 5, $t0, $t1
+		mult, a, $t1, $t2
+		assgin, a, $t2,
+	```
+
+
