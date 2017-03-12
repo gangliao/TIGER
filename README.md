@@ -71,8 +71,14 @@
 
 	```c++
 	/// insert items into parse table
-	void addToParseTable(const int nonterm, const std::vector<int> &terminals,
-						 const std::vector<int> &expand_rule);
+	void Parser::addToParseTable(const int nonterm,
+								const std::vector<int>& terminals,
+								const std::vector<int>& expand_rule) {
+	for (auto& term : terminals) {
+		SymbolTerminalPair stp(nonterm, term);
+		parseTable_[stp] = expand_rule;
+	}
+
 	// # tiger-program
 	// 1: <tiger-program> -> let <declaration-segment> in <stat-seq> end
 	addToParseTable(Symbol::Nonterminal::TIGER_PROGRAM,         // NOLINT
