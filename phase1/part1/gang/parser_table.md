@@ -64,68 +64,60 @@
 41: <stat-assign-stuff> -> (<expr-list>)
 42: <stat-assign-stuff> -> <lvalue-tail> <stat-assign-tail>
 
-43: <stat-assign-tail> -> <expr-tail>
-44: <stat-assign-tail> -> <OR-expr-tail>
-45: <stat-assign-tail> -> <AND-expr-tail>
-46: <stat-assign-tail> -> <compare-tail>
-47: <stat-assign-tail> -> <term-tail>
-48: <stat-assign-tail> -> NULL
+43: <stat-assign-tail> -> <OR-op> <OR-expr> <stat-assign-tail>
+44: <stat-assign-tail> -> <AND-op> <AND-expr> <stat-assign-tail>
+45: <stat-assign-tail> -> <compare-op> <compare> <stat-assign-tail>
+46: <stat-assign-tail> -> <add-op> <term> <compare-tail> <stat-assign-tail>
+47: <stat-assign-tail> -> <mul-op> <factor> <stat-assign-tail>
+47: <stat-assign-tail> -> NULL
 
-49: <stat> -> while <expr> do <stat-seq> enddo;
-50: <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
+48: <stat> -> while <expr> do <stat-seq> enddo;
+49: <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
 
 
-51: <stat> -> break;
-52: <stat> -> return <expr>;
+50: <stat> -> break;
+51: <stat> -> return <expr>;
 
-53: <stat> -> let <declaration-segment> in <stat-seq> end
+52: <stat> -> let <declaration-segment> in <stat-seq> end
 
 # expr
-54: <expr> -> <OR-expr> <expr-tail>
-55: <expr-tail> -> <OR-op> <OR-expr> <stat-assign-tail>
+53: <expr> -> <OR-expr> <stat-assign-tail>
+56: <OR-expr> -> <AND-expr> <stat-assign-tail>
+59: <AND-expr> -> <compare> <stat-assign-tail>
+62: <compare> -> <term> <stat-assign-tail>
+65: <term> -> <factor> <stat-assign-tail>
 
-56: <OR-expr> -> <AND-expr> <OR-expr-tail>
-57: <OR-expr-tail> -> <AND-op> <AND-expr> <stat-assign-tail>
 
-58: <AND-expr> -> <compare> <AND-expr-tail>
-69: <AND-expr-tail> -> <compare-op> <compare> <stat-assign-tail>
-
-60: <compare> -> <term> <compare-tail>
-61: <compare-tail> -> <add-op> <term> <stat-assign-tail>
-
-62: <term> -> <factor> <term-tail>
-63: <term-tail> -> <mul-op> <factor> <stat-assign-tail>
-
-64: <factor> -> (<expr>)
-65: <factor> -> <const>
-66: <factor> -> <lvalue>
+68: <factor> -> (<expr>)
+69: <factor> -> <const>
+70: <factor> -> <lvalue>
 
 # const
-67: <const> -> INTLIT
-68: <const> -> FLOATLIT
+71: <const> -> INTLIT
+72: <const> -> FLOATLIT
 
 # binary-operator
-69: <OR-op> -> |
-70: <AND-op> -> &
-71: <compare-op> -> <=
-72: <compare-op> -> >=
-73: <compare-op> -> <
-74: <compare-op> -> >
-75: <compare-op> -> <>
-76: <compare-op> -> =
-77: <add-op> -> -
-78: <add-op> -> +
-79: <mul-op> -> /
-80: <mul-op> -> *
+73: <OR-op> -> |
+74: <AND-op> -> &
+75: <compare-op> -> <=
+76: <compare-op> -> >=
+77: <compare-op> -> <
+78: <compare-op> -> >
+79: <compare-op> -> <>
+80: <compare-op> -> =
+81: <add-op> -> -
+82: <add-op> -> +
+83: <mul-op> -> /
+84: <mul-op> -> *
 
-81: <expr-list> -> NULL
-82: <expr-list> -> <expr> <expr-list-tail>
-83: <expr-list-tail> -> , <expr> <expr-list-tail>
-84: <expr-list-tail> -> NULL
+85: <expr-list> -> NULL
+86: <expr-list> -> <expr> <expr-list-tail>
+87: <expr-list-tail> -> , <expr> <expr-list-tail>
+88: <expr-list-tail> -> NULL
 
-85: <lvalue> -> id <lvalue-tail>
-86: <lvalue-tail> -> [<expr>]
-87: <lvalue-tail> -> NULL
+89: <lvalue> -> id <lvalue-tail>
+90: <lvalue-tail> -> [<expr>]
+91: <lvalue-tail> -> NULL
 ```
 
 
