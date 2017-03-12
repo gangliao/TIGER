@@ -103,6 +103,20 @@ store the different level symbol tables. For convenience and simplicity, we crea
 ```c++
 /// global symbol table <level, symbol table>
 std::unordered_map<int, SymbolTablePtr> g_SymbolTable;
+
+/// initialize Scop
+inline void initScoping() {
+	++currentLevel;
+	SymbolTablePtr st = std::make_shared<SymbolTable>(currentLevel);
+	g_SymbolTable[currentLevel] = st;
+}
+
+/// finalize Scope
+inline void finalizeScoping() {
+	g_SymbolTable[currentLevel]->dump();
+	g_SymbolTable.erase(currentLevel);
+	--currentLevel;
+}
 ```
 
 Each `let` statement opens a new scope which ends at the corresponding end of the `let` statement. When a new
@@ -212,3 +226,35 @@ Error: for statement begin or end value is not int type!
 
 #### Intermediate Code
 
+To generate intermediate code, we need some tiny functions like `new_temp()`, `new_loop_label()` and `new_if_label()` to generate unique labels in IR code.
+
+Program starts parsing tiger code, when it occurs **action symbols**, it will trigger the corresponding
+functions to do semantic checking and generate IR code.
+
+Here is some action functions:
+
+```c++
+/// parse action like TYPES, VARIABLES, FUNCTIONS declaration
+void parseAction(int expr, std::vector<TokenPair> &tempBuffer);
+
+/// parse for statement action
+void parseForAction(std::vector<TokenPair> &blockBuffer);
+
+/// parse for statement end action
+void parseForActionEnd(std::vector<TokenPair> &blockBuffer);
+
+/// parse function action: function name (x:int) : return-type
+void parseFuncAction(std::vector<TokenPair> &tempBuffer);
+
+/// parse if statement action
+void parseIfAction(std::vector<TokenPair> &tempBuffer);
+
+/// parse return statement action
+void parseReturnAction(std::vector<TokenPair> &tempBuffer);
+
+/// parse while statement action
+void parseWhileAction(std::vector<TokenPair> &tempBuffer);
+
+...
+
+```
