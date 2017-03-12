@@ -1,6 +1,6 @@
 
 
-[ RUN ] parsing code...
+[ RUN ] parsing code... 
 
-let var id , id : int := intlit ; var id : int := intlit ; in if ( id = id = id ) then
+let var id , id : int := intlit ; var id : int := intlit ; in if ( id = id = id ) then 
 Error: if boolean operation exists in if or while condition statement,  it must be the last operation in this expression! for example, if (a + b >= c * d) is correct.

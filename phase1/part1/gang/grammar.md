@@ -74,72 +74,60 @@ naive grammar
 41: <stat-assign-stuff> -> (<expr-list>)
 42: <stat-assign-stuff> -> <lvalue-tail> <stat-assign-tail>
 
-43: <stat-assign-tail> -> <expr-tail>
-44: <stat-assign-tail> -> <OR-expr-tail>
-45: <stat-assign-tail> -> <AND-expr-tail>
-46: <stat-assign-tail> -> <compare-tail>
-47: <stat-assign-tail> -> <term-tail>
+43: <stat-assign-tail> -> <OR-op> <OR-expr> <stat-assign-tail>
+44: <stat-assign-tail> -> <AND-op> <AND-expr> <stat-assign-tail>
+45: <stat-assign-tail> -> <compare-op> <compare> <stat-assign-tail>
+46: <stat-assign-tail> -> <add-op> <term> <stat-assign-tail>
+47: <stat-assign-tail> -> <mul-op> <factor> <stat-assign-tail>
+48: <stat-assign-tail> -> NULL
 
-48: <stat> -> while <expr> do <stat-seq> enddo;
-49: <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
+49: <stat> -> while <expr> do <stat-seq> enddo;
+50: <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
 
 
-50: <stat> -> break;
-51: <stat> -> return <expr>;
+51: <stat> -> break;
+52: <stat> -> return <expr>;
 
-52: <stat> -> let <declaration-segment> in <stat-seq> end
+53: <stat> -> let <declaration-segment> in <stat-seq> end
 
 # expr
-53: <expr> -> <OR-expr> <expr-tail>
-54: <expr-tail> -> <OR-op> <OR-expr> <expr-tail>
-55: <expr-tail> -> NULL
+54: <expr> -> <OR-expr> <stat-assign-tail>
+55: <OR-expr> -> <AND-expr> <stat-assign-tail>
+56: <AND-expr> -> <compare> <stat-assign-tail>
+57: <compare> -> <term> <stat-assign-tail>
+58: <term> -> <factor> <stat-assign-tail>
 
-56: <OR-expr> -> <AND-expr> <OR-expr-tail>
-57: <OR-expr-tail> -> <AND-op> <AND-expr> <OR-expr-tail>
-58: <OR-expr-tail> -> NULL
 
-59: <AND-expr> -> <compare> <AND-expr-tail>
-60: <AND-expr-tail> -> <compare-op> <compare> <AND-expr-tail>
-61: <AND-expr-tail> -> NULL
-
-62: <compare> -> <term> <compare-tail>
-63: <compare-tail> -> <add-op> <term> <compare-tail>
-64: <compare-tail> -> NULL
-
-65: <term> -> <factor> <term-tail>
-66: <term-tail> -> <mul-op> <factor> <term-tail>
-67: <term-tail> -> NULL
-
-68: <factor> -> (<expr>)
-69: <factor> -> <const>
-70: <factor> -> <lvalue>
+59: <factor> -> (<expr>)
+60: <factor> -> <const>
+61: <factor> -> <lvalue>
 
 # const
-71: <const> -> INTLIT
-72: <const> -> FLOATLIT
+62: <const> -> INTLIT
+63: <const> -> FLOATLIT
 
 # binary-operator
-73: <OR-op> -> |
-74: <AND-op> -> &
-75: <compare-op> -> <=
-76: <compare-op> -> >=
-77: <compare-op> -> <
-78: <compare-op> -> >
-79: <compare-op> -> <>
-80: <compare-op> -> =
-81: <add-op> -> -
-82: <add-op> -> +
-83: <mul-op> -> /
-84: <mul-op> -> *
+64: <OR-op> -> |
+65: <AND-op> -> &
+66: <compare-op> -> <=
+67: <compare-op> -> >=
+68: <compare-op> -> <
+69: <compare-op> -> >
+70: <compare-op> -> <>
+71: <compare-op> -> =
+72: <add-op> -> -
+73: <add-op> -> +
+74: <mul-op> -> /
+75: <mul-op> -> *
 
-85: <expr-list> -> NULL
-86: <expr-list> -> <expr> <expr-list-tail>
-87: <expr-list-tail> -> , <expr> <expr-list-tail>
-88: <expr-list-tail> -> NULL
+76: <expr-list> -> NULL
+77: <expr-list> -> <expr> <expr-list-tail>
+78: <expr-list-tail> -> , <expr> <expr-list-tail>
+79: <expr-list-tail> -> NULL
 
-89: <lvalue> -> id <lvalue-tail>
-90: <lvalue-tail> -> [<expr>]
-91: <lvalue-tail> -> NULL
+80: <lvalue> -> id <lvalue-tail>
+81: <lvalue-tail> -> [<expr>]
+82: <lvalue-tail> -> NULL
 ```
 
 ## First Sets
@@ -171,15 +159,10 @@ First(<stat-assign>) = {id ( INTLIT FLOATLIT}
 First(<stat-assign-stuff>) = {( [ | & <= >= < > <> = - + / * NULL}
 First(<stat-assign-tail>) = {| & <= >= < > <> = - + / * NULL}
 First(<expr>) = {( INTLIT FLOATLIT id}
-First(<expr-tail>) = {| NULL}
 First(<OR-expr>) = {( INTLIT FLOATLIT id}
-First(<OR-expr-tail>) = {& NULL}
 First(<AND-expr>) = {( INTLIT FLOATLIT id}
-First(<AND-expr-tail>) = {<= >= < > <> = NULL}
 First(<compare>) = {( INTLIT FLOATLIT id}
-First(<compare-tail>) = {- + NULL}
 First(<term>) = {( INTLIT FLOATLIT id}
-First(<term-tail>) = {/ * NULL}
 First(<factor>) = {( INTLIT FLOATLIT id}
 First(<const>) = {INTLIT FLOATLIT}
 First(<OR-op>) = {|}
@@ -220,19 +203,14 @@ Follow(<stat-if-tail>) = {if id while for break return let end endif else enddo}
 Follow(<stat-funct-or-assign>) = {if id while for break return let end endif else enddo}
 Follow(<stat-assign>) = {;}
 Follow(<stat-assign-stuff>) = {;}
-Follow(<stat-assign-tail>) = {;}
+Follow(<stat-assign-tail>) = {then ) do to ; ] ,}
 Follow(<expr>) = {then ) do to ; ] ,}
-Follow(<expr-tail>) = {then ) do to ; ] ,}
-Follow(<OR-expr>) = {| then ) do to ; ] ,}
-Follow(<OR-expr-tail>) = {| then ) do to ; ] ,}
-Follow(<AND-expr>) = {& | then ) do to ; ] ,}
-Follow(<AND-expr-tail>) = {& | then ) do to ; ] ,}
-Follow(<compare>) = {<= >= < > <> = & | then ) do to ; ] ,}
-Follow(<compare-tail>) = {<= >= < > <> = & | then ) do to ; ] ,}
-Follow(<term>) = {- + <= >= < > <> = & | then ) do to ; ] ,}
-Follow(<term-tail>) = {- + <= >= < > <> = & | then ) do to ; ] ,}
-Follow(<factor>) = {/ * - + <= >= < > <> = & | then ) do to ; ] ,}
-Follow(<const>) = {; / * - + <= >= < > <> = & | then ) do to ; ] ,}
+Follow(<OR-expr>) = {| & <= >= < > <> = - + / * then ) do to ; ] ,}
+Follow(<AND-expr>) = {| & <= >= < > <> = - + / *  then ) do to ; ] ,}
+Follow(<compare>) = {| & <= >= < > <> = - + / *  then ) do to ; ] ,}
+Follow(<term>) = {| & <= >= < > <> = - + / *  then ) do to ; ] ,}
+Follow(<factor>) = {| & <= >= < > <> = - + / *  then ) do to ; ] ,}
+Follow(<const>) = {| & <= >= < > <> = - + / *  then ) do to ; ] ,}
 Follow(<OR-op>) = {( INTLIT FLOATLIT id}
 Follow(<AND-op>) = {( INTLIT FLOATLIT id}
 Follow(<compare-op>) = {( INTLIT FLOATLIT id}
@@ -240,6 +218,6 @@ Follow(<add-op>) = {( INTLIT FLOATLIT id}
 Follow(<mul-op>) = {( INTLIT FLOATLIT id}
 Follow(<expr-list>) = {)}
 Follow(<expr-list-tail>) = {)}
-Follow(<lvalue>) = {/ * - + <= >= < > <> = & | then ) do to ; ] ,}
-Follow(<lvalue-tail>) = {:= / * - + <= >= < > <> = & | then ) do to ; ] ,}
+Follow(<lvalue>) = {| & <= >= < > <> = - + / *  then ) do to ; ] ,}
+Follow(<lvalue-tail>) = {:= | & <= >= < > <> = - + / *  then ) do to ; ] ,}
 ```

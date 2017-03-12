@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code...
+[ RUN ] parsing code... 
 
-let var id , id , id : int := intlit ; in if ( id = id ) then if ( id > intlit ) then id := id + intlit ; else id := id ; endif ; else id := intlit ; endif ; id ( id ) ; end
+let var id , id , id : int := intlit ; in if ( id = id ) then if ( id > intlit ) then id := id + intlit ; else id := id ; endif ; else id := intlit ; endif ; id ( id ) ; end  
 
 ----------------------------------------
 Table: Variables
@@ -195,3 +195,4 @@ if_label5:
     call, printi, a
     return, , ,
 ----------------------------------------
+

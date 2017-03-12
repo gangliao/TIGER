@@ -378,40 +378,60 @@ void Parser::initParseTable() {
                   {Symbol::Nonterminal::LVALUE_TAIL,         // NOLINT
                    Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
-  // 43: <stat-assign-tail> -> <expr-tail>
-  addToParseTable(Symbol::Nonterminal::STAT_ASSIGN_TAIL,  // NOLINT
-                  {Symbol::Terminal::OR},                 // NOLINT
-                  {Symbol::Nonterminal::EXPR_TAIL});      // NOLINT
+  // 43: <stat-assign-tail> -> <OR-op> <OR-expr> <stat-assign-tail>
+  addToParseTable(Symbol::Nonterminal::STAT_ASSIGN_TAIL,     // NOLINT
+                  {Symbol::Terminal::OR},                    // NOLINT
+                  {Symbol::Nonterminal::OR_OP,               // NOLINT
+                   Symbol::Nonterminal::OR_EXPR,             // NOLINT
+                   Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
-  // 44: <stat-assign-tail> -> <OR-expr-tail>
-  addToParseTable(Symbol::Nonterminal::STAT_ASSIGN_TAIL,  // NOLINT
-                  {Symbol::Terminal::AND},                // NOLINT
-                  {Symbol::Nonterminal::OR_EXPR_TAIL});   // NOLINT
+  // 44: <stat-assign-tail> -> <AND-op> <AND-expr> <stat-assign-tail>
+  addToParseTable(Symbol::Nonterminal::STAT_ASSIGN_TAIL,     // NOLINT
+                  {Symbol::Terminal::AND},                   // NOLINT
+                  {Symbol::Nonterminal::AND_OP,              // NOLINT
+                   Symbol::Nonterminal::AND_EXPR,            // NOLINT
+                   Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
-  // 45: <stat-assign-tail> -> <AND-expr-tail>
-  addToParseTable(Symbol::Nonterminal::STAT_ASSIGN_TAIL,  // NOLINT
-                  {Symbol::Terminal::EQ,                  // NOLINT
-                   Symbol::Terminal::NEQ,                 // NOLINT
-                   Symbol::Terminal::LESSER,              // NOLINT
-                   Symbol::Terminal::GREATER,             // NOLINT
-                   Symbol::Terminal::LESSEREQ,            // NOLINT
-                   Symbol::Terminal::GREATEREQ},          // NOLINT
-                  {Symbol::Nonterminal::AND_EXPR_TAIL});  // NOLINT
+  // 45: <stat-assign-tail> -> <compare-op> <compare> <stat-assign-tail>
+  addToParseTable(Symbol::Nonterminal::STAT_ASSIGN_TAIL,     // NOLINT
+                  {Symbol::Terminal::EQ,                     // NOLINT
+                   Symbol::Terminal::NEQ,                    // NOLINT
+                   Symbol::Terminal::LESSER,                 // NOLINT
+                   Symbol::Terminal::GREATER,                // NOLINT
+                   Symbol::Terminal::LESSEREQ,               // NOLINT
+                   Symbol::Terminal::GREATEREQ},             // NOLINT
+                  {Symbol::Nonterminal::COMPARE_OP,          // NOLINT
+                   Symbol::Nonterminal::COMPARE,             // NOLINT
+                   Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
-  // 46: <stat-assign-tail> -> <compare-tail>
-  addToParseTable(Symbol::Nonterminal::STAT_ASSIGN_TAIL,  // NOLINT
-                  {Symbol::Terminal::PLUS,                // NOLINT
-                   Symbol::Terminal::MINUS},              // NOLINT
-                  {Symbol::Nonterminal::COMPARE_TAIL});   // NOLINT
+  // 46: <stat-assign-tail> -> <add-op> <term> <stat-assign-tail>
+  addToParseTable(Symbol::Nonterminal::STAT_ASSIGN_TAIL,     // NOLINT
+                  {Symbol::Terminal::PLUS,                   // NOLINT
+                   Symbol::Terminal::MINUS},                 // NOLINT
+                  {Symbol::Nonterminal::ADD_OP,              // NOLINT
+                   Symbol::Nonterminal::TERM,                // NOLINT
+                   Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
-  // 47: <stat-assign-tail> -> <term-tail>
-  addToParseTable(Symbol::Nonterminal::STAT_ASSIGN_TAIL,  // NOLINT
-                  {Symbol::Terminal::MULT,                // NOLINT
-                   Symbol::Terminal::DIV,                 // NOLINT
-                   Symbol::Terminal::SEMI},               // NOLINT
-                  {Symbol::Nonterminal::TERM_TAIL});      // NOLINT
+  // 47: <stat-assign-tail> -> <mul-op> <factor> <stat-assign-tail>
+  addToParseTable(Symbol::Nonterminal::STAT_ASSIGN_TAIL,     // NOLINT
+                  {Symbol::Terminal::MULT,                   // NOLINT
+                   Symbol::Terminal::DIV},                   // NOLINT
+                  {Symbol::Nonterminal::MUL_OP,              // NOLINT
+                   Symbol::Nonterminal::FACTOR,              // NOLINT
+                   Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
-  // 48: <stat> -> while <expr> do <stat-seq> enddo;
+  // 48: <stat-assign-tail> -> NULL
+  addToParseTable(Symbol::Nonterminal::STAT_ASSIGN_TAIL,  // NOLINT
+                  {Symbol::Terminal::RPAREN,              // NOLINT
+                   Symbol::Terminal::TO,                  // NOLINT
+                   Symbol::Terminal::DO,                  // NOLINT
+                   Symbol::Terminal::THEN,                // NOLINT
+                   Symbol::Terminal::RBRACK,              // NOLINT
+                   Symbol::Terminal::SEMI,                // NOLINT
+                   Symbol::Terminal::COMMA},              // NOLINT
+                  {Symbol::Terminal::NULLL});             // NOLINT
+
+  // 49: <stat> -> while <expr> do <stat-seq> enddo;
   addToParseTable(Symbol::Nonterminal::STAT,        // NOLINT
                   {Symbol::Terminal::WHILE},        // NOLINT
                   {Symbol::Terminal::WHILE,         // NOLINT
@@ -424,7 +444,7 @@ void Parser::initParseTable() {
                    Symbol::Action::MakeWhileEnd,    // NOLINT
                    Symbol::Terminal::SEMI});        // NOLINT
 
-  // 49: <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
+  // 50: <stat> -> for id := <expr> to <expr> do <stat-seq> enddo;
   addToParseTable(Symbol::Nonterminal::STAT,       // NOLINT
                   {Symbol::Terminal::FOR},         // NOLINT
                   {Symbol::Action::MakeForBegin,   // NOLINT
@@ -445,14 +465,14 @@ void Parser::initParseTable() {
                    Symbol::Terminal::SEMI,         // NOLINT
                    Symbol::Action::MakeForEnd});   // NOLINT
 
-  // 50: <stat> -> break;
+  // 51: <stat> -> break;
   addToParseTable(Symbol::Nonterminal::STAT,   // NOLINT
                   {Symbol::Terminal::BREAK},   // NOLINT
                   {Symbol::Terminal::BREAK,    // NOLINT
                    Symbol::Action::MakeBreak,  // NOLINT
                    Symbol::Terminal::SEMI});   // NOLINT
 
-  // 51: <stat> -> return <expr>;
+  // 52: <stat> -> return <expr>;
   addToParseTable(Symbol::Nonterminal::STAT,         // NOLINT
                   {Symbol::Terminal::RETURN},        // NOLINT
                   {Symbol::Terminal::RETURN,         // NOLINT
@@ -461,7 +481,7 @@ void Parser::initParseTable() {
                    Symbol::Action::MakeReturnEnd,    // NOLINT
                    Symbol::Terminal::SEMI});         // NOLINT
 
-  // 52: <stat> -> let <declaration-segment> in <stat-seq> end
+  // 53: <stat> -> let <declaration-segment> in <stat-seq> end
   addToParseTable(Symbol::Nonterminal::STAT,                  // NOLINT
                   {Symbol::Terminal::LET},                    // NOLINT
                   {Symbol::Terminal::LET,                     // NOLINT
@@ -471,265 +491,147 @@ void Parser::initParseTable() {
                    Symbol::Terminal::END});                   // NOLINT
 
   // # expr
-  // 53: <expr> -> <OR-expr> <expr-tail>
-  addToParseTable(Symbol::Nonterminal::EXPR,          // NOLINT
-                  {Symbol::Terminal::ID,              // NOLINT
-                   Symbol::Terminal::LPAREN,          // NOLINT
-                   Symbol::Terminal::INTLIT,          // NOLINT
-                   Symbol::Terminal::FLOATLIT},       // NOLINT
-                  {Symbol::Nonterminal::OR_EXPR,      // NOLINT
-                   Symbol::Nonterminal::EXPR_TAIL});  // NOLINT
+  // 54: <expr> -> <OR-expr> <stat-assign-tail>
+  addToParseTable(Symbol::Nonterminal::EXPR,                 // NOLINT
+                  {Symbol::Terminal::ID,                     // NOLINT
+                   Symbol::Terminal::LPAREN,                 // NOLINT
+                   Symbol::Terminal::INTLIT,                 // NOLINT
+                   Symbol::Terminal::FLOATLIT},              // NOLINT
+                  {Symbol::Nonterminal::OR_EXPR,             // NOLINT
+                   Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
-  // 54: <expr-tail> -> <OR-op> <OR-expr> <expr-tail>
-  addToParseTable(Symbol::Nonterminal::EXPR_TAIL,     // NOLINT
-                  {Symbol::Terminal::OR},             // NOLINT
-                  {Symbol::Nonterminal::OR_OP,        // NOLINT
-                   Symbol::Nonterminal::OR_EXPR,      // NOLINT
-                   Symbol::Nonterminal::EXPR_TAIL});  // NOLINT
+  // 55: <OR-expr> -> <AND-expr> <stat-assign-tail>
+  addToParseTable(Symbol::Nonterminal::OR_EXPR,              // NOLINT
+                  {Symbol::Terminal::ID,                     // NOLINT
+                   Symbol::Terminal::LPAREN,                 // NOLINT
+                   Symbol::Terminal::INTLIT,                 // NOLINT
+                   Symbol::Terminal::FLOATLIT},              // NOLINT
+                  {Symbol::Nonterminal::AND_EXPR,            // NOLINT
+                   Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
-  // 55: <expr-tail> -> NULL
-  addToParseTable(Symbol::Nonterminal::EXPR_TAIL,  // NOLINT
-                  {Symbol::Terminal::DO,           // NOLINT
-                   Symbol::Terminal::THEN,         // NOLINT
-                   Symbol::Terminal::TO,           // NOLINT
-                   Symbol::Terminal::SEMI,         // NOLINT
-                   Symbol::Terminal::COMMA,        // NOLINT
-                   Symbol::Terminal::RPAREN,       // NOLINT
-                   Symbol::Terminal::RBRACK},      // NOLINT
-                  {Symbol::Terminal::NULLL});      // NOLINT
+  // 56: <AND-expr> -> <compare> <stat-assign-tail>
+  addToParseTable(Symbol::Nonterminal::AND_EXPR,             // NOLINT
+                  {Symbol::Terminal::ID,                     // NOLINT
+                   Symbol::Terminal::LPAREN,                 // NOLINT
+                   Symbol::Terminal::INTLIT,                 // NOLINT
+                   Symbol::Terminal::FLOATLIT},              // NOLINT
+                  {Symbol::Nonterminal::COMPARE,             // NOLINT
+                   Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
-  // 56: <OR-expr> -> <AND-expr> <OR-expr-tail>
-  addToParseTable(Symbol::Nonterminal::OR_EXPR,          // NOLINT
-                  {Symbol::Terminal::ID,                 // NOLINT
-                   Symbol::Terminal::LPAREN,             // NOLINT
-                   Symbol::Terminal::INTLIT,             // NOLINT
-                   Symbol::Terminal::FLOATLIT},          // NOLINT
-                  {Symbol::Nonterminal::AND_EXPR,        // NOLINT
-                   Symbol::Nonterminal::OR_EXPR_TAIL});  // NOLINT
+  // 57: <compare> -> <term> <stat-assign-tail>
+  addToParseTable(Symbol::Nonterminal::COMPARE,              // NOLINT
+                  {Symbol::Terminal::ID,                     // NOLINT
+                   Symbol::Terminal::LPAREN,                 // NOLINT
+                   Symbol::Terminal::INTLIT,                 // NOLINT
+                   Symbol::Terminal::FLOATLIT},              // NOLINT
+                  {Symbol::Nonterminal::TERM,                // NOLINT
+                   Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
-  // 57: <OR-expr-tail> -> <AND-op> <AND-expr> <OR-expr-tail>
-  addToParseTable(Symbol::Nonterminal::OR_EXPR_TAIL,     // NOLINT
-                  {Symbol::Terminal::AND},               // NOLINT
-                  {Symbol::Nonterminal::AND_OP,          // NOLINT
-                   Symbol::Nonterminal::AND_EXPR,        // NOLINT
-                   Symbol::Nonterminal::OR_EXPR_TAIL});  // NOLINT
+  // 58: <term> -> <factor> <stat-assign-tail>
+  addToParseTable(Symbol::Nonterminal::TERM,                 // NOLINT
+                  {Symbol::Terminal::ID,                     // NOLINT
+                   Symbol::Terminal::LPAREN,                 // NOLINT
+                   Symbol::Terminal::INTLIT,                 // NOLINT
+                   Symbol::Terminal::FLOATLIT},              // NOLINT
+                  {Symbol::Nonterminal::FACTOR,              // NOLINT
+                   Symbol::Nonterminal::STAT_ASSIGN_TAIL});  // NOLINT
 
-  // 58: <OR-expr-tail> -> NULL
-  addToParseTable(Symbol::Nonterminal::OR_EXPR_TAIL,  // NOLINT
-                  {Symbol::Terminal::OR,              // NOLINT
-                   Symbol::Terminal::DO,              // NOLINT
-                   Symbol::Terminal::THEN,            // NOLINT
-                   Symbol::Terminal::TO,              // NOLINT
-                   Symbol::Terminal::SEMI,            // NOLINT
-                   Symbol::Terminal::COMMA,           // NOLINT
-                   Symbol::Terminal::RPAREN,          // NOLINT
-                   Symbol::Terminal::RBRACK},         // NOLINT
-                  {Symbol::Terminal::NULLL});         // NOLINT
-
-  // 59: <AND-expr> -> <compare> <AND-expr-tail>
-  addToParseTable(Symbol::Nonterminal::AND_EXPR,          // NOLINT
-                  {Symbol::Terminal::ID,                  // NOLINT
-                   Symbol::Terminal::LPAREN,              // NOLINT
-                   Symbol::Terminal::INTLIT,              // NOLINT
-                   Symbol::Terminal::FLOATLIT},           // NOLINT
-                  {Symbol::Nonterminal::COMPARE,          // NOLINT
-                   Symbol::Nonterminal::AND_EXPR_TAIL});  // NOLINT
-
-  // 60: <AND-expr-tail> -> <compare-op> <compare> <AND-expr-tail>
-  addToParseTable(Symbol::Nonterminal::AND_EXPR_TAIL,     // NOLINT
-                  {Symbol::Terminal::EQ,                  // NOLINT
-                   Symbol::Terminal::NEQ,                 // NOLINT
-                   Symbol::Terminal::LESSER,              // NOLINT
-                   Symbol::Terminal::GREATER,             // NOLINT
-                   Symbol::Terminal::LESSEREQ,            // NOLINT
-                   Symbol::Terminal::GREATEREQ},          // NOLINT
-                  {Symbol::Nonterminal::COMPARE_OP,       // NOLINT
-                   Symbol::Nonterminal::COMPARE,          // NOLINT
-                   Symbol::Nonterminal::AND_EXPR_TAIL});  // NOLINT
-
-  // 61: <AND-expr-tail> -> NULL
-  addToParseTable(Symbol::Nonterminal::AND_EXPR_TAIL,  // NOLINT
-                  {Symbol::Terminal::OR,               // NOLINT
-                   Symbol::Terminal::AND,              // NOLINT
-                   Symbol::Terminal::DO,               // NOLINT
-                   Symbol::Terminal::THEN,             // NOLINT
-                   Symbol::Terminal::TO,               // NOLINT
-                   Symbol::Terminal::SEMI,             // NOLINT
-                   Symbol::Terminal::COMMA,            // NOLINT
-                   Symbol::Terminal::RPAREN,           // NOLINT
-                   Symbol::Terminal::RBRACK},          // NOLINT
-                  {Symbol::Terminal::NULLL});          // NOLINT
-
-  // 62: <compare> -> <term> <compare-tail>
-  addToParseTable(Symbol::Nonterminal::COMPARE,          // NOLINT
-                  {Symbol::Terminal::ID,                 // NOLINT
-                   Symbol::Terminal::LPAREN,             // NOLINT
-                   Symbol::Terminal::INTLIT,             // NOLINT
-                   Symbol::Terminal::FLOATLIT},          // NOLINT
-                  {Symbol::Nonterminal::TERM,            // NOLINT
-                   Symbol::Nonterminal::COMPARE_TAIL});  // NOLINT
-
-  // 63: <compare-tail> -> <add-op> <term> <compare-tail>
-  addToParseTable(Symbol::Nonterminal::COMPARE_TAIL,     // NOLINT
-                  {Symbol::Terminal::PLUS,               // NOLINT
-                   Symbol::Terminal::MINUS},             // NOLINT
-                  {Symbol::Nonterminal::ADD_OP,          // NOLINT
-                   Symbol::Nonterminal::TERM,            // NOLINT
-                   Symbol::Nonterminal::COMPARE_TAIL});  // NOLINT
-
-  // 64: <compare-tail> -> NULL
-  addToParseTable(Symbol::Nonterminal::COMPARE_TAIL,  // NOLINT
-                  {Symbol::Terminal::OR,              // NOLINT
-                   Symbol::Terminal::AND,             // NOLINT
-                   Symbol::Terminal::EQ,              // NOLINT
-                   Symbol::Terminal::NEQ,             // NOLINT
-                   Symbol::Terminal::LESSER,          // NOLINT
-                   Symbol::Terminal::GREATER,         // NOLINT
-                   Symbol::Terminal::LESSEREQ,        // NOLINT
-                   Symbol::Terminal::GREATEREQ,       // NOLINT
-                   Symbol::Terminal::DO,              // NOLINT
-                   Symbol::Terminal::THEN,            // NOLINT
-                   Symbol::Terminal::TO,              // NOLINT
-                   Symbol::Terminal::SEMI,            // NOLINT
-                   Symbol::Terminal::COMMA,           // NOLINT
-                   Symbol::Terminal::RPAREN,          // NOLINT
-                   Symbol::Terminal::RBRACK},         // NOLINT
-                  {Symbol::Terminal::NULLL});         // NOLINT
-
-  // 65: <term> -> <factor> <term-tail>
-  addToParseTable(Symbol::Nonterminal::TERM,          // NOLINT
-                  {Symbol::Terminal::ID,              // NOLINT
-                   Symbol::Terminal::LPAREN,          // NOLINT
-                   Symbol::Terminal::INTLIT,          // NOLINT
-                   Symbol::Terminal::FLOATLIT},       // NOLINT
-                  {Symbol::Nonterminal::FACTOR,       // NOLINT
-                   Symbol::Nonterminal::TERM_TAIL});  // NOLINT
-
-  // 66: <term-tail> -> <mul-op> <factor> <term-tail>
-  addToParseTable(Symbol::Nonterminal::TERM_TAIL,     // NOLINT
-                  {Symbol::Terminal::MULT,            // NOLINT
-                   Symbol::Terminal::DIV},            // NOLINT
-                  {Symbol::Nonterminal::MUL_OP,       // NOLINT
-                   Symbol::Nonterminal::FACTOR,       // NOLINT
-                   Symbol::Nonterminal::TERM_TAIL});  // NOLINT
-
-  // 67: <term-tail> -> NULL
-  addToParseTable(Symbol::Nonterminal::TERM_TAIL,  // NOLINT
-                  {Symbol::Terminal::OR,           // NOLINT
-                   Symbol::Terminal::AND,          // NOLINT
-                   Symbol::Terminal::EQ,           // NOLINT
-                   Symbol::Terminal::NEQ,          // NOLINT
-                   Symbol::Terminal::LESSER,       // NOLINT
-                   Symbol::Terminal::GREATER,      // NOLINT
-                   Symbol::Terminal::LESSEREQ,     // NOLINT
-                   Symbol::Terminal::GREATEREQ,    // NOLINT
-                   Symbol::Terminal::PLUS,         // NOLINT
-                   Symbol::Terminal::MINUS,        // NOLINT
-                   Symbol::Terminal::DO,           // NOLINT
-                   Symbol::Terminal::THEN,         // NOLINT
-                   Symbol::Terminal::TO,           // NOLINT
-                   Symbol::Terminal::SEMI,         // NOLINT
-                   Symbol::Terminal::COMMA,        // NOLINT
-                   Symbol::Terminal::RPAREN,       // NOLINT
-                   Symbol::Terminal::RBRACK},      // NOLINT
-                  {Symbol::Terminal::NULLL});      // NOLINT
-
-  // 68: <factor> -> (<expr>)
+  // 59: <factor> -> (<expr>)
   addToParseTable(Symbol::Nonterminal::FACTOR,  // NOLINT
                   {Symbol::Terminal::LPAREN},   // NOLINT
                   {Symbol::Terminal::LPAREN,    // NOLINT
                    Symbol::Nonterminal::EXPR,   // NOLINT
                    Symbol::Terminal::RPAREN});  // NOLINT
 
-  // 69: <factor> -> <const>
+  // 60: <factor> -> <const>
   addToParseTable(Symbol::Nonterminal::FACTOR,    // NOLINT
                   {Symbol::Terminal::INTLIT,      // NOLINT
                    Symbol::Terminal::FLOATLIT},   // NOLINT
                   {Symbol::Nonterminal::CONST});  // NOLINT
 
-  // 70: <factor> -> <lvalue>
+  // 61: <factor> -> <lvalue>
   addToParseTable(Symbol::Nonterminal::FACTOR,     // NOLINT
                   {Symbol::Terminal::ID},          // NOLINT
                   {Symbol::Nonterminal::LVALUE});  // NOLINT
 
   // # const
-  // 71: <const> -> INTLIT
+  // 62: <const> -> INTLIT
   addToParseTable(Symbol::Nonterminal::CONST,   // NOLINT
                   {Symbol::Terminal::INTLIT},   // NOLINT
                   {Symbol::Terminal::INTLIT});  // NOLINT
 
-  // 72: <const> -> FLOATLIT
+  // 63: <const> -> FLOATLIT
   addToParseTable(Symbol::Nonterminal::CONST,     // NOLINT
                   {Symbol::Terminal::FLOATLIT},   // NOLINT
                   {Symbol::Terminal::FLOATLIT});  // NOLINT
 
   // # binary-operator
-  // 73: <OR-op> -> |
+  // 64: <OR-op> -> |
   addToParseTable(Symbol::Nonterminal::OR_OP,  // NOLINT
                   {Symbol::Terminal::OR},      // NOLINT
                   {Symbol::Terminal::OR});     // NOLINT
 
-  // 74: <AND-op> -> &
+  // 65: <AND-op> -> &
   addToParseTable(Symbol::Nonterminal::AND_OP,  // NOLINT
                   {Symbol::Terminal::AND},      // NOLINT
                   {Symbol::Terminal::AND});     // NOLINT
 
-  // 75: <compare-op> -> <=
+  // 66: <compare-op> -> <=
   addToParseTable(Symbol::Nonterminal::COMPARE_OP,  // NOLINT
                   {Symbol::Terminal::LESSEREQ},     // NOLINT
                   {Symbol::Terminal::LESSEREQ});    // NOLINT
 
-  // 76: <compare-op> -> >=
+  // 67: <compare-op> -> >=
   addToParseTable(Symbol::Nonterminal::COMPARE_OP,  // NOLINT
                   {Symbol::Terminal::GREATEREQ},    // NOLINT
                   {Symbol::Terminal::GREATEREQ});   // NOLINT
 
-  // 77: <compare-op> -> <
+  // 68: <compare-op> -> <
   addToParseTable(Symbol::Nonterminal::COMPARE_OP,  // NOLINT
                   {Symbol::Terminal::LESSER},       // NOLINT
                   {Symbol::Terminal::LESSER});      // NOLINT
 
-  // 78: <compare-op> -> >
+  // 69: <compare-op> -> >
   addToParseTable(Symbol::Nonterminal::COMPARE_OP,  // NOLINT
                   {Symbol::Terminal::GREATER},      // NOLINT
                   {Symbol::Terminal::GREATER});     // NOLINT
 
-  // 79: <compare-op> -> <>
+  // 70: <compare-op> -> <>
   addToParseTable(Symbol::Nonterminal::COMPARE_OP,  // NOLINT
                   {Symbol::Terminal::NEQ},          // NOLINT
                   {Symbol::Terminal::NEQ});         // NOLINT
 
-  // 80: <compare-op> -> =
+  // 71: <compare-op> -> =
   addToParseTable(Symbol::Nonterminal::COMPARE_OP,  // NOLINT
                   {Symbol::Terminal::EQ},           // NOLINT
                   {Symbol::Terminal::EQ});          // NOLINT
 
-  // 81: <add-op> -> -
+  // 72: <add-op> -> -
   addToParseTable(Symbol::Nonterminal::ADD_OP,  // NOLINT
                   {Symbol::Terminal::MINUS},    // NOLINT
                   {Symbol::Terminal::MINUS});   // NOLINT
 
-  // 82: <add-op> -> +
+  // 73: <add-op> -> +
   addToParseTable(Symbol::Nonterminal::ADD_OP,  // NOLINT
                   {Symbol::Terminal::PLUS},     // NOLINT
                   {Symbol::Terminal::PLUS});    // NOLINT
 
-  // 83: <mul-op> -> /
+  // 74: <mul-op> -> /
   addToParseTable(Symbol::Nonterminal::MUL_OP,  // NOLINT
                   {Symbol::Terminal::DIV},      // NOLINT
                   {Symbol::Terminal::DIV});     // NOLINT
 
-  // 84: <mul-op> -> *
+  // 75: <mul-op> -> *
   addToParseTable(Symbol::Nonterminal::MUL_OP,  // NOLINT
                   {Symbol::Terminal::MULT},     // NOLINT
                   {Symbol::Terminal::MULT});    // NOLINT
 
-  // 85: <expr-list> -> NULL
+  // 76: <expr-list> -> NULL
   addToParseTable(Symbol::Nonterminal::EXPR_LIST,  // NOLINT
                   {Symbol::Terminal::RPAREN},      // NOLINT
                   {Symbol::Terminal::NULLL});      // NOLINT
 
-  // 86: <expr-list> -> <expr> <expr-list-tail>
+  // 77: <expr-list> -> <expr> <expr-list-tail>
   addToParseTable(Symbol::Nonterminal::EXPR_LIST,          // NOLINT
                   {Symbol::Terminal::ID,                   // NOLINT
                    Symbol::Terminal::LPAREN,               // NOLINT
@@ -738,25 +640,25 @@ void Parser::initParseTable() {
                   {Symbol::Nonterminal::EXPR,              // NOLINT
                    Symbol::Nonterminal::EXPR_LIST_TAIL});  // NOLINT
 
-  // 87: <expr-list-tail> -> , <expr> <expr-list-tail>
+  // 78: <expr-list-tail> -> , <expr> <expr-list-tail>
   addToParseTable(Symbol::Nonterminal::EXPR_LIST_TAIL,     // NOLINT
                   {Symbol::Terminal::COMMA},               // NOLINT
                   {Symbol::Terminal::COMMA,                // NOLINT
                    Symbol::Nonterminal::EXPR,              // NOLINT
                    Symbol::Nonterminal::EXPR_LIST_TAIL});  // NOLINT
 
-  // 88: <expr-list-tail> -> NULL
+  // 79: <expr-list-tail> -> NULL
   addToParseTable(Symbol::Nonterminal::EXPR_LIST_TAIL,  // NOLINT
                   {Symbol::Terminal::RPAREN},           // NOLINT
                   {Symbol::Terminal::NULLL});           // NOLINT
 
-  // 89: <lvalue> -> id <lvalue-tail>
+  // 80: <lvalue> -> id <lvalue-tail>
   addToParseTable(Symbol::Nonterminal::LVALUE,          // NOLINT
                   {Symbol::Terminal::ID},               // NOLINT
                   {Symbol::Terminal::ID,                // NOLINT
                    Symbol::Nonterminal::LVALUE_TAIL});  // NOLINT
 
-  // 90: <lvalue-tail> -> [<expr>]
+  // 81: <lvalue-tail> -> [<expr>]
   addToParseTable(Symbol::Nonterminal::LVALUE_TAIL,  // NOLINT
                   {Symbol::Terminal::LBRACK},        // NOLINT
                   {Symbol::Action::MakeArrayBegin,   // NOLINT
@@ -765,7 +667,7 @@ void Parser::initParseTable() {
                    Symbol::Terminal::RBRACK,         // NOLINT
                    Symbol::Action::MakeArrayEnd});   // NOLINT
 
-  // 91: <lvalue-tail> -> NULL
+  // 82: <lvalue-tail> -> NULL
   addToParseTable(Symbol::Nonterminal::LVALUE_TAIL,  // NOLINT
                   {Symbol::Terminal::DO,             // NOLINT
                    Symbol::Terminal::THEN,           // NOLINT

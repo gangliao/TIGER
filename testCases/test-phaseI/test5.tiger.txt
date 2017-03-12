@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code...
+[ RUN ] parsing code... 
 
-let var id , id : int := intlit ; in if ( id = id ) then id := id + intlit ; else id := intlit ; endif ; id ( id ) ; end
+let var id , id : int := intlit ; in if ( id = id ) then id := ( id + intlit ) / intlit - id * id - intlit + id ; else id := intlit ; endif ; id ( id ) ; end  
 
 ----------------------------------------
 Table: Variables
@@ -20,6 +20,71 @@ Return type: -
 ----------------------------------------
 Table: Variables
 Name: $t1
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t2
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t3
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t4
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t5
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t6
 ----------------------------------------
 Scope: 0
 Type: int
@@ -151,7 +216,12 @@ main:
 if_label0:
     breq, $t0, 0, if_label1
     add, 2, b, $t1
-    assgin, a, $t1,
+    div, 5, $t1, $t2
+    mult, b, a, $t3
+    sub, $t3, $t2, $t4
+    sub, 5, $t4, $t5
+    add, b, $t5, $t6
+    assgin, a, $t6,
     goto, if_label2, ,
 if_label1:
     assgin, a, 2,
@@ -159,3 +229,4 @@ if_label2:
     call, printi, a
     return, , ,
 ----------------------------------------
+
