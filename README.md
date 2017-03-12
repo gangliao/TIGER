@@ -169,6 +169,45 @@ the stack and symbol table.
 
 There are several cases in Tiger where type checking must occur:
 
+	1. Agreement between binary operands.
+	2. Agreement between funtion return values and the funtion's return type.
+	3. Agreement between funtion calls and the funtion's parameters.
+	4. Redeclaration of same variable.
+	5. Error nous comparison operator.
+	6. Test for printi with float value.
+	7. Test for inbuilt function ‘exit’ with wrong parameters.
+	8. Multiple let-in-end test.
+	10. For loop expression with float parameter.
+
+We alreay added these negative test cases in directory `/testCases/test-phaseI`, please refer to our [Phase1-Testing and Output](https://github.com/gangliao/Tiger-Compiler/blob/master/Phase1-Testing%20and%20Output.pdf) to find more details.
+
+As a simple example, consider `test32.tiger` in directory `/testCases/test-phaseI`, Its tiger code as follows:
+
+```c++
+/* test for loop expression type as float, this should generate error */
+let
+        type ArrayInt = array [100] of int; /* Declare ArrayInt as a new type */
+        var X, Y : ArrayInt := 10; /* Declare vars X and Y as arrays with initialization */
+        var a, i : int := 0;
+		var b : float := 10.0;
+in
+        for i := a to b do /* Error: b is float */
+                sum := sum + X[i] * Y [i];
+        enddo;
+        printi(sum); /* library call to printi to print the dot product */
+end
+```
+
+After issue the command `./bin/parser testCases/test-phaseI/test32.tiger -d`:
+
+```bash
+[ RUN ] parsing code...
+
+let type id = array [ intlit ] of int ; var id , id : id := intlit ; var id , id : int := intlit ; var id : float := f
+loatlit ; in for id := id to id do
+
+Error: for statement begin or end value is not int type!
+```
 
 
 #### Intermediate Code
