@@ -2,6 +2,11 @@
 
 ### How to Build
 
+0. development environment
+
+	Currently, this project repository is maintained on github privately and also been deployed on Travis CI.
+	It supports both Ubuntu and Mac OS X.
+
 1. build:
 
 	```bash
