@@ -93,8 +93,6 @@ First  ('tiger-program', ['let'])
 
 
 
-
-
 Follow  tiger-program ['$']
 Follow  declaration-segment ['in']
 Follow  stat-seq ['end', 'else', 'endif', 'enddo']
