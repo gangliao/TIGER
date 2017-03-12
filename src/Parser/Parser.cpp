@@ -1391,9 +1391,10 @@ bool Parser::detectAction(int symbol, bool& enable_block,
   }
   if (symbol == Symbol::Action::MakeIfBegin) {
     enable_buffer = true;
-    auto ifLabel = std::make_pair<std::string, std::string>(new_if_label(),
-                                                            new_if_label());
-    labelStack_.push(ifLabel);
+
+    auto lbl1 = new_if_label();
+    auto lbl2 = new_if_label();
+    labelStack_.push({lbl1, lbl2});
     return true;
   }
   if (symbol == Symbol::Action::MakeIfMid) {
