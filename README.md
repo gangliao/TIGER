@@ -49,11 +49,11 @@
 
 1. Hand-modified Tiger grammars
 
-	First, we need to rewrite the grammar given in the Tiger language specification to remove the ambiguity by enforcing operator precedences and left associativity. This part is done by hand. You can check out our [modified grammar file](https://github.com/gangliao/Tiger-Compiler/blob/master/phase1/part1/gang/grammar.md) in this repo.
+	First, we need to rewrite the grammar given in the Tiger language specification to remove the ambiguity by enforcing operator precedences and left associativity. This part is done by hand. You can check out our [parser_table.md](https://github.com/gangliao/Tiger-Compiler/blob/master/phase1/part1/gang/grammar.md) in current directory.
 
 2. Hand-written parse table
 
-	Modifying the grammar obtained in step 1 to support LL(1) parsing. This could include removing left recursion and performing left factoring on the grammar obtained in step 1 above. Creating the LL(1) parser table for Tiger. This will drive the decision-making process for the parser. This part is also done by hand by using the theory of LL parsing and finding the first(), follow() sets that help you develop the parser table (please check out [parser table file](https://github.com/gangliao/Tiger-Compiler/blob/master/phase1/part1/gang/parser_table.md) in this repo.)
+	Modifying the grammar obtained in step 1 to support LL(1) parsing. This could include removing left recursion and performing left factoring on the grammar obtained in step 1 above. Creating the LL(1) parser table for Tiger. This will drive the decision-making process for the parser. This part is also done by hand by using the theory of LL parsing and finding the first(), follow() sets that help you develop the parser table (please check out [grammar.md](https://github.com/gangliao/Tiger-Compiler/blob/master/phase1/part1/gang/parser_table.md) in current directory.)
 
 3. Parser code
 
