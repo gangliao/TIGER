@@ -43,10 +43,49 @@
 #### Design LL(1) Parse Table
 
 1. Hand-modified Tiger grammars
+
+	First, we need to rewrite the grammar given in the Tiger language specification to remove the ambiguity by enforcing operator precedences and left associativity. This part is to be done by hand. You can check out our [modified grammar file](phase1/part1/gang/grammar.md) in this repo.
+
 2. Hand-written parser table
+
+	Modifying the grammar obtained in step 1 to support LL(1) parsing. This could include removing left recursion and performing left factoring on the grammar obtained in step 1 above. Creating the LL(1) parser table for Tiger. This will drive the decision-making process for the parser. This part is to be done by hand by using the theory of LL parsing by finding the first(), follow() sets that help you develop the parser table (please check out [parser table file](phase1/part1/gang/paser_table.md) in this repo.
+
 3. Parser code
 
+	After hand-written parser table is created, it should be hand-code into our program. we create a data structure - hash table:
+	
+	```c++
+	std::map<SymbolTerminalPair, std::vector<int> > parseTable_;
+	```
+
+	Here, class `SymbolTerminalPair` includes a pair members (Entry entry, std::string name), std::vector<int> is
+	the actual expansion grammar rules. To build a parse table, we can simply insert all rules into hash table.
+	As a simple example, consider the following:
+
+	```c++
+	/// insert items into parse table
+	void addToParseTable(const int nonterm, const std::vector<int> &terminals,
+						 const std::vector<int> &expand_rule);
+	// # tiger-program
+	// 1: <tiger-program> -> let <declaration-segment> in <stat-seq> end
+	addToParseTable(Symbol::Nonterminal::TIGER_PROGRAM,         // NOLINT
+					{Symbol::Terminal::LET},                    // NOLINT
+					{Symbol::Action::InitializeScope,           // NOLINT
+					Symbol::Terminal::LET,                     // NOLINT
+					Symbol::Nonterminal::DECLARATION_SEGMENT,  // NOLINT
+					Symbol::Terminal::IN,                      // NOLINT
+					Symbol::Action::MakeMainLabel,             // NOLINT
+					Symbol::Nonterminal::STAT_SEQ,             // NOLINT
+					Symbol::Terminal::END,                     // NOLINT
+					Symbol::Action::FinalizeScope});           // NOLINT
+	...				
+	```
+
+	In general, combining `addToParseTable` and hand-written parse table, we can embed parse table into program before it starts parsing.
+
 #### Symbol Table
+
+
 
 #### Semantic Checking
 
