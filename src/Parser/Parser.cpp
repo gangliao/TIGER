@@ -1353,8 +1353,11 @@ bool Parser::detectAction(int symbol, bool& enable_block,
   if (symbol == Symbol::Action::MakeWhileBegin) {
     enable_buffer = true;
     isInside_while_ = true;
-    auto labels = std::make_pair<std::string, std::string>(new_loop_label(),
-                                                           new_loop_label());
+
+    auto lbl1 = new_loop_label();
+    auto lbl2 = new_loop_label();
+    std::pair<std::string, std::string> labels = {lbl1, lbl2};
+
     currLoopLabel_ = labels;
     IR.push_back(labels.first + ":");
 
@@ -1469,10 +1472,11 @@ bool Parser::detectAction(int symbol, bool& enable_block,
   if (symbol == Symbol::Action::MakeForBegin) {
     isInside_for_ = true;
     enable_block = true;
-    auto loopLabel = std::make_pair<std::string, std::string>(new_loop_label(),
-                                                              new_loop_label());
-    labelStack_.push(loopLabel);
-    blockStack_.push(loopLabel);
+
+    auto lbl1 = new_loop_label();
+    auto lbl2 = new_loop_label();
+    labelStack_.push({lbl1, lbl2});
+    blockStack_.push({lbl1, lbl2});
     return true;
   }
   if (symbol == Symbol::Action::MakeForMid) {
