@@ -1,11 +1,14 @@
 
-
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <sstream>
 #include <cstring>
 #include <map>
+#include <list>
+#include <stack>
+#include <algorithm>
+
 class cfgNode{
 
     public:
@@ -13,74 +16,187 @@ class cfgNode{
       int end;
       int blockNum;
       std::vector<cfgNode> edges;
-      typedef std::pair<std::string, int> PAIR;
-      std::vector<PAIR> def_set;
-      std::vector<PAIR> use_set;
+      
+      typedef struct def_set_details{
+        int usage_count;
+        int block_num;
+        int line_num;
+      }def_use_set;
+      
+      typedef std::vector<def_use_set>  def_use_vec;
+      //typedef std::pair<std::string, DEF_USE_SET> PAIR;
+      std::map<std::string, def_use_vec> def_set;
+      std::map<std::string, def_use_vec> use_set;
 
       cfgNode(int bNum, int s){
 
         blockNum = bNum;
         start=s;
-        
       }
 
       void setEndLine(int e){
-
         end = e;
       }
       void addEdge(cfgNode node){
-
         edges.push_back(node);
       }
 
       void printEdges(){
 
         for(size_t i=0;i<edges.size();i++)
-            std::cout << "Edge: From->" << this->blockNum << " to->" << edges[i].blockNum << std::endl;
+            std::cout << "Edge: From block -> " << this->blockNum << " to " << edges[i].blockNum << std::endl;
       }
 
-      void set_def_set(std::string str,int lineNum){
+      void set_def_set(std::string str,int blockNum,int lineNum){
 
-        this->def_set.push_back(std::pair<std::string, int>(str,lineNum));
+        auto it = def_set.find(str);
+        if (it == def_set.end()) {
+            int count = 1;
+            def_use_set var = {count,blockNum,lineNum};
+            def_use_vec vec;
+            vec.push_back(var);
+            this->def_set.insert(std::pair<std::string, def_use_vec>(str,vec));
+        }
+        else{
 
+
+            auto str = it->first;
+            auto vec = it->second;
+            int vec_size = vec.size();
+            int count = vec_size + 1;
+            def_use_set var = {count,blockNum,lineNum};
+            it->second.push_back(var);
+            this->def_set.insert(std::pair<std::string, def_use_vec>(str,it->second));
+        }
       }
-      void set_use_set(std::string str,int lineNum){
+      void set_use_set(std::string str,int blockNum,int lineNum){
 
-        this->use_set.push_back(std::pair<std::string, int>(str,lineNum));
+        auto it = use_set.find(str);
+        if (it == use_set.end()) {
+            int count = 1;
+            def_use_set var = {count,blockNum,lineNum};
+            def_use_vec vec;
+            vec.push_back(var);
+            this->use_set.insert(std::pair<std::string, def_use_vec>(str,vec));
+        }
+        else{
 
+            auto str = it->first;
+            auto vec = it->second;
+            int vec_size = vec.size();
+            int count = vec_size + 1;
+            def_use_set var = {count,blockNum,lineNum};
+            it->second.push_back(var);
+            this->use_set.insert(std::pair<std::string, def_use_vec>(str,it->second));
+        }
+        
       }
 
-      void print_du(){
-        std::cout << "def=> " ;
-        for (auto it=def_set.begin(); it!=def_set.end(); ++it)
-                std::cout << it->first << "(" << it->second  << ")";
+      void print_du(int blockNum){
+        std::cout << "def set for block " << blockNum << " =>";
+        for (auto it=def_set.begin(); it!=def_set.end(); ++it){
+            
+            auto vec = it->second;
+            int l = it->second.size();
+            //std::cout << "vec size is " << it->first << " " << l << std::endl;
+            for (int j=0;j<l;j++){
+
+                if(blockNum == vec[j].block_num)
+                    std::cout << it->first << " (" << vec[j].usage_count << "," << vec[j].block_num << " " << vec[j].line_num << ") ";
+            }
+        }
         std::cout << std::endl;
-        std::cout << "use=> " ;
-        for (auto it=use_set.begin(); it!=use_set.end(); ++it)
-                std::cout << it->first << "(" << it->second << ")";
+        std::cout << "use set for block " << blockNum << " =>";
+        for (auto it=use_set.begin(); it!=use_set.end(); ++it){
+            
+            auto vec = it->second;
+            int l = it->second.size();
+            for (int j=0;j<l;j++){
+                if(blockNum == vec[j].block_num)
+                    std::cout << it->first << " (" << vec[j].usage_count << "," << vec[j].block_num << " " << vec[j].line_num << ") ";
+            }
+        }
         std::cout << std::endl;
         
       }
 
 };
+class interferenceGraphNode{
 
+    public:
+      int start_line;
+      int end_line;
+      int spill_cost;
+      int assigned_color;
+      std::string str_name;
+      std::string assigned_reg;
+
+      std::vector<interferenceGraphNode> edges;
+      //vector representing the avilable registers for a node
+      std::vector<int> avilable_colors;
+
+      interferenceGraphNode(std::string str_name,int startline, int endline){
+        this->str_name = str_name;
+        this->start_line = startline;
+        this->end_line = endline;
+        this->spill_cost = 0;
+        this->assigned_color = -1;
+        for (int i=0; i< 15;i++){
+            avilable_colors.push_back(i);
+        }
+      }
+
+    void addEdge(interferenceGraphNode &node){
+        edges.push_back(node);
+      }
+
+    void erase_color(int color){
+        
+        //this->avilable_colors.erase(avilable_colors.begin()+color);
+        for (int i=0;i<avilable_colors.size();i++){
+
+            if(avilable_colors[i] == color){
+                this->avilable_colors.erase(avilable_colors.begin()+i);
+            }
+        }
+    }
+    void assign_register(int color){
+
+        assigned_reg = "reg" + std::to_string(color);
+    }
+    void printEdges(){
+        std::cout << "*************printing edge for ******************" <<str_name << " " <<std::endl;
+        for(size_t i=0;i<this->edges.size();i++)
+            std::cout << "Edge: From -> " << this->str_name << " to " << this->edges[i].str_name << std::endl;
+        std::cout << "*******************************" <<std::endl;
+      }
+
+  };
 class cfg {
 
     public:
          std::vector<std::string> ir_code;
+         std::vector<std::string> final_ir_code;
          std::vector<cfgNode> graph;
+         std::vector<interferenceGraphNode> interferenceGraph;
+         std::stack<std::string> interferenceStack;
+
          bool next_line_is_new_block;
-         int block_number=0;
+         int block_number=-1;
+         int num_registers = 15;
+         
+
          //data structure for live range
-         struct live_range_blk_line{
+         struct live_range_details{
+                std::string str_name;
                 int start_block;
                 int end_block;
                 int start_line;
                 int end_line;
-            }details;
-          typedef std::map<std::string, live_range_blk_line > Maptype;
-          Maptype  live_range;
-
+          };
+          typedef std::vector<live_range_details > live_range_vec;
+          live_range_vec live_range;
+          /************************************************************************/
          //constructor, reads the input IR code in buffer
          cfg(std::string filename){
 
@@ -95,6 +211,31 @@ class cfg {
             }
             file.close();
         }
+        struct register_entry
+        {
+            int usage_count;
+            int block_num;
+            std::string reg_name;
+            std::string string_name;
+
+            register_entry(int k, int b,const std::string& r, const std::string& s) : usage_count(k), block_num(b),reg_name(r),string_name(s) {}
+        };
+        std::vector<register_entry> register_map;
+
+        struct sort_on_usage_count
+        {
+            inline bool operator() (const register_entry& struct1, const register_entry& struct2)
+            {
+                return (struct1.usage_count > struct2.usage_count);
+            }
+        };
+        struct sort_on_spill_cost
+        {
+            inline bool operator() (const interferenceGraphNode& struct1, const interferenceGraphNode& struct2)
+            {
+                return (struct1.spill_cost < struct2.spill_cost);
+            }
+        };
 
         //generates the block number
         int getBlockNumber(){
@@ -156,32 +297,34 @@ class cfg {
                     //std::cout << "setting new block to true " << std::endl;
                 }   
             }
-            std::cout << "Block " << "start line " << "end line " <<std::endl;
-            std::cout << "*******************"<<std::endl;
+            std::cout <<"Block details => " <<std::endl;
+            std::cout << "\t" <<"Num" << "\t"<< "start" << "\t"<< "end" <<std::endl;
+            std::cout << "\t" << "*******************"<<std::endl;
             //set end line for each block
             size_t node_num =0;
             for(node_num = 0;node_num < graph.size() - 1; node_num++){
 
                     graph[node_num].setEndLine(graph[node_num+1].start - 1);
-                    std::cout << "Block: " << graph[node_num].blockNum << " "<<graph[node_num].start << " " << graph[node_num].end << std::endl;
+                    std::cout << "\t" << graph[node_num].blockNum << "\t"<<graph[node_num].start << "\t" << graph[node_num].end << std::endl;
             }
 
             graph[node_num].setEndLine(ir_code.size()-1);
-            std::cout << "Block: " << graph[node_num].blockNum << " " << graph[node_num].start << " " << graph[node_num].end << std::endl;
-
-            //create and print edges
-            createEdges(graph, ir_code);
-            for(node_num=0;node_num<graph.size();node_num++){
-                graph[node_num].printEdges();
-            }
-            calculate_def_use_set(graph, ir_code);
-            for(node_num=0;node_num<graph.size();node_num++){
-                graph[node_num].print_du();
-            }
-            calculate_live_range(graph);
+            std::cout << "\t" << graph[node_num].blockNum << "\t" << graph[node_num].start << "\t" << graph[node_num].end << std::endl;
+            std::cout << "\t" << "*******************"<<std::endl;
         }
-        
-        void createEdges(std::vector<cfgNode> &graph, std::vector<std::string> &ir_code) {
+
+        int get_block_number(std::vector<cfgNode> &graph,int line_num){
+
+            for(int node_num = 0;node_num < graph.size(); node_num++){
+                if((line_num >= graph[node_num].start) && ((line_num <= graph[node_num].end))){
+                    //std::cout << "Get block number returning......." << node_num << std::endl;
+                    return node_num;
+                }
+            }
+            return -1;
+        }
+
+        void create_cfg_edges(std::vector<cfgNode> &graph, std::vector<std::string> &ir_code) {
 
             // add edges to the control flow graph
             for(size_t node_num=0;node_num<graph.size();node_num++){
@@ -213,7 +356,7 @@ class cfg {
 
                     //add edge for label
                     label_to_go = line_buffer[1];
-                    add_edge(node_num,label_to_go,graph,ir_code);
+                    add_cfg_edge(node_num,label_to_go,graph,ir_code);
                     //std::cout << "got goto in block starts with line " << start_line << " " << label_to_go <<std::endl;
                     
                 } 
@@ -223,7 +366,7 @@ class cfg {
 
                     // add edge for label
                     label_to_go = line_buffer[3];
-                    add_edge(node_num,label_to_go,graph,ir_code);
+                    add_cfg_edge(node_num,label_to_go,graph,ir_code);
                     
                     //fall through case
                     if(node_num < graph.size()-1){
@@ -239,9 +382,9 @@ class cfg {
 
             }
 
-        } //end of createEdges
+        } //end of create_cfg_edges
 
-        void add_edge(int src_node_index, std::string label_to_go,std::vector<cfgNode> &graph, std::vector<std::string> &ir_code){
+        void add_cfg_edge(int src_node_index, std::string label_to_go,std::vector<cfgNode> &graph, std::vector<std::string> &ir_code){
 
             for(size_t node_num=0;node_num<graph.size();node_num++){
 
@@ -272,7 +415,7 @@ class cfg {
                 }
 
             } 
-        } //end of add_edge
+        } //end of add_cfg_edge
 
 
         void calculate_def_use_set(std::vector<cfgNode> &graph, std::vector<std::string> &ir_code){
@@ -301,34 +444,51 @@ class cfg {
                         result.push_back(line);
                     }
                     if((strcmp(result[0].c_str(),"assign") == 0) && (result.size()==3)){
-                        graph[node_num].set_def_set(result[1],line_num);
-                        graph[node_num].set_use_set(result[2],line_num);     
+                        graph[node_num].set_def_set(result[1],node_num,line_num);
+                        graph[node_num].set_use_set(result[2],node_num,line_num);     
 
                         //std::cout << result[0] << " " << result[1] << " " <<result[2] <<std::endl;                       
                     }
                     else if((strcmp(result[0].c_str(),"assign") == 0) && (result.size()==4)){
-                        graph[node_num].set_def_set(result[1],line_num);
-                        graph[node_num].set_use_set(result[2],line_num);     
-                        graph[node_num].set_use_set(result[3],line_num);  
+                        //check if this is valid case ??????????????????
+                        graph[node_num].set_def_set(result[1],node_num,line_num);
+                        graph[node_num].set_use_set(result[2],node_num,line_num);     
+                        graph[node_num].set_use_set(result[3],node_num,line_num);  
                         //std::cout << result[0] << " " << result[1] << " " <<result[2] <<std::endl;                       
                     }
                     else if( (strcmp(result[0].c_str(),"brneq") == 0) || (strcmp(result[0].c_str(),"breq") == 0) 
                         || (strcmp(result[0].c_str(),"brlt") == 0) || (strcmp(result[0].c_str(),"brgt") == 0)
                         || (strcmp(result[0].c_str(),"brgeq") == 0) || (strcmp(result[0].c_str(),"brleq") == 0) ){
 
-                        graph[node_num].set_use_set(result[1],line_num);
-                        graph[node_num].set_use_set(result[2],line_num);
+                        graph[node_num].set_use_set(result[1],node_num,line_num);
+                        graph[node_num].set_use_set(result[2],node_num,line_num);
 
                     }
                     else if( (strcmp(result[0].c_str(),"add") == 0) || (strcmp(result[0].c_str(),"sub") == 0) 
                         || (strcmp(result[0].c_str(),"mult") == 0) || (strcmp(result[0].c_str(),"div") == 0)
                         || (strcmp(result[0].c_str(),"and") == 0) || (strcmp(result[0].c_str(),"or") == 0) ){
 
-                        graph[node_num].set_def_set(result[3],line_num);
-                        graph[node_num].set_use_set(result[1],line_num);
-                        graph[node_num].set_use_set(result[2],line_num);
+                        graph[node_num].set_def_set(result[3],node_num,line_num);
+                        graph[node_num].set_use_set(result[1],node_num,line_num);
+                        graph[node_num].set_use_set(result[2],node_num,line_num);
                     }
+                    else if((strcmp(result[0].c_str(),"call") == 0) || (strcmp(result[0].c_str(),"callr") == 0)){
+                        int offset = 0;
 
+                        if(strcmp(result[0].c_str(),"callr") == 0){
+                            offset = 1;
+                            graph[node_num].set_use_set(result[1],node_num,line_num);  //return value
+                        }
+
+                        for (size_t char_num =2+offset;char_num<result.size();char_num++){
+                            graph[node_num].set_use_set(result[char_num],node_num,line_num);     
+                            //std::cout << result[0] << " " << result[1] << " " <<result[2] <<std::endl;                       
+                        }
+                    }
+                    else if((strcmp(result[0].c_str(),"return") == 0) && (result.size()==2)){
+                        graph[node_num].set_use_set(result[1],node_num,line_num);     
+                        //std::cout << result[0] << " " << result[1] << " " <<result[2] <<std::endl;                       
+                    }
                 }
             }
 
@@ -336,56 +496,595 @@ class cfg {
 
         void calculate_live_range(std::vector<cfgNode> &graph){
 
-            int across_block = 0;
+            live_range_vec initial_live_range,final_live_range;
             for(size_t node_num=0;node_num<graph.size();node_num++){
 
                 for (auto itd=graph[node_num].def_set.begin(); itd!=graph[node_num].def_set.end(); ++itd){
 
-                    details.start_line = itd->second;
-                    details.end_line = itd->second;
-                    details.start_block = node_num+1;
-                    details.end_block = node_num+1;
-                    //this for loop is required if we find live ranges accorss the blocks
-                    if(across_block){
-                        for(size_t next_node=node_num; next_node<graph.size();next_node++){
+                    int def_vec_len = itd->second.size();
+                    //search for all the defintions of string
+                    for(size_t i=0;i<def_vec_len;i++){
 
-                          for (auto itu=graph[next_node].use_set.begin(); itu!=graph[next_node].use_set.end(); ++itu){
+                        int matched = 0;
+                        auto def_vec = itd->second[i];
+                        //std::cout << "def searching for string .........." << itd->first << " " << def_vec.line_num << std::endl;
+                        //search in all the blocks; starting from current block
+                        for(size_t next_node=node_num; next_node<graph.size();next_node++){
+                            
+                            //serach in use set
+                            for (auto itu=graph[next_node].use_set.begin(); itu!=graph[next_node].use_set.end(); ++itu){
                             
                                 if(itd->first == itu->first){
-                                    details.end_line = itu->second;
-                                    details.end_block = next_node+1;
-                                    //std::cout << "def for " << itd->first << " use set = " << itu->first << " " << next_node <<std::endl;
+                                    matched = 1;
+                                    int use_vec_len = itu->second.size();
+                                    auto use_vec = itu->second[use_vec_len-1]; //take the line of last use
+                                    live_range_details details;
+                                    details.str_name = itd->first;
+                                    details.start_line = def_vec.line_num;
+                                    details.start_block = def_vec.block_num;
+                                    details.end_line = use_vec.line_num;
+                                    details.end_block = use_vec.block_num;
+                                    
+                                    initial_live_range.push_back(details);   
+                                }
+                                
+                            }
+                        }
+                        //if no match is found in any of the use set then range is with in the line
+                        if(matched == 0){
+                            
+                            live_range_details details;
+                            details.str_name = itd->first;
+                            details.start_line = def_vec.line_num;
+                            details.end_line = def_vec.line_num;
+                            details.start_block = def_vec.block_num;
+                            details.end_block = def_vec.block_num;
+                            initial_live_range.push_back(details);
+                        }
+                    }
+                    
+                }
+
+            }
+            //print_live_range(initial_live_range);
+            //this is same as creating webs of defs and use across basic blocks; according to the lecture;
+            bool result = compare_live_range_vector(initial_live_range, final_live_range);
+            
+            while(result == false){
+                live_range_vec input_live_range = initial_live_range;
+                final_live_range.clear();
+                converg_live_range_vector(graph,initial_live_range,final_live_range);
+
+                result = compare_live_range_vector(input_live_range, final_live_range);
+                initial_live_range = final_live_range;  
+                 
+            }
+            print_live_range(final_live_range);
+            live_range = final_live_range;
+        }
+
+        /* This function compares two vectors and return true if they are same otherwise false */
+        bool compare_live_range_vector(live_range_vec &initial_live_range,live_range_vec &final_live_range)
+        {
+                
+                int size1 = initial_live_range.size();
+                int size2 = final_live_range.size();
+        
+                if(size1 != size2)
+                    return false;
+
+                int count = 0;
+                for (int i =0;i<size1;i++){
+                    for (int j =0;j<size2;j++){
+
+                        if((initial_live_range[i].str_name == final_live_range[j].str_name) && 
+                            (initial_live_range[i].start_block == final_live_range[j].start_block) &&
+                            (initial_live_range[i].end_block == final_live_range[j].end_block) &&
+                            (initial_live_range[i].start_line == final_live_range[j].start_line) &&
+                            (initial_live_range[i].end_line == final_live_range[j].end_line)){
+
+                                count++;
+                        }
+                    }
+                }
+                
+                if(count == size1)
+                    return true;
+                else
+                    return false;
+        }
+
+        /* This function tries to converge the live ranges  */
+        void converg_live_range_vector(std::vector<cfgNode> &graph,live_range_vec &initial_live_range,live_range_vec &final_live_range)
+        {
+            //reiterate live range and refine it for the cases of multiple enties for same symbol
+            bool change = true;
+            
+            while(change == true) {
+                change = false;
+                
+                for(size_t node_num=0;node_num<initial_live_range.size();node_num++){
+
+                    int matched = 0;
+                    /* if 2 ranges have same starting point, then consider the one having greater range */
+                    for(size_t next_node=node_num+1;next_node<initial_live_range.size();next_node++){
+
+                        if((initial_live_range[node_num].str_name == initial_live_range[next_node].str_name) && 
+                            (initial_live_range[node_num].start_block == initial_live_range[next_node].start_block) &&
+                            (initial_live_range[node_num].start_line == initial_live_range[next_node].start_line)){
+                                                                
+                                matched = 1;
+                                change = true;
+                                if(initial_live_range[next_node].end_line > initial_live_range[node_num].end_line){
+                                    final_live_range.push_back(initial_live_range[next_node]);
+                                }
+                                else{
+                                    final_live_range.push_back(initial_live_range[node_num]);
+                                }
+                                initial_live_range.erase(initial_live_range.begin()+next_node) ;
+                        }
+                    }
+                    for(size_t next_node=node_num+1;next_node<initial_live_range.size();next_node++){
+                     
+                        /* if 2 ranges have same end point, then update endline and endblock for the live ranges */
+                        if((initial_live_range[node_num].str_name == initial_live_range[next_node].str_name) && 
+                            (initial_live_range[node_num].end_block == initial_live_range[next_node].end_block) &&
+                            (initial_live_range[node_num].end_line == initial_live_range[next_node].end_line)){
+                                
+                                matched = 1;
+                                change = true;
+                                initial_live_range[node_num].end_line = initial_live_range[next_node].start_line-1;
+                                initial_live_range[node_num].end_block = get_block_number(graph,initial_live_range[node_num].end_line);
+                                final_live_range.push_back(initial_live_range[node_num]);
+                                final_live_range.push_back(initial_live_range[next_node]);
+
+                                initial_live_range.erase(initial_live_range.begin()+next_node);
+                        }
+                    }
+                    if(matched)
+                        initial_live_range.erase(initial_live_range.begin()+node_num);
+                }
+                
+            }  
+            
+            int i = initial_live_range.size()-1;
+            while(i >= 0){
+                final_live_range.push_back(initial_live_range[i]);
+                initial_live_range.erase(initial_live_range.begin()+i);
+                i--;
+            }
+        }
+
+        void print_live_range(live_range_vec ive_range){
+
+            std::cout << "Live ranges are: " <<std::endl;
+            std::cout << "variable" << "\t" << "start block" << "\t" << "end block" << "\t" << "start line" << "\t" << "end line" <<std::endl;
+            std::cout << "***************************************************************"<<std::endl;
+            for (auto it=ive_range.begin(); it!=ive_range.end(); ++it)
+                std::cout << it->str_name << "\t\t" << it->start_block << "\t\t" << it->end_block << "\t\t" << it->start_line << "\t\t" << it->end_line  << '\n';
+            std::cout << "***************************************************************"<<std::endl;
+
+        }
+
+        void allocate_register_intrablock(std::vector<cfgNode> &graph){
+
+            //we assume that we have 15 registers
+            for(size_t node_num=0;node_num<graph.size();node_num++){
+
+                std::vector<register_entry> usage_set;
+                for (auto itu=graph[node_num].use_set.begin(); itu!=graph[node_num].use_set.end(); ++itu){
+
+                    int use_vec_len = itu->second.size();
+                    for(size_t i=0;i<use_vec_len;i++){
+
+                        auto use_vec = itu->second[i];
+                        //std::cout << "name " << node_num << "  " << itu->first << " " <<itu->second.usage_count <<std::endl;
+                        usage_set.push_back(register_entry(use_vec.usage_count,node_num,"",itu->first));
+                    }
+                }
+                //sort according to the maximum number of use
+                std::sort(usage_set.begin(), usage_set.end(),sort_on_usage_count());
+                int reg_count = 0;
+
+                //std::cout << "-----------" <<std::endl;
+                for (auto itu=usage_set.begin(); itu!=usage_set.end(); ++itu){
+                    
+                    if(reg_count < num_registers){
+
+                        std::string reg = "reg" + std::to_string(reg_count);
+                        register_map.push_back(register_entry(itu->usage_count,node_num,reg,itu->string_name));
+                        //std::cout << itu->usage_count << " " << node_num+1 << " " <<reg << " " << itu->string_name<<std::endl;
+                        reg_count++; 
+                    }
+                    else{
+
+                        register_map.push_back(register_entry(itu->usage_count,node_num,"",itu->string_name));   
+                    }
+                } 
+                
+            }
+            
+        }
+        
+        void generate_final_ir_code(std::vector<cfgNode> &graph, std::vector<std::string> &ir_code){
+
+            for(size_t node_num=0;node_num<graph.size();node_num++){
+            
+                //load variables from this blocks register map
+                for (auto itu=register_map.begin(); itu!=register_map.end(); ++itu){
+                    
+                    if(node_num == itu->block_num){
+                        std::string str = "\tload_var " + itu->reg_name + " " + itu->string_name;
+                        //std::cout << "\tload_var " << itu->reg_name<< " " << itu->string_name <<std::endl;
+                        final_ir_code.push_back(str);
+                    }
+                }//end of initial load
+
+                int start_line = graph[node_num].start;
+                int end_line = graph[node_num].end;
+
+                for(size_t line_num = start_line;line_num <= end_line; line_num++){
+
+                    std::string line = ir_code[line_num];
+
+                    //std::cout << line << std::endl;
+                    //remove comma
+                    for (size_t char_num =0;char_num<line.size();char_num++){
+                        if((line[char_num] == ',') || (line[char_num] == ':')){
+                            line[char_num] = ' ';
+                        }
+                    }
+
+                    //get the strings in a line
+                    std::vector<std::string> result;
+                    std::istringstream iss(line);
+                    for(std::string line; iss >> line; ){
+                        result.push_back(line);
+                    }
+                    if((strcmp(result[0].c_str(),"assign") == 0) && (result.size()==3)){
+                                              
+                        //check result 2 in register map
+                        std::string reg="";
+                        if(find_in_reg_map(node_num,result[2],reg)){
+                            std::string str = "\tassign " + result[1] + " " + reg;
+                            final_ir_code.push_back(str);
+                        }
+                        else{
+                            std::string str = "\tassign " + result[1] + " " + result[2];
+                            final_ir_code.push_back(str);
+                        }
+                    }
+                    else if((strcmp(result[0].c_str(),"assign") == 0) && (result.size()==4)){
+                        
+                        std::string reg1="";
+                        std::string reg2="";
+                        std::string str;
+                        bool res1 = find_in_reg_map(node_num,result[2],reg1);
+                        bool res2 = find_in_reg_map(node_num,result[3],reg2);
+                        if(res1 && res2){
+                            str = "\tassign " + result[1] + " " + reg1 + " " + reg2;
+                        }
+                        else if(!res1 && res2){
+                            str = "\tassign " + result[1] + " " + result[2]  + " " + reg2;
+                        }
+                        else if(res1 && !res2){
+                            str = "\tassign " + result[1]  + " " + reg1 + " " + result[3];
+                        }
+                        else{
+                            str = "\tassign " + result[1] + " " + result[2]+ " " + result[3];
+                        }
+                        final_ir_code.push_back(str);
+                    }
+                    else if( (strcmp(result[0].c_str(),"brneq") == 0) || (strcmp(result[0].c_str(),"breq") == 0) 
+                        || (strcmp(result[0].c_str(),"brlt") == 0) || (strcmp(result[0].c_str(),"brgt") == 0)
+                        || (strcmp(result[0].c_str(),"brgeq") == 0) || (strcmp(result[0].c_str(),"brleq") == 0) ) {
+                        
+                        std::string reg1="";
+                        std::string reg2="";
+                        std::string str;
+                        bool res1 = find_in_reg_map(node_num,result[1],reg1);
+                        bool res2 = find_in_reg_map(node_num,result[2],reg2);
+                        if(res1 && res2){
+                            str = "\t" + result[0] + " " + reg1 + " " + reg2 + " " + result[3];
+                        }
+                        else if(!res1 && res2){
+                            str = "\t" +  result[0] + " " + result[1] + " " + reg2  + " " + result[3];
+                        }
+                        else if(res1 && !res2){
+                            str = "\t"+ result[0] + " " + reg1  + " " + result[2] + " " + result[3];
+                        }
+                        else{
+                            str = "\t"+  result[0] + " "+ result[1] + " " + result[2]+ " " + result[3];
+                        }
+                        final_ir_code.push_back(str);
+
+                    }
+                    else if( (strcmp(result[0].c_str(),"add") == 0) || (strcmp(result[0].c_str(),"sub") == 0) 
+                        || (strcmp(result[0].c_str(),"mult") == 0) || (strcmp(result[0].c_str(),"div") == 0)
+                        || (strcmp(result[0].c_str(),"and") == 0) || (strcmp(result[0].c_str(),"or") == 0) ){
+
+                        std::string reg1="";
+                        std::string reg2="";
+                        std::string str;
+                        bool res1 = find_in_reg_map(node_num,result[1],reg1);
+                        bool res2 = find_in_reg_map(node_num,result[2],reg2);
+                        if(res1 && res2){
+                            str = "\t" + result[0] + " " + reg1 + " " + reg2 + " " + result[3];
+                        }
+                        else if(!res1 && res2){
+                            str = "\t" +  result[0] + " " + result[1] + " " + reg2  + " " + result[3];
+                        }
+                        else if(res1 && !res2){
+                            str = "\t"+ result[0] + " " + reg1  + " " + result[2] + " " + result[3];
+                        }
+                        else{
+                            str = "\t"+  result[0] + " "+ result[1] + " " + result[2]+ " " + result[3];
+                        }
+                        final_ir_code.push_back(str);
+                       
+                    }
+                    else if((strcmp(result[0].c_str(),"call") == 0) || (strcmp(result[0].c_str(),"callr") == 0)){
+                        int offset = 0;
+                        std::string reg1="";
+                        std::string reg2="";
+                        std::string str;
+                        if(strcmp(result[0].c_str(),"callr") == 0){
+                            offset = 1;
+                            bool res1 = find_in_reg_map(node_num,result[1],reg1);
+                            if(res1)
+                                str = "\t callr " + reg1;
+                        }
+                        else{
+
+                            str = "\t call";
+                        }
+
+                        for (size_t char_num =2+offset;char_num<result.size();char_num++){
+                                
+                            bool res2 = find_in_reg_map(node_num,result[char_num],reg2); 
+                            if(res2)
+                                str +=  " " +  reg2;                
+                        }
+                        final_ir_code.push_back(str);
+                    }
+                    else if(strcmp(result[0].c_str(),"return") == 0){
+                        std::string str;
+                        if(result.size()==2){
+                            std::string reg1="";
+                            bool res1 = find_in_reg_map(node_num,result[1],reg1);
+                            
+                            if(res1){
+                                str = "\t return " + reg1;
+                                final_ir_code.push_back(str);
+                            }
+                        }else{
+                            str = "\t return";
+                            final_ir_code.push_back(str);
+                        }
+                    
+                    }
+                    else{
+                        std::cout << "adding here......." << line <<std::endl;
+                        final_ir_code.push_back(line);
+                    }
+                }
+                //store variables from this blocks register to memory
+                for (auto itu=register_map.begin(); itu!=register_map.end(); ++itu){
+                    
+                    if(node_num == itu->block_num){
+                        std::string str = "\tstore_var " + itu->reg_name + " " + itu->string_name;
+                        final_ir_code.push_back(str);
+                    }
+                }//end of initial load
+            } 
+
+        }
+
+        bool find_in_reg_map(int block_num,std::string result,std::string& reg){
+
+            for (auto itu=register_map.begin(); itu!=register_map.end(); ++itu){
+                    
+                    if((block_num == itu->block_num) && (strcmp(result.c_str(),itu->string_name.c_str()) == 0)) {
+                        reg = itu->reg_name;
+                        return true;
+                    }
+                }//end of initial load
+
+            return false;
+        }
+        void print_ir_code(std::vector<std::string> &final_ir_code) {
+          std::cout << "\n\n----------------------------------------" << std::endl;
+          std::cout << "Generate Final IR CODE ..." << std::endl;
+          std::cout << "----------------------------------------" << std::endl;
+          for (size_t i = 0; i < final_ir_code.size(); ++i) {
+            std::cout << final_ir_code[i] << std::endl;
+          }
+          std::cout << "----------------------------------------\n" << std::endl;
+        }
+
+        
+
+        void  calculate_interference_graph(live_range_vec &lrange){
+
+                //create graph with nodes
+                for (int i=0;i<lrange.size();i++){
+                    std::string str = "s" + std::to_string(i);
+                    
+                    auto node = new interferenceGraphNode(str,lrange[i].start_line,lrange[i].end_line);
+                    this->interferenceGraph.push_back(*node);
+                }
+                
+                //add edges in the graph
+                for(size_t node_num=0;node_num<interferenceGraph.size();node_num++){
+                    for(size_t next_node=0;next_node<interferenceGraph.size();next_node++){
+
+                        if(node_num != next_node){
+
+                            if(((interferenceGraph[node_num].start_line >= interferenceGraph[next_node].start_line) &&
+                                (interferenceGraph[node_num].start_line <= interferenceGraph[next_node].end_line)) ||
+                                ((interferenceGraph[node_num].end_line >= interferenceGraph[next_node].start_line) &&
+                                (interferenceGraph[node_num].end_line <= interferenceGraph[next_node].end_line)) ) {
+
+                                interferenceGraph[node_num].addEdge(interferenceGraph[next_node]);
+                                //std::cout << "adding edge from " << node_num << " " << next_node <<std::endl;
+                            }
+
+                        }
+                    }
+
+                }
+                //calculate spill cost of each node; this is cost to have variable in the memory; equal to the times variable is used
+                for(int node_num=0;node_num<interferenceGraph.size();node_num++){
+                    //interferenceGraph[node_num].printEdges();
+                    interferenceGraph[node_num].spill_cost = calculate_spill_cost(node_num);
+                    //std::cout << "node is " << interferenceGraph[node_num].str_name << " " << interferenceGraph[node_num].spill_cost <<std::endl;
+                }
+                //sort and push in stack
+                std::sort(interferenceGraph.begin(), interferenceGraph.end(),sort_on_spill_cost());
+                
+                for(int node_num=0;node_num<interferenceGraph.size();node_num++){
+                    interferenceStack.push(interferenceGraph[node_num].str_name);
+                    //std::cout << interferenceGraph[node_num].str_name << " " << interferenceGraph[node_num].spill_cost<<std::endl;
+                }
+        }
+
+        int calculate_spill_cost(int in_node){
+
+            int spill_cost = 0;
+            for(size_t node_num=0;node_num<interferenceGraph.size();node_num++){
+                if(node_num == in_node){
+                    spill_cost = interferenceGraph[node_num].end_line - interferenceGraph[node_num].start_line;
+                }
+            }
+            return spill_cost;
+        }
+
+        void update_avilable_colors(std::string input_str){
+
+            
+            for(size_t node_num=0;node_num<interferenceGraph.size();node_num++){
+                //std::cout << "Input string is " <<interferenceGraph[node_num].str_name << " " << input_str <<std::endl;
+                if(strcmp(interferenceGraph[node_num].str_name.c_str(),input_str.c_str()) == 0){
+                    
+                    //check out going edges and remove the color of those nodes from avilable colors
+                    for (int j=0;j<interferenceGraph[node_num].edges.size();j++){
+                    
+                        for(size_t next_node=0;next_node<interferenceGraph.size();next_node++){
+
+                            if(strcmp(interferenceGraph[node_num].edges[j].str_name.c_str(),interferenceGraph[next_node].str_name.c_str()) == 0){
+
+                                //std::cout << "checking out going edge " << interferenceGraph[node_num].str_name << " " << interferenceGraph[next_node].str_name \
+                                << " " << interferenceGraph[next_node].assigned_color <<std::endl;
+                                if(interferenceGraph[next_node].assigned_color != -1){
+
+                                    int to_del = interferenceGraph[next_node].assigned_color;
+                                    interferenceGraph[node_num].erase_color(to_del);
                                 }
                             }
                         }
                     }
-                    else{
-                      
-                      for (auto itu=graph[node_num].use_set.begin(); itu!=graph[node_num].use_set.end(); ++itu){
-                        
-                            if(itd->first == itu->first){
-                                details.end_line = itu->second;
-                                details.end_block = node_num+1;
+
+                }
+            }
+            for(size_t node_num=0;node_num<interferenceGraph.size();node_num++){ //check incoming edges to the node
+
+                if(strcmp(interferenceGraph[node_num].str_name.c_str(),input_str.c_str()) == 0){
+
+                    for(size_t next_node=0;next_node<interferenceGraph.size();next_node++){
+
+                        for (int j=0;j<interferenceGraph[next_node].edges.size();j++) {
+
+                            if(strcmp(interferenceGraph[next_node].edges[j].str_name.c_str(),interferenceGraph[node_num].str_name.c_str()) == 0){
+
+                                //std::cout << "checking in coming edge " << interferenceGraph[node_num].str_name << " " << interferenceGraph[next_node].str_name \
+                                << " " << interferenceGraph[next_node].assigned_color <<std::endl;
+
+                                if(interferenceGraph[next_node].assigned_color != -1){
+                                    
+                                    int to_del = interferenceGraph[next_node].assigned_color;
+                                    interferenceGraph[node_num].erase_color(to_del);
+                                }
                             }
                         }
-                    }//end of across_block else
-
-                    std::string str = itd->first;
-                    live_range.insert(std::pair<std::string, live_range_blk_line > (str,details));
+                        
+                    }
                 }
 
             }
-            std::cout << "Live ranges are: " <<std::endl;
-            for (auto it=live_range.begin(); it!=live_range.end(); ++it)
-                std::cout << it->first << " => " << it->second.start_block << " " << it->second.end_block  << " " << it->second.start_line << " " << it->second.end_line  << '\n';
+            
+        }
+        void update_node_color(){
+
+            while (!interferenceStack.empty()){
+
+
+                std::string str = interferenceStack.top();
+                interferenceStack.pop();
+                update_avilable_colors(str);
+                
+                for(size_t node_num=0;node_num<interferenceGraph.size();node_num++){
+                   //if(interferenceGraph[node_num].str_name == str){
+                    if(strcmp(interferenceGraph[node_num].str_name.c_str(),str.c_str()) == 0){
+                        //assign the first avilable color to the node
+
+                        if(interferenceGraph[node_num].avilable_colors.size() != 0){
+
+                            interferenceGraph[node_num].assigned_color = interferenceGraph[node_num].avilable_colors[0];
+                            interferenceGraph[node_num].assign_register(interferenceGraph[node_num].assigned_color);
+                            //std::cout << "assinging color to node......" << interferenceGraph[node_num].str_name << " " << interferenceGraph[node_num].assigned_reg << std::endl;
+                              
+                            register_map.push_back(register_entry(0,node_num,interferenceGraph[node_num].assigned_reg,interferenceGraph[node_num].str_name));
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+        void update_intra_reg_allocation() {
+            
+            //create and print edges
+            create_cfg_edges(graph, ir_code);
+            for(int node_num=0;node_num<graph.size();node_num++){
+                graph[node_num].printEdges();
+            }
+            calculate_def_use_set(graph, ir_code);
+            for(int node_num=0;node_num<graph.size();node_num++){
+                graph[node_num].print_du(node_num);
+            }
+
+            allocate_register_intrablock(graph);
+            generate_final_ir_code(graph, ir_code);
+            print_ir_code(final_ir_code);
+        }
+
+    
+        void update_inter_reg_allocation() {
+            
+            //create and print edges
+            create_cfg_edges(graph, ir_code);
+            for(int node_num=0;node_num<graph.size();node_num++){
+                graph[node_num].printEdges();
+            }
+            calculate_def_use_set(graph, ir_code);
+            for(int node_num=0;node_num<graph.size();node_num++){
+                graph[node_num].print_du(node_num);
+            }
+            calculate_live_range(graph);
+            calculate_interference_graph(live_range);
+            update_node_color();
+            generate_final_ir_code(graph, ir_code);
+            print_ir_code(final_ir_code);
         }
 
 };
 
+
+
 //Pass IR file as input
 int main(int argc, char** argv) {
 
-  
   // The user has given us a bad number of args
   if (argc > 3 || argc < 1) {
     return 0;
@@ -393,6 +1092,8 @@ int main(int argc, char** argv) {
 
   cfg graph(argv[1]);
   graph.createBasicBlocks();
-  
+  //graph.update_intra_reg_allocation();
+  graph.update_inter_reg_allocation();
+
   return 0;
 }
