@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -130,6 +129,8 @@ class interferenceGraphNode{
     public:
       int start_line;
       int end_line;
+      int start_block;
+      int end_block;
       int spill_cost;
       int assigned_color;
       bool isSpillEnable;
@@ -141,13 +142,15 @@ class interferenceGraphNode{
     //vector representing the avilable registers for a node
     std::vector<int> avilable_colors;
 
-    interferenceGraphNode(std::string node_name,std::string var_name,int startline, int endline){
+    interferenceGraphNode(std::string node_name,std::string var_name,int startline, int endline,int start_block,int end_block){
         
         this->node_name = node_name;
         this->var_name = var_name;
         this->start_line = startline;
         this->end_line = endline;
         this->spill_cost = 0;
+        this->start_block = start_block;
+        this->end_block = end_block;
         this->assigned_color = -1;
         this->isSpillEnable = false;
         for (int i=0; i< 15;i++){   //number of avilable registers is 15
@@ -226,11 +229,12 @@ class cfg {
         struct register_entry
         {
             int usage_count;
-            int block_num;
+            int start_block;
+            int end_block;
             std::string reg_name;
             std::string string_name;
 
-            register_entry(int k, int b,const std::string& r, const std::string& s) : usage_count(k), block_num(b),reg_name(r),string_name(s) {}
+            register_entry(int k, int sb,int eb,const std::string& r, const std::string& s) : usage_count(k), start_block(sb),end_block(eb),reg_name(r),string_name(s) {}
         };
         std::vector<register_entry> register_map;
 
@@ -491,7 +495,7 @@ class cfg {
 
                         if(strcmp(result[0].c_str(),"callr") == 0){
                             offset = 1;
-                            graph[node_num].set_use_set(result[1],node_num,line_num);  //return value
+                            graph[node_num].set_def_set(result[1],node_num,line_num);  //return value
                         }
 
                         for (size_t char_num =2+offset;char_num<result.size();char_num++){
@@ -515,7 +519,7 @@ class cfg {
 
         }
 
-        void calculate_live_range(std::vector<cfgNode> &graph){
+        void calculate_live_range(std::vector<cfgNode> &graph,bool inter_block){
 
             live_range_vec initial_live_range,final_live_range;
             for(size_t node_num=0;node_num<graph.size();node_num++){
@@ -528,12 +532,45 @@ class cfg {
 
                         int matched = 0;
                         auto def_vec = itd->second[i];
-                        
-                        //search in all the blocks; starting from current block
-                        for(size_t next_node=node_num; next_node<graph.size();next_node++){
-                            
+                        if(inter_block) {
+                            //search in all the blocks; starting from current block
+                            for(size_t next_node=node_num; next_node<graph.size();next_node++){
+                                
+                                //serach in use set
+                                for (auto itu=graph[next_node].use_set.begin(); itu!=graph[next_node].use_set.end(); ++itu){
+                                
+                                    if(itd->first == itu->first){
+                                        matched = 1;
+                                        int use_vec_len = itu->second.size();
+                                        auto use_vec = itu->second[use_vec_len-1]; //take the line of last use
+                                        live_range_details details;
+                                        details.str_name = itd->first;
+                                        details.start_line = def_vec.line_num;
+                                        details.start_block = def_vec.block_num;
+                                        details.end_line = use_vec.line_num;
+                                        details.end_block = use_vec.block_num;
+                                        
+                                        initial_live_range.push_back(details);   
+                                    }
+                                    
+                                }
+                            }
+                            //if no match is found in any of the use set then range is with in the line
+                            if(matched == 0){
+                                
+                                live_range_details details;
+                                details.str_name = itd->first;
+                                details.start_line = def_vec.line_num;
+                                details.end_line = def_vec.line_num;
+                                details.start_block = def_vec.block_num;
+                                details.end_block = def_vec.block_num;
+                                initial_live_range.push_back(details);
+                            }
+                        }//end of interblock
+                        else{
+
                             //serach in use set
-                            for (auto itu=graph[next_node].use_set.begin(); itu!=graph[next_node].use_set.end(); ++itu){
+                            for (auto itu=graph[node_num].use_set.begin(); itu!=graph[node_num].use_set.end(); ++itu){
                             
                                 if(itd->first == itu->first){
                                     matched = 1;
@@ -550,17 +587,16 @@ class cfg {
                                 }
                                 
                             }
-                        }
-                        //if no match is found in any of the use set then range is with in the line
-                        if(matched == 0){
-                            
-                            live_range_details details;
-                            details.str_name = itd->first;
-                            details.start_line = def_vec.line_num;
-                            details.end_line = def_vec.line_num;
-                            details.start_block = def_vec.block_num;
-                            details.end_block = def_vec.block_num;
-                            initial_live_range.push_back(details);
+                            if(matched == 0){
+                                
+                                live_range_details details;
+                                details.str_name = itd->first;
+                                details.start_line = def_vec.line_num;
+                                details.end_line = def_vec.line_num;
+                                details.start_block = def_vec.block_num;
+                                details.end_block = def_vec.block_num;
+                                initial_live_range.push_back(details);
+                            }
                         }
                     }
                     
@@ -628,6 +664,23 @@ class cfg {
                 for(size_t node_num=0;node_num<initial_live_range.size();node_num++){
 
                     int matched = 0;
+                    for(size_t next_node=node_num+1;next_node<initial_live_range.size();next_node++){
+                     
+                        /* if 2 ranges have same end point, then update endline and endblock for the live ranges */
+                        if((initial_live_range[node_num].str_name == initial_live_range[next_node].str_name) && 
+                            (initial_live_range[node_num].end_block == initial_live_range[next_node].end_block) &&
+                            (initial_live_range[node_num].end_line == initial_live_range[next_node].end_line)){
+                                
+                                matched = 1;
+                                change = true;
+                                initial_live_range[node_num].end_line = initial_live_range[next_node].start_line-1;
+                                initial_live_range[node_num].end_block = get_block_number(graph,initial_live_range[node_num].end_line);
+                                final_live_range.push_back(initial_live_range[node_num]);
+                                final_live_range.push_back(initial_live_range[next_node]);
+
+                                initial_live_range.erase(initial_live_range.begin()+next_node);
+                        }
+                    }
                     /* if 2 ranges have same starting point, then consider the one having greater range */
                     for(size_t next_node=node_num+1;next_node<initial_live_range.size();next_node++){
 
@@ -646,23 +699,7 @@ class cfg {
                                 initial_live_range.erase(initial_live_range.begin()+next_node) ;
                         }
                     }
-                    for(size_t next_node=node_num+1;next_node<initial_live_range.size();next_node++){
-                     
-                        /* if 2 ranges have same end point, then update endline and endblock for the live ranges */
-                        if((initial_live_range[node_num].str_name == initial_live_range[next_node].str_name) && 
-                            (initial_live_range[node_num].end_block == initial_live_range[next_node].end_block) &&
-                            (initial_live_range[node_num].end_line == initial_live_range[next_node].end_line)){
-                                
-                                matched = 1;
-                                change = true;
-                                initial_live_range[node_num].end_line = initial_live_range[next_node].start_line-1;
-                                initial_live_range[node_num].end_block = get_block_number(graph,initial_live_range[node_num].end_line);
-                                final_live_range.push_back(initial_live_range[node_num]);
-                                final_live_range.push_back(initial_live_range[next_node]);
-
-                                initial_live_range.erase(initial_live_range.begin()+next_node);
-                        }
-                    }
+                    
                     if(matched)
                         initial_live_range.erase(initial_live_range.begin()+node_num);
                 }
@@ -688,39 +725,36 @@ class cfg {
 
         }
 
-        void allocate_register_intrablock(std::vector<cfgNode> &graph){
+        void allocate_register_intrablock(std::vector<cfgNode> &graph,live_range_vec &lrange){
 
             //we assume that we have 15 registers
             for(size_t node_num=0;node_num<graph.size();node_num++){
 
                 std::vector<register_entry> usage_set;
-                for (auto itu=graph[node_num].use_set.begin(); itu!=graph[node_num].use_set.end(); ++itu){
-
-                    int use_vec_len = itu->second.size();
-                    for(size_t i=0;i<use_vec_len;i++){
-
-                        auto use_vec = itu->second[i];
-                        //std::cout << "name " << node_num << "  " << itu->first << " " <<itu->second.usage_count <<std::endl;
-                        usage_set.push_back(register_entry(use_vec.usage_count,node_num,"",itu->first));
+                //create graph with nodes
+                for (int i=0;i<lrange.size();i++){
+                    if(node_num == lrange[i].start_block){
+                        int usage_count = lrange[i].end_line - lrange[i].start_line;
+                        usage_set.push_back(register_entry(usage_count,node_num,node_num,"",lrange[i].str_name));
                     }
                 }
+
                 //sort according to the maximum number of use
                 std::sort(usage_set.begin(), usage_set.end(),sort_on_usage_count());
                 int reg_count = 0;
 
-                //std::cout << "-----------" <<std::endl;
                 for (auto itu=usage_set.begin(); itu!=usage_set.end(); ++itu){
                     
                     if(reg_count < num_registers){
 
                         std::string reg = "reg" + std::to_string(reg_count);
-                        register_map.push_back(register_entry(itu->usage_count,node_num,reg,itu->string_name));
+                        register_map.push_back(register_entry(itu->usage_count,node_num,node_num,reg,itu->string_name));
                         //std::cout << itu->usage_count << " " << node_num+1 << " " <<reg << " " << itu->string_name<<std::endl;
                         reg_count++; 
                     }
                     else{
 
-                        register_map.push_back(register_entry(itu->usage_count,node_num,"",itu->string_name));   
+                        register_map.push_back(register_entry(itu->usage_count,node_num,node_num,"",itu->string_name));   
                     }
                 } 
                 
@@ -735,7 +769,7 @@ class cfg {
                 //load variables from this blocks register map
                 for (auto itu=register_map.begin(); itu!=register_map.end(); ++itu){
                     
-                    if(node_num == itu->block_num){
+                    if(node_num == itu->start_block){
                         std::string str = "\tload_var " + itu->reg_name + " " + itu->string_name;
                         //std::cout << "\tload_var " << itu->reg_name<< " " << itu->string_name <<std::endl;
                         final_ir_code.push_back(str);
@@ -896,7 +930,7 @@ class cfg {
                 //store variables from this blocks register to memory
                 for (auto itu=register_map.begin(); itu!=register_map.end(); ++itu){
                     
-                    if(node_num == itu->block_num){
+                    if(node_num == itu->start_block){
                         std::string str = "\tstore_var " + itu->reg_name + " " + itu->string_name;
                         final_ir_code.push_back(str);
                     }
@@ -910,7 +944,7 @@ class cfg {
             if(!inter_block){
                 for (auto itu=register_map.begin(); itu!=register_map.end(); ++itu){
                         
-                        if((block_num == itu->block_num) && (strcmp(result.c_str(),itu->string_name.c_str()) == 0)) {
+                        if((block_num == itu->start_block) && (strcmp(result.c_str(),itu->string_name.c_str()) == 0)) {
                             reg = itu->reg_name;
                             return true;
                         }
@@ -947,7 +981,7 @@ class cfg {
                 for (int i=0;i<lrange.size();i++){
                     std::string node_name = "s" + std::to_string(i);
                     std::string var_name = lrange[i].str_name;
-                    auto node = new interferenceGraphNode(node_name,var_name,lrange[i].start_line,lrange[i].end_line);
+                    auto node = new interferenceGraphNode(node_name,var_name,lrange[i].start_line,lrange[i].end_line,lrange[i].start_block,lrange[i].end_block);
                     this->interferenceGraph.push_back(*node);
                 }
                 
@@ -1067,13 +1101,15 @@ class cfg {
 
                             interferenceGraph[node_num].assigned_color = interferenceGraph[node_num].avilable_colors[0];
                             interferenceGraph[node_num].assign_register(interferenceGraph[node_num].assigned_color);  
-                            register_map.push_back(register_entry(0,node_num,interferenceGraph[node_num].assigned_reg,interferenceGraph[node_num].var_name));
+                            register_map.push_back(register_entry(0,interferenceGraph[node_num].start_block,interferenceGraph[node_num].end_block,
+                                interferenceGraph[node_num].assigned_reg,interferenceGraph[node_num].var_name));
                             //std::cout << "assigning color to " << interferenceGraph[node_num].var_name << " " << interferenceGraph[node_num].assigned_reg <<std::endl;
                         }
                         else { //this is the case of spill
 
                                 interferenceGraph[node_num].isSpillEnable = true;
-                                register_map.push_back(register_entry(0,node_num,"",interferenceGraph[node_num].var_name));  
+                                register_map.push_back(register_entry(0,interferenceGraph[node_num].start_block,interferenceGraph[node_num].end_block,
+                                    "",interferenceGraph[node_num].var_name));  
                         }
 
                     }
@@ -1094,8 +1130,8 @@ class cfg {
             for(int node_num=0;node_num<graph.size();node_num++){
                 graph[node_num].print_du(node_num);
             }
-
-            allocate_register_intrablock(graph);
+            calculate_live_range(graph,false);
+            allocate_register_intrablock(graph,live_range);
             generate_final_ir_code(graph, ir_code,false);
             print_ir_code(final_ir_code);
         }
@@ -1113,7 +1149,7 @@ class cfg {
                 graph[node_num].print_du(node_num);
             }
 
-            calculate_live_range(graph);
+            calculate_live_range(graph,true);
             calculate_interference_graph(live_range);
             update_node_color();
             generate_final_ir_code(graph, ir_code,true);
@@ -1135,7 +1171,10 @@ int main(int argc, char** argv) {
   cfg graph(argv[1]);
   graph.createBasicBlocks();
   graph.update_intra_reg_allocation();
-  graph.update_inter_reg_allocation();
+
+  cfg graph1(argv[1]);
+  graph1.createBasicBlocks();
+  graph1.update_inter_reg_allocation();
 
   return 0;
 }
