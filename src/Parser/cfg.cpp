@@ -137,7 +137,8 @@ class interferenceGraphNode{
       std::string node_name; //name of the node
       std::string var_name;
       std::string assigned_reg;
-
+      int num_registers = 8;
+      int str_temp_reg_num = 2;
     std::vector<interferenceGraphNode> edges;
     //vector representing the avilable registers for a node
     std::vector<int> avilable_colors;
@@ -153,7 +154,8 @@ class interferenceGraphNode{
         this->end_block = end_block;
         this->assigned_color = -1;
         this->isSpillEnable = false;
-        for (int i=0; i< 15;i++){   //number of avilable registers is 15
+
+        for (int i=0; i< num_registers;i++){   //number of avilable registers is 15
             avilable_colors.push_back(i);
         }
       }
@@ -171,11 +173,20 @@ class interferenceGraphNode{
             }
         }
     }
-
+    std::string gen_temp_reg_name(){
+        str_temp_reg_num++;
+        return ("$t" + std::to_string(str_temp_reg_num));
+    }
     //generate register name from the assinged color
     void assign_register(int color){
 
-        assigned_reg = "reg" + std::to_string(color);
+        if(isSpillEnable){
+                std::string str = gen_temp_reg_name();
+                assigned_reg = "$t" + str;
+        }else{
+
+        assigned_reg = "$s" + std::to_string(color);
+        }
     }
 
     void printEdges(){
@@ -198,8 +209,10 @@ class cfg {
 
          bool next_line_is_new_block;
          int block_number=-1;
-         int num_registers = 15;
-         
+         int num_registers = 8;
+         int max_registers = 15;
+         int str_reg_num = -1;
+         int str_temp_reg_num = 2;
          //data structure for live range
          struct live_range_details{
                 std::string str_name;
@@ -567,26 +580,42 @@ class cfg {
                                 initial_live_range.push_back(details);
                             }
                         }//end of interblock
-                        else{
+                    }
+                    
+                }
+                /*
+                for (auto itd=graph[node_num].use_set.begin(); itd!=graph[node_num].use_set.end(); ++itd){
 
-                            //serach in use set
-                            for (auto itu=graph[node_num].use_set.begin(); itu!=graph[node_num].use_set.end(); ++itu){
-                            
-                                if(itd->first == itu->first){
-                                    matched = 1;
-                                    int use_vec_len = itu->second.size();
-                                    auto use_vec = itu->second[use_vec_len-1]; //take the line of last use
-                                    live_range_details details;
-                                    details.str_name = itd->first;
-                                    details.start_line = def_vec.line_num;
-                                    details.start_block = def_vec.block_num;
-                                    details.end_line = use_vec.line_num;
-                                    details.end_block = use_vec.block_num;
-                                    
-                                    initial_live_range.push_back(details);   
-                                }
+                    int def_vec_len = itd->second.size();
+                    //search for all the defintions of string
+                    for(size_t i=0;i<def_vec_len;i++){
+
+                        int matched = 0;
+                        auto def_vec = itd->second[i];
+                        if(inter_block) {
+                            //search in all the blocks; starting from current block
+                            for(size_t next_node=node_num; next_node<graph.size();next_node++){
                                 
+                                //serach in use set
+                                for (auto itu=graph[next_node].use_set.begin(); itu!=graph[next_node].use_set.end(); ++itu){
+                                
+                                    if(itd->first == itu->first){
+                                        matched = 1;
+                                        int use_vec_len = itu->second.size();
+                                        auto use_vec = itu->second[use_vec_len-1]; //take the line of last use
+                                        live_range_details details;
+                                        details.str_name = itd->first;
+                                        details.start_line = def_vec.line_num;
+                                        details.start_block = def_vec.block_num;
+                                        details.end_line = use_vec.line_num;
+                                        details.end_block = use_vec.block_num;
+                                        
+                                        initial_live_range.push_back(details);   
+                                    }
+                                    
+                                }
                             }
+                            //if no match is found in any of the use set then range is with in the line
                             if(matched == 0){
                                 
                                 live_range_details details;
@@ -597,10 +626,10 @@ class cfg {
                                 details.end_block = def_vec.block_num;
                                 initial_live_range.push_back(details);
                             }
-                        }
+                        }//end of interblock
                     }
                     
-                }
+                }*/
 
             }
             //print_live_range(initial_live_range);
@@ -724,7 +753,15 @@ class cfg {
             std::cout << "***************************************************************"<<std::endl;
 
         }
-
+        
+        std::string gen_reg_name(){
+            str_reg_num++;
+            return ("$s" + std::to_string(str_reg_num));
+        }
+        std::string gen_temp_reg_name(){
+            str_temp_reg_num++;
+            return ("$t" + std::to_string(str_temp_reg_num));
+        }
         void allocate_register_intrablock(std::vector<cfgNode> &graph,live_range_vec &lrange){
 
             //we assume that we have 15 registers
@@ -732,29 +769,44 @@ class cfg {
 
                 std::vector<register_entry> usage_set;
                 //create graph with nodes
-                for (int i=0;i<lrange.size();i++){
+               /* for (int i=0;i<lrange.size();i++){
                     if(node_num == lrange[i].start_block){
                         int usage_count = lrange[i].end_line - lrange[i].start_line;
                         usage_set.push_back(register_entry(usage_count,node_num,node_num,"",lrange[i].str_name));
+                    }
+                }*/
+            
+                for (auto itu=graph[node_num].use_set.begin(); itu!=graph[node_num].use_set.end(); ++itu){
+
+                    int use_vec_len = itu->second.size();
+                    for(size_t i=0;i<use_vec_len;i++){
+
+                        auto use_vec = itu->second[i];
+                        int type = checkType(itu->first.c_str());
+                        if(type == -1){ //no int or float
+                            //std::cout << "name " << node_num << "  " << itu->first << " " <<itu->second.usage_count <<std::endl;
+                            usage_set.push_back(register_entry(use_vec.usage_count,node_num,node_num,"",itu->first));
+                        }
                     }
                 }
 
                 //sort according to the maximum number of use
                 std::sort(usage_set.begin(), usage_set.end(),sort_on_usage_count());
-                int reg_count = 0;
+                int reg_count = 0; // total 15 registers are allowed 8 in $s and other 8 in $t
 
                 for (auto itu=usage_set.begin(); itu!=usage_set.end(); ++itu){
                     
                     if(reg_count < num_registers){
-
-                        std::string reg = "reg" + std::to_string(reg_count);
+                        std::string reg = gen_reg_name();
+                        //std::string reg = "reg" + std::to_string(reg_count);
                         register_map.push_back(register_entry(itu->usage_count,node_num,node_num,reg,itu->string_name));
                         //std::cout << itu->usage_count << " " << node_num+1 << " " <<reg << " " << itu->string_name<<std::endl;
                         reg_count++; 
                     }
-                    else{
-
-                        register_map.push_back(register_entry(itu->usage_count,node_num,node_num,"",itu->string_name));   
+                    else if((reg_count > num_registers) &&(reg_count < max_registers)){
+                        std::string reg = gen_temp_reg_name();
+                        register_map.push_back(register_entry(itu->usage_count,node_num,node_num,reg,itu->string_name));   
+                        reg_count++;
                     }
                 } 
                 
@@ -764,8 +816,22 @@ class cfg {
         
         void generate_final_ir_code(std::vector<cfgNode> &graph, std::vector<std::string> &ir_code,bool inter_block){
 
+            int mem_spill = 0;
+            
             for(size_t node_num=0;node_num<graph.size();node_num++){
             
+                std::vector<std::string> func_calls;
+                int start_line = graph[node_num].start;
+                int end_line = graph[node_num].end;
+
+                //check if the first line of the block is label;if label then push it in final ir
+                std::string first_line = ir_code[start_line];
+                for (size_t char_num =0;char_num<first_line.size();char_num++){
+                        if(first_line[char_num] == ':'){
+                            final_ir_code.push_back(first_line);
+                        }
+                    }
+                
                 //load variables from this blocks register map
                 for (auto itu=register_map.begin(); itu!=register_map.end(); ++itu){
                     
@@ -775,9 +841,6 @@ class cfg {
                         final_ir_code.push_back(str);
                     }
                 }//end of initial load
-
-                int start_line = graph[node_num].start;
-                int end_line = graph[node_num].end;
 
                 for(size_t line_num = start_line;line_num <= end_line; line_num++){
 
@@ -805,14 +868,24 @@ class cfg {
                         std::string str1 = "assign";
                         bool res1 = find_in_reg_map(node_num,result[1],reg1,inter_block);
                         bool res2 = find_in_reg_map(node_num,result[2],reg2,inter_block);
-                        if(!res1)
-                            reg1 = result[1];
-                        if(!res2)
-                            reg2 = result[2];
+                        if(!res1){
+                            reg1 = "$t1";
+                            mem_spill = 1;
+                        }
+                        if(!res2){
+                            str = "\t load_var $t0 " + result[2];
+                            final_ir_code.push_back(str);
+                            reg2 = "$t0";
+                        }
 
                         //check result 2 in register map
                         str = "\t" + str1 + " " + reg1 + " " + reg2;
                         final_ir_code.push_back(str);
+                        if(mem_spill){
+                            mem_spill = 0;
+                            str = "store_var " + result[1] + " " + "$t1";
+                            final_ir_code.push_back(str);
+                        }
                         
                     }
                     else if((strcmp(result[0].c_str(),"assign") == 0) && (result.size()==4)){
@@ -866,16 +939,31 @@ class cfg {
                         bool res2 = find_in_reg_map(node_num,result[2],reg2,inter_block);
                         bool res3 = find_in_reg_map(node_num,result[3],reg3,inter_block);
 
-                        if(!res1)
-                            reg1 = result[1];
-                        if(!res2)
-                            reg2 = result[2];
-                        if(!res3)
-                            reg3 = result[3];
+                        if(!res1){
+                            str = "\t load_var $t0 " + result[1];
+                            final_ir_code.push_back(str);
+                            reg1 = "$t0";
+                        }
+                        if(!res2){
+                            str = "\t load_var $t1 " + result[2];
+                            final_ir_code.push_back(str);
+                            reg2 = "$t1";
+                        }
+                        if(!res3){
+                            reg3 = "$t2";
+                            //this is the case of memory spill
+                            mem_spill = 1;
+
+                        }
                         
                         str = "\t" + result[0] + " " + reg1 + " " + reg2 + " " + reg3;
                        
                         final_ir_code.push_back(str);
+                        if(mem_spill){
+                            mem_spill = 0;
+                            str = "store_var " + result[3] + " " + "$t2";
+                            final_ir_code.push_back(str);
+                        }
                        
                     }
                     else if((strcmp(result[0].c_str(),"call") == 0) || (strcmp(result[0].c_str(),"callr") == 0)){
@@ -895,14 +983,24 @@ class cfg {
                             std::string str1 = "call";
                             str = "\t" + str1 + " " + result[1];
                         }
-
+                        std::string str2 = str;
+                        int count = 0;
                         for (size_t char_num =2+offset;char_num<result.size();char_num++){
                                 
                             bool res2 = find_in_reg_map(node_num,result[char_num],reg2,inter_block); 
-                            if(res2)
-                                str +=  " " +  reg2;                
+                            std::string spc = " ";
+                            if(res2){
+                                
+                                std::string str_store = "\t store_var " + result[1] + "_arg" + std::to_string(count) + " " + reg2;
+                                final_ir_code.push_back(str_store);
+
+                                std::string str1 = "\t load_var $a" + std::to_string(count) +  spc  + result[1] + "_arg" + std::to_string(count);
+                                final_ir_code.push_back(str1);
+                                count++;
+                                str2 =  str + " " +  reg2;                
+                            }
                         }
-                        final_ir_code.push_back(str);
+                        func_calls.push_back(str2);
                     }
                     else if(strcmp(result[0].c_str(),"return") == 0){
                         std::string str;
@@ -913,30 +1011,126 @@ class cfg {
                             if(res1){
                                 std::string str1 = "return";
                                 str = "\t" + str1 +  " " + reg1;
-                                final_ir_code.push_back(str);
                             }
+                            else{
+                                str = "\t load_var $t0 " + result[1];
+                                final_ir_code.push_back(str);
+                                reg1 = "$t0";
+                            }
+                            str = "\t assign $v0 " + reg1;
+                            final_ir_code.push_back(str);
+
+                            func_calls.push_back(str);
+
                         }else{
                             std::string str1 = "return";
                             str = "\t" + str1;
+                            func_calls.push_back(str);
+                        }
+                        
+                    }
+                    else if(strcmp(result[0].c_str(),"goto") == 0){
+                        func_calls.push_back(line);
+                    }
+                    else if(strcmp(result[0].c_str(),"array_store") == 0){
+                        std::string reg2="";
+                        std::string reg3="";
+                        std::string str;
+                        bool res2 = find_in_reg_map(node_num,result[2],reg2,inter_block);
+                        bool res3 = find_in_reg_map(node_num,result[3],reg3,inter_block);
+                        if(!res2){
+                            str = "load_var $t1 " + result[2];
+                            final_ir_code.push_back(str);
+                            reg2 = "$t1";
+                        }
+                        if(!res3){
+                            str = "load_var $t0 " + result[3];
+                            final_ir_code.push_back(str);
+                            reg3 = "$t0";
+                        }
+                        str = "\t array_store " + result[1] + " " + reg2 + " " + reg3;
+                        final_ir_code.push_back(str);
+                    }
+                    else if(strcmp(result[0].c_str(),"array_load") == 0){
+                        std::string reg1="";
+                        std::string reg3="";
+                        std::string str;
+                        bool res1 = find_in_reg_map(node_num,result[1],reg1,inter_block);
+                        bool res3 = find_in_reg_map(node_num,result[3],reg3,inter_block);
+                        if(!res1){
+                            reg1 = "$t0";
+                            mem_spill = 1;
+                        }
+                        if(!res3){
+                            str = "load_var $t1 " + result[3];
+                            final_ir_code.push_back(str);
+                            reg3 = "$t1";
+                        }
+                        str = "\t array_load " + reg1 + " " + result[2] + " " + reg3;
+                        final_ir_code.push_back(str);
+                        if(mem_spill){
+                            mem_spill = 0;
+                            str = "\t store_var " + result[1] + " " + "$t0";
                             final_ir_code.push_back(str);
                         }
-                    
                     }
                     else{
                         //std::cout << "adding here......." << line <<std::endl;
-                        final_ir_code.push_back(line);
+                        //final_ir_code.push_back(line);
                     }
                 }
                 //store variables from this blocks register to memory
                 for (auto itu=register_map.begin(); itu!=register_map.end(); ++itu){
                     
                     if(node_num == itu->start_block){
-                        std::string str = "\tstore_var " + itu->reg_name + " " + itu->string_name;
+                        std::string str = "\tstore_var " + itu->string_name + " " + itu->reg_name;
                         final_ir_code.push_back(str);
                     }
                 }//end of initial load
-            } 
 
+                for(auto it=0;it < func_calls.size();it++){
+                 final_ir_code.push_back(func_calls[it]);   
+                }
+            } 
+            
+
+        }
+
+        int checkType(const char *input)
+        {
+            short int isInt=0;//we use int as a boolean value;
+            short int isFloat=0;
+            short int isUndifined=0;
+            int count;
+            int len = strlen(input);
+            for(count = 0 ; count<len; count++)
+            {
+                if(isdigit(input[count])){//you should include ctype.h at the beginning of this program
+                    isInt=1;
+                    //std::cout << "got int ";
+                }
+                else if(input[count] == '.'){
+                    isFloat=1;
+                    //std::cout << "got float ";
+                }
+                else{
+                    //std::cout << "dnt know ";
+                    return -1;//some character that neither int nor '.' char.
+                }
+            }
+            if(isInt == 1 && isFloat ==1){
+                //std::cout << "Returning float ";
+                return 2; // for float
+            }
+            else if(isInt == 1 && isFloat ==0){
+                //std::cout << "Returning int ";
+                return 1; //for int
+            }
+            else{
+                
+                //std::cout << "Returning unknown";
+                return -1;//illegal format
+            }
         }
 
         bool find_in_reg_map(int block_num,std::string result,std::string& reg,bool inter_block){
@@ -1108,8 +1302,10 @@ class cfg {
                         else { //this is the case of spill
 
                                 interferenceGraph[node_num].isSpillEnable = true;
+                                interferenceGraph[node_num].assign_register(interferenceGraph[node_num].assigned_color); 
+
                                 register_map.push_back(register_entry(0,interferenceGraph[node_num].start_block,interferenceGraph[node_num].end_block,
-                                    "",interferenceGraph[node_num].var_name));  
+                                    interferenceGraph[node_num].assigned_reg,interferenceGraph[node_num].var_name));  
                         }
 
                     }
@@ -1130,7 +1326,7 @@ class cfg {
             for(int node_num=0;node_num<graph.size();node_num++){
                 graph[node_num].print_du(node_num);
             }
-            calculate_live_range(graph,false);
+            
             allocate_register_intrablock(graph,live_range);
             generate_final_ir_code(graph, ir_code,false);
             print_ir_code(final_ir_code);
