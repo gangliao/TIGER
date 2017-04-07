@@ -1,0 +1,7 @@
+    assign, m, 5,
+print:
+    call, printi, n
+    return, , ,
+main:
+    call, print, m
+    return, , ,

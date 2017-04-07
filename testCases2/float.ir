@@ -1,0 +1,8 @@
+printf:
+    add, 1n, 5.0, t0
+    assign, B, t0,
+    return, , ,
+main:
+    assign, A, 1.5,
+    call, printf, A
+    return, , ,

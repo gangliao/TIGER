@@ -1,0 +1,14 @@
+let
+	type ArrayFloat = array [5] of float;
+	var A : ArrayFloat := 2.5;
+	var B :float;
+	var i : int := 0;
+        function printf (n : float) begin
+		B := n + 5.0;
+	end; 
+in
+	A[4] := 1.5;
+	for i := 0 to 5 do
+		printf(A[i]);
+	enddo;
+end

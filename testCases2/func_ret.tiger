@@ -1,0 +1,9 @@
+let
+	var m : int := 5;
+	function fact ( n : int ) : int begin
+		return n * 2;
+	end;
+in
+	m := fact(m);
+	printi(m);
+end
