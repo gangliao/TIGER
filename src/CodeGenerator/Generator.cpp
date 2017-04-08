@@ -1,11 +1,16 @@
 #include "Generator.hpp"
-#include <iostream>
-#include <fstream>
+
+std::string Generator::new_general_reg() {
+  return "$t" + std::to_string(genetal_num_++);
+}
+std::string Generator::new_float_reg() {
+  return "$f" + std::to_string(float_num_++);
+}
 
 Generator::Generator(std::string filename) {
   std::ifstream file;
   file.open(filename);
-  std::string line; 
+  std::string line;
   if (file.is_open()) {
     while (std::getline(file, line)) {
         ir_.push_back(line);
@@ -15,6 +20,11 @@ Generator::Generator(std::string filename) {
     exit(EXIT_FAILURE);
   }
   file.close();
+
+  /// init built in funcs
+  load_built_in("lib_printi");
+  load_built_in("lib_exit");
+  load_built_in("lib_not");
 }
 
 Generator::Generator(std::vector<std::string>& ir) {
@@ -28,5 +38,5 @@ void Generator::dump() {
   for (auto& code : asm_) {
     std::cout << code << std::endl;
   }
-  std::cout << "----------------------------------------\n" << std::endl;  
+  std::cout << "----------------------------------------\n" << std::endl;
 }
