@@ -1,0 +1,23 @@
+printf:
+        load_var $s0 B
+        load_var $s1 n1
+        load_var $s2 t0
+         load_var $t1 5.0
+        add $s1 $t1 $s2
+        assign $s0 $s2
+         store_var printi_arg0 $s0
+         load_var $a0 printi_arg0
+        store_var B $s0
+        store_var n1 $s1
+        store_var t0 $s2
+        call printi $s0
+        return
+main:
+        load_var $s3 A
+         load_var $t0 1.5
+        assign $s3 $t0
+         store_var printf_arg0 $s3
+         load_var $a0 printf_arg0
+        store_var A $s3
+        call printf $s3
+        return

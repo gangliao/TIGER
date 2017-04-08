@@ -1,0 +1,38 @@
+        assign A 5 2.5
+         load_var $t0 0
+        assign $t1 $t0
+store_var i $t1
+printf:
+        load_var $s0 n1
+        load_var $s1 t0
+         load_var $t1 5.0
+        add $s0 $t1 $s1
+        assign $t1 $s1
+store_var B $t1
+        store_var n1 $s0
+        store_var t0 $s1
+        return
+main:
+load_var $t1 4
+load_var $t0 1.5
+         array_store A $t1 $t0
+         load_var $t0 0
+        assign $t1 $t0
+store_var i $t1
+loop_label0:
+        load_var $s2 i
+        brgt $s2 5 loop_label1
+        store_var i $s2
+        load_var $s3 i
+        load_var $s4 t1
+         array_load $s4 A $s3
+         store_var printf_arg0 $s4
+         load_var $a0 printf_arg0
+         load_var $t1 1
+        add $s3 $t1 $s3
+        store_var i $s3
+        store_var t1 $s4
+        call printf $s4
+    goto  loop_label0
+loop_label1:
+        return
