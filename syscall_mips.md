@@ -10,7 +10,7 @@
 <body>
 
 <h3>MIPS system calls</h3>
-(from <u>SPIM S20: A MIPS R2000 
+(from <u>SPIM S20: A MIPS R2000
 Simulator</u>, James J. Larus, University of Wisconsin-Madison)
 <br>
 <br>
