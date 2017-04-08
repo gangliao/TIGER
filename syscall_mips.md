@@ -9,6 +9,8 @@
 
 <body>
 
+http://logos.cs.uic.edu/366/notes/mips%20quick%20tutorial.htm
+
 <h3>MIPS system calls</h3>
 (from <u>SPIM S20: A MIPS R2000
 Simulator</u>, James J. Larus, University of Wisconsin-Madison)

@@ -10,6 +10,9 @@ Generator::Generator(std::string filename) {
     while (std::getline(file, line)) {
         ir_.push_back(line);
     }
+  } else {
+    std::cerr << "Open file " << filename << " failed!";
+    exit(EXIT_FAILURE);
   }
   file.close();
 }
