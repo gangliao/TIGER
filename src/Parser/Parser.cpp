@@ -835,18 +835,20 @@ TokenPair Parser::evaPostfix(std::vector<TokenPair>& expr) {
       std::string typeB;
       stack.pop();
 
-      // produce a type for temp var
-      std::string temp = new_temp();
+      RecordPtr record = std::make_shared<Record>(currentLevel);
       typeA = getSymbolType(A);
       typeB = getSymbolType(B);
-
-      RecordPtr record = std::make_shared<Record>(currentLevel);
-      SymbolTablePair idx(Entry::Variables, temp);
       if (typeA == typeB) {
         record->type = typeA;
       } else {
         record->type = "float";
       }
+
+      // produce a type for temp var
+      std::string temp = (record->type == "int" ? new_temp() : new_fp_temp());
+
+      SymbolTablePair idx(Entry::Variables, temp);
+
       record->dimension = 0;
       g_SymbolTable[currentLevel]->insert(idx, record);
 
@@ -1516,14 +1518,16 @@ bool Parser::detectAction(int symbol, bool& enable_block,
                      tempBuffer[actBegin_ - 2].getTokenString() + ", " +
                      res.getTokenString() + ", ";
     } else {
-      // generate temp var
-      std::string temp = new_temp();
-      // define record
-      SymbolTablePair idx(Entry::Variables, temp);
       RecordPtr record = std::make_shared<Record>(currentLevel);
       // set record attributes
       record->type = getSymbolType(tempBuffer[actBegin_ - 2]);
       record->dimension = 0;
+
+      // generate temp var
+      std::string temp = (record->type == "int" ? new_temp() : new_fp_temp());
+      // define record
+      SymbolTablePair idx(Entry::Variables, temp);
+
       // insert into symbol table
       g_SymbolTable[currentLevel]->insert(idx, record);
 
