@@ -22,9 +22,9 @@ Generator::Generator(std::string filename) {
   file.close();
 
   /// init built in funcs
-  load_built_in("lib_printi");
-  load_built_in("lib_exit");
-  load_built_in("lib_not");
+  // load_built_in("lib_printi");
+  // load_built_in("lib_exit");
+  // load_built_in("lib_not");
 }
 
 Generator::Generator(std::vector<std::string>& ir) {
@@ -32,11 +32,11 @@ Generator::Generator(std::vector<std::string>& ir) {
 }
 
 void Generator::dump() {
-  std::cout << "\n\n----------------------------------------" << std::endl;
-  std::cout << "Generate ASM CODE ..." << std::endl;
-  std::cout << "----------------------------------------" << std::endl;
+  std::cout << "\n\n#----------------------------------------" << std::endl;
+  std::cout << "# Generate ASM CODE ..." << std::endl;
+  std::cout << "#----------------------------------------" << std::endl;
   for (auto& code : asm_) {
     std::cout << code << std::endl;
   }
-  std::cout << "----------------------------------------\n" << std::endl;
+  std::cout << "#----------------------------------------\n" << std::endl;
 }

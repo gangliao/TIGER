@@ -29,7 +29,7 @@ class Generator {
             func_map_[filename].push_back(line);
         }
       } else {
-        std::cerr << "Open file " << filename << " failed!";
+        std::cerr << "Open file " << filename << " failed!\n";
         exit(EXIT_FAILURE);
       }
       file.close();
@@ -55,6 +55,8 @@ class Generator {
 
 class GenNaive final : public Generator {
   public:
+    GenNaive(std::string filename) : Generator(filename) {}
+    GenNaive(std::vector<std::string>& ir) : Generator(ir) {}
     void generate() override;
   private:
     void data_seg() override;
