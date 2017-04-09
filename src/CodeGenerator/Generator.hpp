@@ -36,12 +36,19 @@ class Generator {
     }
 
   protected:
+    enum Type {
+      INT = 0,
+      FLOAT = 1
+    };
     /// intermediate code
     std::vector<std::string> ir_;
     /// MIPS ASM code
     std::vector<std::string> asm_;
     /// built in funcs hash map
     std::unordered_map<std::string, std::vector<std::string> > func_map_;
+    /// data segment map
+    std::unordered_map<std::string, std::pair<std::string, int> > data_map_;
+
     size_t float_num_ = 0;
     size_t genetal_num_ = 0;
 };
@@ -53,6 +60,7 @@ class GenNaive final : public Generator {
     void generate() override;
   private:
     void assign_asm(std::vector<std::string> tokens);
+    void operator_asm(std::vector<std::string> tokens);
 };
 
 class GenCFG final : public Generator {

@@ -1,9 +1,12 @@
 let
+	type ArrayFloat = array [5] of float;
 	var A,B : float;
+	var C : ArrayFloat := 2.5;
 	function printf (n : float) begin
 		B := n + 5.0;
 	end; 
 in
+	C[2] := C[1] + 5.0 + 6.5 + C[4];
 	A := 1.5;
 	printf(A);
 end
