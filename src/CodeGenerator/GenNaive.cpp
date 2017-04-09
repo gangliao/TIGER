@@ -300,8 +300,21 @@ void GenNaive::text_seg() {
 
   // main entrance
   asm_.push_back("main:\n");
-  
-  for (auto& line : ir_) {
+
+  asm_.push_back("sw $s0, -4($sp)");
+  asm_.push_back("sw $s1, -8($sp)");
+  asm_.push_back("sw $s2, -12($sp)");
+  asm_.push_back("sw $s3, -16($sp)");
+  asm_.push_back("sw $s4, -20($sp)");
+  asm_.push_back("sw $s5, -24($sp)");
+  asm_.push_back("sw $s6, -28($sp)");
+  asm_.push_back("sw $s7, -32($sp)");
+  asm_.push_back("addi $sp, $sp, -32");
+  asm_.push_back("sw $ra, -4($sp)");
+  asm_.push_back("addi $sp, $sp, -4");
+
+  for (size_t i = 0; i < ir_.size(); ++i) {
+    auto& line = ir_[i];
     std::istringstream ss(line);
     std::vector<std::string> tokens;
     std::string token;
@@ -331,9 +344,18 @@ void GenNaive::text_seg() {
     } else if (tokens[0] == "array_load") {
       array_load_asm(tokens);
     } else if (tokens[0] != "main:") {
-      asm_.push_back(tokens[0]);
+      if (tokens[0].find("label") == std::string::npos) { // function procedure
+        asm_.push_back(tokens[0].substr(0, tokens[0].size() - 1) + "0:");
+        std::vector<std::string> func_ir;
+        while (line.find("return") == std::string::npos) {
+          func_ir.push_back(line);
+          ++i; line = ir_[i];
+        }
+        func_ir.push_back(line);
+      } else {
+        asm_.push_back(tokens[0]);
+      }
     }
-
   }
 }
 
