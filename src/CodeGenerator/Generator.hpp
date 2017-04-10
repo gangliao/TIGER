@@ -28,9 +28,10 @@ class Generator {
   std::vector<std::string> ir_;
   /// MIPS ASM code
   std::vector<std::string> asm_;
-  /// built in funcs hash map
-  std::unordered_map<std::string, std::vector<std::string> > func_map_;
-  /// data segment map
+  /// function argument regs map <funcname, <(param0, reg0), (param1, reg1), ... >>
+  /// use registers: t4 - t9, f12 - f14, a0 - a4, or stack
+  std::unordered_map<std::string, std::vector<std::pair<std::string, std::string> > > func_map_;
+  /// data segment map <data var name, <.space 20, FLOAT>>
   std::unordered_map<std::string, std::pair<std::string, int> > data_map_;
 
   size_t float_num_ = 0;

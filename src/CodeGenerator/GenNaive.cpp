@@ -186,7 +186,6 @@ void GenNaive::return_asm(std::vector<std::string>& tokens) {
 }
 
 void GenNaive::call_asm(std::vector<std::string>& tokens) {
-  return;
   asm_.push_back("    sw $t4, -4($sp)");
   asm_.push_back("    sw $t5, -8($sp)");
   asm_.push_back("    sw $t6, -12($sp)");
@@ -213,11 +212,12 @@ void GenNaive::call_asm(std::vector<std::string>& tokens) {
     param_idx = 2;
   }
   for (size_t i = 0; i < param_size; ++i) {
-    asm_.push_back("    la $t9, " + data_map_[tokens[param_idx + i]].first);
+    asm_.push_back("    la $t0, " + data_map_[tokens[param_idx + i]].first);
     if (data_map_[tokens[param_idx]].second == INT) {
-      asm_.push_back("    lw $a" + std::to_string(i) + ", 0($t9)");
+      asm_.push_back("    lw $s" + std::to_string(i) + ", 0($t0)");
     } else {
-      asm_.push_back("    lwc1 $a" + std::to_string(i) + ", 0($t9)");
+      asm_.push_back("    lwc1 $f0, 0($t0)");
+      asm_.push_back("    mov.s $a" + std::to_string(i) + ", $f0");
     }
   }
   asm_.push_back("    jal " + (tokens[0] == "callr" ? tokens[2] : tokens[1]));
@@ -315,14 +315,6 @@ void GenNaive::text_seg() {
   built_in_printi();
   built_in_exit();
   built_in_not();
-
-  // built in funcs
-  for (auto& func : func_map_) {
-    for (auto& line : func.second) {
-      asm_.push_back(line);
-    }
-    asm_.push_back("\n");
-  }
 
   // main entrance
   asm_.push_back("\nmain:\n");
