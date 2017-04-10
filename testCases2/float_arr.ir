@@ -1,16 +1,17 @@
     assign, A, 5, 2.5
+    assign, B, 0.0,
     assign, i, 0,
 printf:
-    add, 1n, 5.0, t0
-    assign, B, t0,
+    add, n, 5.0, f0
+    assgin, B, f0,
     return, , ,
 main:
     array_store, A, 4, 1.5
     assign, i, 0,
 loop_label0:
     brgt, i, 5, loop_label1
-    array_load, t1, A, i
-    call, printf, t1
+    array_load, f1, A, i
+    call, printf, f1
     add, i, 1, i
     goto, loop_label0, ,
 loop_label1:

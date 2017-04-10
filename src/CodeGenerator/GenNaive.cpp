@@ -38,11 +38,11 @@ void GenNaive::data_seg() {
     if (tokens[0] == "assign") {
       if (data_map_.find(tokens[1]) == data_map_.end()) {
         if (tokens.size() == 4) {
-          asm_.push_back(tokens[1] + ": \t\t.space \t" + std::to_string(4 * atoi(tokens[2].c_str())));
+          asm_.push_back(tokens[1] + ": \t\t\t.space \t" + std::to_string(4 * atoi(tokens[2].c_str())));
           data_map_[tokens[1]] = std::make_pair(tokens[1],
             (tokens[3].find(".") != std::string::npos ? FLOAT : INT));
         } else if (tokens.size() == 3) {
-          asm_.push_back(tokens[1] + ": \t\t" +
+          asm_.push_back(tokens[1] + ": \t\t\t" +
             (tokens[2].find(".") != std::string::npos ? ".float \t" : ".word \t") + tokens[2]);
           data_map_[tokens[1]] = std::make_pair(tokens[1],
             (tokens[2].find(".") != std::string::npos ? FLOAT : INT));
