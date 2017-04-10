@@ -312,6 +312,10 @@ void GenNaive::text_seg() {
   asm_.push_back("\n# Beginning of the code section\n");
   asm_.push_back(".text");
 
+  built_in_printi();
+  built_in_exit();
+  built_in_not();
+
   // built in funcs
   for (auto& func : func_map_) {
     for (auto& line : func.second) {

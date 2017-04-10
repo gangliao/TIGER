@@ -21,20 +21,6 @@ class Generator {
  private:
   virtual void data_seg() = 0;
   virtual void text_seg() = 0;
-  inline void load_built_in(std::string filename) {
-    std::ifstream file;
-    file.open(filename);
-    std::string line;
-    if (file.is_open()) {
-      while (std::getline(file, line)) {
-        func_map_[filename].push_back(line);
-      }
-    } else {
-      std::cerr << "Open file " << filename << " failed!\n";
-      exit(EXIT_FAILURE);
-    }
-    file.close();
-  }
 
  protected:
   enum Type { INT = 0, FLOAT = 1 };
@@ -49,6 +35,10 @@ class Generator {
 
   size_t float_num_ = 0;
   size_t genetal_num_ = 0;
+
+  void built_in_printi();
+  void built_in_exit();
+  void built_in_not();
 };
 
 class GenNaive final : public Generator {
