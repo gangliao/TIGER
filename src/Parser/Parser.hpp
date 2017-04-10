@@ -128,7 +128,9 @@ class Parser final {
 
   /// generate new temp name
   inline std::string new_temp() { return "t" + std::to_string(numTemps++); }
-  inline std::string new_fp_temp() { return "f" + std::to_string(numFPTemps++); }
+  inline std::string new_fp_temp() {
+    return "f" + std::to_string(numFPTemps++);
+  }
 
   /// generate new loop label name
   inline std::string new_loop_label() {
@@ -155,9 +157,9 @@ class Parser final {
   int numErrors = 0;      /// how many errors detected
   int currentLevel = -1;  /// current paser code's scope level
   std::pair<std::string, std::string>
-      currLoopLabel_;          /// current loop label name
-  int numIfs = 0;              /// generate if labels for IR
-  int numTemps = 0;            /// generate temp variable for IR
+      currLoopLabel_;  /// current loop label name
+  int numIfs = 0;      /// generate if labels for IR
+  int numTemps = 0;    /// generate temp variable for IR
   int numFPTemps = 0;
   int numLoops = 0;            /// generate loop label name for IR
   std::string globalFileName;  /// global file name

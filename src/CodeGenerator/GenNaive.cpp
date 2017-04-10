@@ -1,15 +1,14 @@
-#include "Generator.hpp"
-#include <sstream>
 #include <cmath>
 #include <set>
+#include <sstream>
+#include "Generator.hpp"
 
-bool is_num(std::string s) {  
-  std::stringstream sin(s);  
+bool is_num(std::string s) {
+  std::stringstream sin(s);
   double t;
   char p;
-  if(!(sin >> t))
-    return false;
-  if(sin >> p)
+  if (!(sin >> t)) return false;
+  if (sin >> p)
     return false;
   else
     return true;
@@ -30,8 +29,8 @@ void GenNaive::data_seg() {
     std::istringstream ss(line);
     std::vector<std::string> tokens;
     std::string token;
-    while(std::getline(ss, token, ',')) {
-      token.erase(std::remove(token.begin(),token.end(),' '),token.end());
+    while (std::getline(ss, token, ',')) {
+      token.erase(std::remove(token.begin(), token.end(), ' '), token.end());
       if (!token.empty()) {
         tokens.push_back(token);
       }
@@ -39,9 +38,11 @@ void GenNaive::data_seg() {
     if (tokens[0] == "assign") {
       if (data_map_.find(tokens[1]) == data_map_.end()) {
         if (tokens.size() == 4) {
-          data_float.push_back(tokens[1] + ": \t\t.space \t" + std::to_string(4 * atoi(tokens[2].c_str())));
-          data_map_[tokens[1]] = std::make_pair(tokens[1],
-            (tokens[3].find(".") != std::string::npos ? FLOAT : INT));
+          data_float.push_back(tokens[1] + ": \t\t.space \t" +
+                               std::to_string(4 * atoi(tokens[2].c_str())));
+          data_map_[tokens[1]] = std::make_pair(
+              tokens[1],
+              (tokens[3].find(".") != std::string::npos ? FLOAT : INT));
         } else if (tokens.size() == 3) {
           if (tokens[2].find(".") != std::string::npos) {
             data_float.push_back(tokens[1] + ": \t\t.float \t" + tokens[2]);
@@ -65,12 +66,14 @@ void GenNaive::data_seg() {
         if (token.find(".") != std::string::npos) {
           int pos = token.find(".");
           std::string digit = token.substr(0, pos);
-          std::string decimal = token.substr(pos+1, token.size());
-          data_float.push_back("num_" + digit + "_" + decimal + ": \t.float \t" + token);
+          std::string decimal = token.substr(pos + 1, token.size());
+          data_float.push_back("num_" + digit + "_" + decimal +
+                               ": \t.float \t" + token);
           std::string asm_code = "num_" + digit + "_" + decimal;
           data_map_[token] = std::make_pair(asm_code, FLOAT);
         } else {
-          data_word.push_back("num_" + std::to_string(atoi(token.c_str())) + ": \t\t.word \t" + token);
+          data_word.push_back("num_" + std::to_string(atoi(token.c_str())) +
+                              ": \t\t.word \t" + token);
           std::string asm_code = "num_" + std::to_string(atoi(token.c_str()));
           data_map_[token] = std::make_pair(asm_code, INT);
         }
@@ -88,21 +91,22 @@ void GenNaive::data_seg() {
   asm_.reserve(data_word.size() + data_float.size());
   for (auto& data : data_float) {
     asm_.push_back(data);
-  }  
+  }
   for (auto& data : data_word) {
-    asm_.push_back(data); 
+    asm_.push_back(data);
   }
 }
 
 void GenNaive::assign_asm(std::vector<std::string>& tokens) {
-  if (tokens.size() == 4) { // array
+  if (tokens.size() == 4) {  // array
     size_t size = atoi(tokens[2].c_str());
     if (data_map_[tokens[3]].second == FLOAT) {
       asm_.push_back("    la $t0, " + data_map_[tokens[3]].first);
       asm_.push_back("    lwc1 $f1, 0($t0)");
       asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
       for (size_t i = 0; i < size; ++i) {
-        asm_.push_back("    swc1 $f1, " + std::to_string(4 * (i + 1)) + "($t0)");
+        asm_.push_back("    swc1 $f1, " + std::to_string(4 * (i + 1)) +
+                       "($t0)");
       }
     } else {
       asm_.push_back("    la $t0, " + data_map_[tokens[3]].first);
@@ -141,7 +145,7 @@ void GenNaive::operator_asm(std::vector<std::string>& tokens) {
       asm_.push_back("    " + tokens[0] + " $t1, $t2");
       asm_.push_back("    mflo $t1");
       asm_.push_back("    la $t0, " + data_map_[tokens[3]].first);
-      asm_.push_back("    sw $t1, 0($t0)");      
+      asm_.push_back("    sw $t1, 0($t0)");
     }
   } else {
     asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
@@ -156,7 +160,7 @@ void GenNaive::operator_asm(std::vector<std::string>& tokens) {
       asm_.push_back("    " + tokens[0] + " $f1, $f2");
       asm_.push_back("    mflo $f1");
       asm_.push_back("    la $t0, " + data_map_[tokens[3]].first);
-      asm_.push_back("    swc1 $f1, 0($t0)");      
+      asm_.push_back("    swc1 $f1, 0($t0)");
     }
   }
 }
@@ -257,7 +261,7 @@ void GenNaive::array_load_asm(std::vector<std::string>& tokens) {
   } else {
     asm_.push_back("    lw  $t1, 0($t0)");
     asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
-    asm_.push_back("    sw $t1, 0($t0)");    
+    asm_.push_back("    sw $t1, 0($t0)");
   }
 }
 
@@ -336,24 +340,23 @@ void GenNaive::text_seg() {
     std::istringstream ss(line);
     std::vector<std::string> tokens;
     std::string token;
-    while(std::getline(ss, token, ',')) {
-      token.erase(std::remove(token.begin(),token.end(),' '),token.end());
+    while (std::getline(ss, token, ',')) {
+      token.erase(std::remove(token.begin(), token.end(), ' '), token.end());
       if (!token.empty()) {
         tokens.push_back(token);
-      } 
+      }
     }
     asm_.push_back("\n    # IR:" + line);
     if (tokens[0] == "assign") {
       assign_asm(tokens);
-    } else if (tokens[0] == "add" || tokens[0] == "sub"
-            || tokens[0] == "and" || tokens[0] == "or"
-            || tokens[0] == "mult" || tokens[0] == "div") {
+    } else if (tokens[0] == "add" || tokens[0] == "sub" || tokens[0] == "and" ||
+               tokens[0] == "or" || tokens[0] == "mult" || tokens[0] == "div") {
       operator_asm(tokens);
     } else if (tokens[0] == "goto") {
       asm_.push_back("    j " + tokens[1]);
-    } else if (tokens[0] == "breq" || tokens[0] == "brneq"
-            || tokens[0] == "brlt" || tokens[0] == "brgt"
-            || tokens[0] == "brgeq" || tokens[0] == "brleq") {
+    } else if (tokens[0] == "breq" || tokens[0] == "brneq" ||
+               tokens[0] == "brlt" || tokens[0] == "brgt" ||
+               tokens[0] == "brgeq" || tokens[0] == "brleq") {
       condition_asm(tokens);
     } else if (tokens[0] == "return") {
       return_asm(tokens);
@@ -364,12 +367,13 @@ void GenNaive::text_seg() {
     } else if (tokens[0] == "array_load") {
       array_load_asm(tokens);
     } else if (tokens[0] != "main:") {
-      if (tokens[0].find("label") == std::string::npos) { // function procedure
+      if (tokens[0].find("label") == std::string::npos) {  // function procedure
         asm_.push_back(tokens[0].substr(0, tokens[0].size() - 1) + "0:");
         std::vector<std::string> func_ir;
         while (line.find("return") == std::string::npos) {
           func_ir.push_back(line);
-          ++i; line = ir_[i];
+          ++i;
+          line = ir_[i];
         }
         func_ir.push_back(line);
       } else {

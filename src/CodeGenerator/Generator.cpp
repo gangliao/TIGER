@@ -13,7 +13,7 @@ Generator::Generator(std::string filename) {
   std::string line;
   if (file.is_open()) {
     while (std::getline(file, line)) {
-        ir_.push_back(line);
+      ir_.push_back(line);
     }
   } else {
     std::cerr << "Open file " << filename << " failed!";
@@ -27,9 +27,7 @@ Generator::Generator(std::string filename) {
   // load_built_in("lib_not");
 }
 
-Generator::Generator(std::vector<std::string>& ir) {
-  ir_ = std::move(ir);
-}
+Generator::Generator(std::vector<std::string>& ir) { ir_ = std::move(ir); }
 
 void Generator::dump() {
   std::cout << "\n\n#----------------------------------------" << std::endl;

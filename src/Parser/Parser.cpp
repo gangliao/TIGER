@@ -744,9 +744,8 @@ std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
       stack.push(tempBuffer[i]);
     } else if (tempBuffer[i].getTokenType().getValue() ==
                Symbol::Terminal::RPAREN) {
-      while (!stack.empty() &&
-             stack.top().getTokenType().getValue() !=
-                 Symbol::Terminal::LPAREN) {
+      while (!stack.empty() && stack.top().getTokenType().getValue() !=
+                                   Symbol::Terminal::LPAREN) {
         TokenPair temp = stack.top();
         expr.push_back(temp);
         stack.pop();

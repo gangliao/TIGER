@@ -45,16 +45,16 @@ class SymbolTable {
     RecordPtr record = std::make_shared<Record>(scopeLevel);
     if (arg1 == "array") {
       /*************************************
-      * type id = array [num] of type_id
-      *            |      |        |
-      *           arg1   arg2     arg3
-      *************************************/
+       * type id = array [num] of type_id
+       *            |      |        |
+       *           arg1   arg2     arg3
+       *************************************/
       record->dimension = std::stoi(arg2);
       record->type = arg3;
     } else {
       /*************************************
-      * type id = <id> | int | float
-      *************************************/
+       * type id = <id> | int | float
+       *************************************/
       record->dimension = lookup(Entry::Types, arg1)->getDimension();
       record->type = lookup(Entry::Types, arg1)->getType();
     }
