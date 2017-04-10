@@ -18,7 +18,8 @@ bool is_num(std::string s) {
 void GenNaive::data_seg() {
   asm_.push_back("# Beginning of the data section\n");
   asm_.push_back(".data");
-
+  std::vector<std::string> data_float;
+  std::vector<std::string> data_word;
   std::set<std::string> labels;
   for (auto& line : ir_) {
     if (line.find(":") != std::string::npos) {
@@ -38,14 +39,17 @@ void GenNaive::data_seg() {
     if (tokens[0] == "assign") {
       if (data_map_.find(tokens[1]) == data_map_.end()) {
         if (tokens.size() == 4) {
-          asm_.push_back(tokens[1] + ": \t\t\t.space \t" + std::to_string(4 * atoi(tokens[2].c_str())));
+          data_float.push_back(tokens[1] + ": \t\t.space \t" + std::to_string(4 * atoi(tokens[2].c_str())));
           data_map_[tokens[1]] = std::make_pair(tokens[1],
             (tokens[3].find(".") != std::string::npos ? FLOAT : INT));
         } else if (tokens.size() == 3) {
-          asm_.push_back(tokens[1] + ": \t\t\t" +
-            (tokens[2].find(".") != std::string::npos ? ".float \t" : ".word \t") + tokens[2]);
-          data_map_[tokens[1]] = std::make_pair(tokens[1],
-            (tokens[2].find(".") != std::string::npos ? FLOAT : INT));
+          if (tokens[2].find(".") != std::string::npos) {
+            data_float.push_back(tokens[1] + ": \t\t.float \t" + tokens[2]);
+            data_map_[tokens[1]] = std::make_pair(tokens[1], FLOAT);
+          } else {
+            data_word.push_back(tokens[1] + ": \t\t.word \t" + tokens[2]);
+            data_map_[tokens[1]] = std::make_pair(tokens[1], INT);
+          }
         }
       }
     }
@@ -56,33 +60,37 @@ void GenNaive::data_seg() {
       if (tokens[0] == "callr" && i == 3) continue;
       if (token.find(":") != std::string::npos) continue;
       if (labels.find(token) != labels.end()) continue;
-
-      if (data_map_.find(token) != data_map_.end()) {
-        continue;
-      }
+      if (data_map_.find(token) != data_map_.end()) continue;
       if (is_num(token)) {
         if (token.find(".") != std::string::npos) {
           int pos = token.find(".");
           std::string digit = token.substr(0, pos);
           std::string decimal = token.substr(pos+1, token.size());
-          asm_.push_back("num_" + digit + "_" + decimal + ": \t.float \t" + token);
+          data_float.push_back("num_" + digit + "_" + decimal + ": \t.float \t" + token);
           std::string asm_code = "num_" + digit + "_" + decimal;
           data_map_[token] = std::make_pair(asm_code, FLOAT);
         } else {
-          asm_.push_back("num_" + std::to_string(atoi(token.c_str())) + ": \t\t.word \t" + token);
+          data_word.push_back("num_" + std::to_string(atoi(token.c_str())) + ": \t\t.word \t" + token);
           std::string asm_code = "num_" + std::to_string(atoi(token.c_str()));
           data_map_[token] = std::make_pair(asm_code, INT);
         }
       } else {
         if (token.find("f") != std::string::npos) {
-          asm_.push_back(token + ": \t\t.float \t0.0");
+          data_float.push_back(token + ": \t\t.float \t0.0");
           data_map_[token] = std::make_pair(token, FLOAT);
         } else {
-          asm_.push_back(token + ": \t\t.word \t0");
+          data_word.push_back(token + ": \t\t.word \t0");
           data_map_[token] = std::make_pair(token, INT);
         }
       }
     }
+  }
+  asm_.reserve(data_word.size() + data_float.size());
+  for (auto& data : data_float) {
+    asm_.push_back(data);
+  }  
+  for (auto& data : data_word) {
+    asm_.push_back(data); 
   }
 }
 
