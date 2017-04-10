@@ -182,6 +182,7 @@ void GenNaive::return_asm(std::vector<std::string>& tokens) {
 }
 
 void GenNaive::call_asm(std::vector<std::string>& tokens) {
+  return;
   asm_.push_back("    sw $t4, -4($sp)");
   asm_.push_back("    sw $t5, -8($sp)");
   asm_.push_back("    sw $t6, -12($sp)");

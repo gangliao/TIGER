@@ -1123,7 +1123,7 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
             exit(EXIT_FAILURE);
           }
 
-          std::string code = "    assgin, " + tempBuffer[0].getTokenString() +
+          std::string code = "    assign, " + tempBuffer[0].getTokenString() +
                              ", " + res.getTokenString() + ",";
           IR.push_back(code);
         }

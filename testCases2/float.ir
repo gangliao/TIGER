@@ -3,9 +3,9 @@
     assign, C, 5, 2.5
 printf:
     add, n, 5.0, f0
-    assgin, B, f0,
+    assign, B, f0,
     return, , ,
 main:
-    assgin, A, 1.5,
+    assign, A, 1.5,
     call, printf, A
     return, , ,
