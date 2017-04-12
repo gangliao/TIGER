@@ -308,6 +308,8 @@ void GenNaive::condition_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    " + cond_asm + ", $t1, $t2, " + tokens[3]);
 }
 
+void GenNaive::func_asm(std::vector<std::string>& tokens) {}
+
 void GenNaive::text_seg() {
   asm_.push_back("\n# Beginning of the code section\n");
   asm_.push_back(".text");
@@ -363,7 +365,8 @@ void GenNaive::text_seg() {
     } else if (tokens[0] == "array_load") {
       array_load_asm(tokens);
     } else if (tokens[0] != "main:") {
-      if (tokens[0].find("label") == std::string::npos) {  // function procedure
+      if (tokens[0].find("label") == std::string::npos) {
+        // function procedure
         asm_.push_back(tokens[0].substr(0, tokens[0].size() - 1) + "0:");
         std::vector<std::string> func_ir;
         while (line.find("return") == std::string::npos) {
@@ -372,6 +375,7 @@ void GenNaive::text_seg() {
           line = ir_[i];
         }
         func_ir.push_back(line);
+        func_asm(func_ir);
       } else {
         asm_.push_back(tokens[0]);
       }

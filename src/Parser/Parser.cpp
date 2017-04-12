@@ -5,6 +5,7 @@
  */
 
 #include "Parser.hpp"
+#include "../CodeGenerator/Generator.hpp"
 
 Parser::Parser(std::string fileName) : scanner(fileName) {
   // push tiger program into parse stack
@@ -1017,7 +1018,6 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
     if (tempBuffer[1].getTokenString() == "(") { /* function */
       RecordPtr record = g_SymbolTable[currentLevel]->lookup(
           Entry::Functions, tempBuffer[0].getTokenString());
-      auto& dims = record->getParameterDimensions();
       auto& paramTypes = record->getParameterTypes();
 
       // semantic checking: param size
@@ -1057,7 +1057,6 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
         // assignment function
         RecordPtr record = g_SymbolTable[currentLevel]->lookup(
             Entry::Functions, tempBuffer[2].getTokenString());
-        auto& dims = record->getParameterDimensions();
         auto& paramTypes = record->getParameterTypes();
 
         // semantic checking: param size
@@ -1193,10 +1192,14 @@ void Parser::parseFuncAction(std::vector<TokenPair>& tempBuffer) {
   }
   funcRetType_ = retType;
 
+  std::vector<std::pair<std::string, std::string>> func_param;
   for (size_t i = paramBeginIdx + 1; i < paramEndIdx; i += 4) {
     params.push_back(tempBuffer[i].getTokenString());
     paramTypes.push_back(tempBuffer[i + 2].getTokenString());
+    func_param.push_back(std::make_pair(tempBuffer[i].getTokenString(),
+                                        tempBuffer[i + 2].getTokenString()));
   }
+  func_map_[tempBuffer[1].getTokenString()] = std::move(func_param);
   g_SymbolTable[currentLevel]->insertFunctions(idx, retType, paramTypes,
                                                params);
 
@@ -1781,6 +1784,10 @@ int main(int argc, char** argv) {
 
   // output IR
   parser.ir_code();
+
+  GenNaive gen(parser.get_ir(), parser.get_func_info());
+  gen.generate();
+  gen.dump();
 
   // Close all open files like
   parser.outFile.close();

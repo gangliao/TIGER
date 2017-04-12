@@ -4,7 +4,6 @@
 #include <memory>
 #include <unordered_map>
 
-#include "Level.hpp"
 #include "Record.hpp"
 #include "SymbolTablePair.hpp"
 
@@ -18,9 +17,6 @@ std::unordered_map<int, SymbolTablePtr> g_SymbolTable;
 
 class SymbolTable {
  private:
-  Level topLevel;
-  Level currLevel;
-
   int scopeLevel;
   std::map<SymbolTablePair, RecordPtr> table_;
 

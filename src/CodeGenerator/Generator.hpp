@@ -12,7 +12,10 @@
 class Generator {
  public:
   Generator(std::string filename);
-  Generator(std::vector<std::string>& ir);
+  Generator(std::vector<std::string>& ir,
+            std::unordered_map<
+                std::string, std::vector<std::pair<std::string, std::string>>>&
+                func_info);
   virtual void generate() = 0;
   void dump();
   std::string new_general_reg();
@@ -28,11 +31,13 @@ class Generator {
   std::vector<std::string> ir_;
   /// MIPS ASM code
   std::vector<std::string> asm_;
-  /// function argument regs map <funcname, <(param0, reg0), (param1, reg1), ... >>
-  /// use registers: t4 - t9, f12 - f14, a0 - a4, or stack
-  std::unordered_map<std::string, std::vector<std::pair<std::string, std::string> > > func_map_;
+  /// function argument regs map <funcname, <(param0, reg0), (param1, reg1), ...
+  /// >> use registers: t4 - t9, f12 - f14, a0 - a4, or stack
+  std::unordered_map<std::string,
+                     std::vector<std::pair<std::string, std::string>>>
+      func_map_;
   /// data segment map <data var name, <.space 20, FLOAT>>
-  std::unordered_map<std::string, std::pair<std::string, int> > data_map_;
+  std::unordered_map<std::string, std::pair<std::string, int>> data_map_;
 
   size_t float_num_ = 0;
   size_t genetal_num_ = 0;
@@ -45,7 +50,11 @@ class Generator {
 class GenNaive final : public Generator {
  public:
   GenNaive(std::string filename) : Generator(filename) {}
-  GenNaive(std::vector<std::string>& ir) : Generator(ir) {}
+  GenNaive(std::vector<std::string>& ir,
+           std::unordered_map<std::string,
+                              std::vector<std::pair<std::string, std::string>>>&
+               func_info)
+      : Generator(ir, func_info) {}
   void generate() override;
 
  private:
@@ -58,6 +67,7 @@ class GenNaive final : public Generator {
   void array_load_asm(std::vector<std::string>& tokens);
   void array_store_asm(std::vector<std::string>& tokens);
   void condition_asm(std::vector<std::string>& tokens);
+  void func_asm(std::vector<std::string>& tokens);
 };
 
 class GenCFG final : public Generator {

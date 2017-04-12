@@ -22,7 +22,14 @@ Generator::Generator(std::string filename) {
   file.close();
 }
 
-Generator::Generator(std::vector<std::string>& ir) { ir_ = std::move(ir); }
+Generator::Generator(
+    std::vector<std::string>& ir,
+    std::unordered_map<std::string,
+                       std::vector<std::pair<std::string, std::string>>>&
+        func_info) {
+  ir_ = std::move(ir);
+  func_map_ = std::move(func_info);
+}
 
 void Generator::dump() {
   std::cout << "\n\n#----------------------------------------" << std::endl;
@@ -61,11 +68,11 @@ void Generator::built_in_printi() {
   asm_.push_back("    lw $s5, -24($sp)");
   asm_.push_back("    lw $s6, -28($sp)");
   asm_.push_back("    lw $s7, -32($sp)");
-  asm_.push_back("    jr $ra\n");  
+  asm_.push_back("    jr $ra\n");
 }
 
 void Generator::built_in_exit() {
-  asm_.push_back("lib_exit:"); 
+  asm_.push_back("lib_exit:");
   asm_.push_back("    # Callee Convention (entering exit):");
   asm_.push_back("    sw $s0, -4($sp)");
   asm_.push_back("    sw $s1, -8($sp)");
