@@ -308,7 +308,9 @@ void GenNaive::condition_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    " + cond_asm + ", $t1, $t2, " + tokens[3]);
 }
 
-void GenNaive::func_asm(std::vector<std::string>& tokens) {}
+void GenNaive::func_asm(std::vector<std::string>& tokens) {
+  
+}
 
 void GenNaive::text_seg() {
   asm_.push_back("\n# Beginning of the code section\n");
