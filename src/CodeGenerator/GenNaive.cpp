@@ -14,6 +14,19 @@ bool is_num(std::string s) {
     return true;
 }
 
+std::string remove_white_space(std::string token) {
+  int length = token.size();
+  int i = 0, j = length - 1;
+  while (i < length && isspace(token[i] & 0xFF)) {
+    i++;
+  }
+  while (j >= 0 && isspace(token[j] & 0xFF)) {
+    j--;
+  }
+  if (j < i) return std::string();
+  return token.substr(i, j - i + 1);
+}
+
 void GenNaive::data_seg() {
   asm_.push_back("# Beginning of the data section\n");
   asm_.push_back(".data");
@@ -30,7 +43,7 @@ void GenNaive::data_seg() {
     std::vector<std::string> tokens;
     std::string token;
     while (std::getline(ss, token, ',')) {
-      token.erase(std::remove(token.begin(), token.end(), ' '), token.end());
+      token = remove_white_space(token);
       if (!token.empty()) {
         tokens.push_back(token);
       }
@@ -309,7 +322,14 @@ void GenNaive::condition_asm(std::vector<std::string>& tokens) {
 }
 
 void GenNaive::func_asm(std::vector<std::string>& tokens) {
-  
+  std::string funcname = tokens[0].substr(0, tokens[0].size() - 1);
+  if (func_map_.find(funcname) != func_map_.end()) {
+    std::cout << " ##### " << funcname << std::endl;
+    for (auto& param : func_map_[funcname]) {
+      std::cout << param.first << " " << param.second;
+    }
+    std::cout << std::endl;
+  }
 }
 
 void GenNaive::text_seg() {
@@ -341,7 +361,7 @@ void GenNaive::text_seg() {
     std::vector<std::string> tokens;
     std::string token;
     while (std::getline(ss, token, ',')) {
-      token.erase(std::remove(token.begin(), token.end(), ' '), token.end());
+      token = remove_white_space(token);
       if (!token.empty()) {
         tokens.push_back(token);
       }
