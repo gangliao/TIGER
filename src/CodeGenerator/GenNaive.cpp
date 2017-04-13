@@ -110,7 +110,78 @@ void GenNaive::data_seg() {
   }
 }
 
+std::string GenNaive::alloc_reg(std::string token) {
+  std::string funcname;
+  if (!func_stack_.empty()) {
+    funcname = func_stack_.top();
+    auto& params = func_map_[funcname];
+    for (auto& param : params) {
+      if (param.first == token) {
+        if (param.second == "int") {
+          param.second = "$a" + std::to_string(a_idx_);
+          return "$a" + std::to_string(a_idx_++);
+        } else if (param.second == "float") {
+          param.second = "$f" + std::to_string(fp_idx_);
+          return "$f" + std::to_string(fp_idx_++);
+        } else {
+          return param.second;
+        }
+      }
+    }
+  }
+  return "";
+}
+
+std::string GenNaive::load(std::string token) {
+  std::string reg = alloc_reg(token);
+  if (reg.empty()) {
+    asm_.push_back("    la $t4, " + data_map_[token].first);
+    if (data_map_[token].second == FLOAT) {
+      reg = "$f1";
+      asm_.push_back("    lwc1 $f1, 0($t4)");
+    } else {
+      reg = "$t5";
+      asm_.push_back("    lw $t5, 0($t4)");
+    }
+  }
+  return reg;
+}
+
+std::string GenNaive::load(std::string token, std::string res) {
+  std::string reg = alloc_reg(token);
+  if (reg.empty()) {
+    asm_.push_back("    la $t4, " + data_map_[token].first);
+    if (data_map_[token].second == FLOAT) {
+      reg = res;
+      asm_.push_back("    lwc1 " + reg + ", 0($t4)");
+    } else {
+      reg = res;
+      asm_.push_back("    lw " + reg + ", 0($t4)");
+    }
+  }
+  return reg;
+}
+
+void GenNaive::store(std::string token, std::string reg) {
+  std::string new_reg = alloc_reg(token);
+  if (new_reg.empty()) {
+    asm_.push_back("    la $t4, " + data_map_[token].first);
+    if (data_map_[token].second == FLOAT) {
+      asm_.push_back("    swc1 " + reg + ", 0($t4)");
+    } else {
+      asm_.push_back("    sw " + reg + ", 0($t4)");
+    }
+  } else {
+    if (data_map_[token].second == FLOAT) {
+      asm_.push_back("    mov.s " + new_reg + ", " + reg);
+    } else {
+      asm_.push_back("    move " + new_reg + ", " + reg);
+    }
+  }
+}
+
 void GenNaive::assign_asm(std::vector<std::string>& tokens) {
+  reset_reg();
   if (tokens.size() == 4) {  // array
     size_t size = atoi(tokens[2].c_str());
     if (data_map_[tokens[3]].second == FLOAT) {
@@ -130,52 +201,36 @@ void GenNaive::assign_asm(std::vector<std::string>& tokens) {
       }
     }
   } else if (tokens.size() == 3) {
-    if (data_map_[tokens[2]].second == FLOAT) {
-      asm_.push_back("    la $t0, " + data_map_[tokens[2]].first);
-      asm_.push_back("    lwc1 $f1, 0($t0)");
-      asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
-      asm_.push_back("    swc1 $f1, 0($t0)");
-    } else {
-      asm_.push_back("    la $t0, " + data_map_[tokens[2]].first);
-      asm_.push_back("    lw $t1, 0($t0)");
-      asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
-      asm_.push_back("    sw $t1, 0($t0)");
-    }
+    store(tokens[1], load(tokens[2]));
   }
+  reset_reg();
 }
 
 void GenNaive::operator_asm(std::vector<std::string>& tokens) {
+  reset_reg();
+  std::string reg1, reg2;
   if (data_map_[tokens[3]].second == INT) {
-    asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
-    asm_.push_back("    lw $t1, 0($t0)");
-    asm_.push_back("    la $t0, " + data_map_[tokens[2]].first);
-    asm_.push_back("    lw $t2, 0($t0)");
+    reg1 = load(tokens[1], "$t4");
+    reg2 = load(tokens[2], "$t5");
     if (tokens[0] != "mult" && tokens[0] != "div") {
-      asm_.push_back("    " + tokens[0] + " $t1, $t1, $t2");
-      asm_.push_back("    la $t0, " + data_map_[tokens[3]].first);
-      asm_.push_back("    sw $t1, 0($t0)");
+      asm_.push_back("    " + tokens[0] + reg1 + ", " + reg1 + ", " + reg2);
     } else {
-      asm_.push_back("    " + tokens[0] + " $t1, $t2");
-      asm_.push_back("    mflo $t1");
-      asm_.push_back("    la $t0, " + data_map_[tokens[3]].first);
-      asm_.push_back("    sw $t1, 0($t0)");
+      asm_.push_back("    " + tokens[0] + " " + reg1 + ", " + reg2);
+      asm_.push_back("    mflo " + reg1);
     }
   } else {
-    asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
-    asm_.push_back("    lwc1 $f1, 0($t0)");
-    asm_.push_back("    la $t0, " + data_map_[tokens[2]].first);
-    asm_.push_back("    lwc1 $f2, 0($t0)");
+    reg1 = load(tokens[1], "$f1");
+    reg2 = load(tokens[2], "$f2");
     if (tokens[0] != "mult" && tokens[0] != "div") {
-      asm_.push_back("    " + tokens[0] + ".s $f1, $f1, $f2");
-      asm_.push_back("    la $t0, " + data_map_[tokens[3]].first);
-      asm_.push_back("    swc1 $f1, 0($t0)");
+      asm_.push_back("    " + tokens[0] + ".s " + reg1 + ", " + reg1 + ", " +
+                     reg2);
     } else {
-      asm_.push_back("    " + tokens[0] + " $f1, $f2");
-      asm_.push_back("    mflo $f1");
-      asm_.push_back("    la $t0, " + data_map_[tokens[3]].first);
-      asm_.push_back("    swc1 $f1, 0($t0)");
+      asm_.push_back("    " + tokens[0] + " " + reg1 + ", " + reg2);
+      asm_.push_back("    mflo " + reg1);
     }
   }
+  store(tokens[3], reg1);
+  reset_reg();
 }
 
 void GenNaive::return_asm(std::vector<std::string>& tokens) {
@@ -196,6 +251,17 @@ void GenNaive::return_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    lw $s6, -28($sp)");
   asm_.push_back("    lw $s7, -32($sp)");
   asm_.push_back("    jr $ra");
+}
+
+inline std::string ret_func_name(std::string name) {
+  if (name == "printi") {
+    return "lib_printi";
+  } else if (name == "not") {
+    return "lib_not";
+  } else if (name == "exit") {
+    return "lib_exit";
+  }
+  return name;
 }
 
 void GenNaive::call_asm(std::vector<std::string>& tokens) {
@@ -225,15 +291,17 @@ void GenNaive::call_asm(std::vector<std::string>& tokens) {
     param_idx = 2;
   }
   for (size_t i = 0; i < param_size; ++i) {
-    asm_.push_back("    la $t0, " + data_map_[tokens[param_idx + i]].first);
     if (data_map_[tokens[param_idx]].second == INT) {
-      asm_.push_back("    lw $s" + std::to_string(i) + ", 0($t0)");
+      load(tokens[param_idx + i], "$a" + std::to_string(i));
     } else {
-      asm_.push_back("    lwc1 $f0, 0($t0)");
-      asm_.push_back("    mov.s $a" + std::to_string(i) + ", $f0");
+      load(tokens[param_idx + i], "$f" + std::to_string(i + 12));
     }
   }
-  asm_.push_back("    jal " + (tokens[0] == "callr" ? tokens[2] : tokens[1]));
+
+  std::string funcname =
+      ret_func_name(tokens[0] == "callr" ? tokens[2] : tokens[1]);
+
+  asm_.push_back("    jal " + funcname);
   asm_.push_back("    addi $sp, $sp, 16");
   asm_.push_back("    lw $a0, -4($sp)");
   asm_.push_back("    lw $a1, -8($sp)");
@@ -321,28 +389,10 @@ void GenNaive::condition_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    " + cond_asm + ", $t1, $t2, " + tokens[3]);
 }
 
-void GenNaive::func_asm(std::vector<std::string>& tokens) {
-  std::string funcname = tokens[0].substr(0, tokens[0].size() - 1);
-  if (func_map_.find(funcname) != func_map_.end()) {
-    std::cout << " ##### " << funcname << std::endl;
-    for (auto& param : func_map_[funcname]) {
-      std::cout << param.first << " " << param.second;
-    }
-    std::cout << std::endl;
-  }
-}
-
-void GenNaive::text_seg() {
-  asm_.push_back("\n# Beginning of the code section\n");
-  asm_.push_back(".text");
-
-  built_in_printi();
-  built_in_exit();
-  built_in_not();
-
-  // main entrance
-  asm_.push_back("\nmain:\n");
-
+void GenNaive::func_asm(std::vector<std::string>& code) {
+  func_stack_.push(code[0].substr(0, code[0].size() - 1));
+  reset_reg();
+  asm_.push_back("\n" + code[0] + "\n");
   asm_.push_back("    sw $s0, -4($sp)");
   asm_.push_back("    sw $s1, -8($sp)");
   asm_.push_back("    sw $s2, -12($sp)");
@@ -355,8 +405,8 @@ void GenNaive::text_seg() {
   asm_.push_back("    sw $ra, -4($sp)");
   asm_.push_back("    addi $sp, $sp, -4");
 
-  for (size_t i = 0; i < ir_.size(); ++i) {
-    auto& line = ir_[i];
+  for (size_t i = 1; i < code.size(); ++i) {
+    auto& line = code[i];
     std::istringstream ss(line);
     std::vector<std::string> tokens;
     std::string token;
@@ -387,9 +437,86 @@ void GenNaive::text_seg() {
     } else if (tokens[0] == "array_load") {
       array_load_asm(tokens);
     } else if (tokens[0] != "main:") {
+      // function procedure
+      asm_.push_back(tokens[0]);
+    }
+  }
+
+  reset_reg();
+  func_stack_.pop();
+}
+
+void GenNaive::text_seg() {
+  asm_.push_back("\n# Beginning of the code section\n");
+  asm_.push_back(".text");
+
+  built_in_printi();
+  built_in_exit();
+  built_in_not();
+
+  // main entrance
+  asm_.push_back("main:");
+
+  size_t times = 0;
+  for (size_t i = 0; i < ir_.size(); ++i) {
+    auto& line = ir_[i];
+    std::istringstream ss(line);
+    std::vector<std::string> tokens;
+    std::string token;
+    while (std::getline(ss, token, ',')) {
+      token = remove_white_space(token);
+      if (!token.empty()) {
+        tokens.push_back(token);
+      }
+    }
+
+    if (tokens[0] == "assign") {
+      asm_.push_back("\n    # IR:" + line);
+      assign_asm(tokens);
+    } else if (tokens[0] == "add" || tokens[0] == "sub" || tokens[0] == "and" ||
+               tokens[0] == "or" || tokens[0] == "mult" || tokens[0] == "div") {
+      asm_.push_back("\n    # IR:" + line);
+      operator_asm(tokens);
+    } else if (tokens[0] == "goto") {
+      asm_.push_back("    j " + tokens[1]);
+    } else if (tokens[0] == "breq" || tokens[0] == "brneq" ||
+               tokens[0] == "brlt" || tokens[0] == "brgt" ||
+               tokens[0] == "brgeq" || tokens[0] == "brleq") {
+      asm_.push_back("\n    # IR:" + line);
+      condition_asm(tokens);
+    } else if (tokens[0] == "return") {
+      asm_.push_back("\n    # IR:" + line);
+      return_asm(tokens);
+    } else if (tokens[0] == "call" || tokens[0] == "callr") {
+      asm_.push_back("\n    # IR:" + line);
+      call_asm(tokens);
+    } else if (tokens[0] == "array_store") {
+      asm_.push_back("\n    # IR:" + line);
+      array_store_asm(tokens);
+    } else if (tokens[0] == "array_load") {
+      asm_.push_back("\n    # IR:" + line);
+      array_load_asm(tokens);
+    } else if (tokens[0] == "main:") {
+      asm_.push_back("\nmain0:\n");
+      asm_.push_back("    sw $s0, -4($sp)");
+      asm_.push_back("    sw $s1, -8($sp)");
+      asm_.push_back("    sw $s2, -12($sp)");
+      asm_.push_back("    sw $s3, -16($sp)");
+      asm_.push_back("    sw $s4, -20($sp)");
+      asm_.push_back("    sw $s5, -24($sp)");
+      asm_.push_back("    sw $s6, -28($sp)");
+      asm_.push_back("    sw $s7, -32($sp)");
+      asm_.push_back("    addi $sp, $sp, -32");
+      asm_.push_back("    sw $ra, -4($sp)");
+      asm_.push_back("    addi $sp, $sp, -4");
+    } else {
       if (tokens[0].find("label") == std::string::npos) {
+        if (times == 0) {
+          asm_.push_back("\n    # IR: goto, main0");
+          asm_.push_back("    j main0");
+          times++;
+        }
         // function procedure
-        asm_.push_back(tokens[0].substr(0, tokens[0].size() - 1) + "0:");
         std::vector<std::string> func_ir;
         while (line.find("return") == std::string::npos) {
           func_ir.push_back(line);

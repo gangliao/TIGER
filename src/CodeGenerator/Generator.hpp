@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <stack>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -68,6 +69,20 @@ class GenNaive final : public Generator {
   void array_store_asm(std::vector<std::string>& tokens);
   void condition_asm(std::vector<std::string>& tokens);
   void func_asm(std::vector<std::string>& tokens);
+  std::string alloc_reg(std::string token);
+  std::string load(std::string token);
+  std::string load(std::string token, std::string res);
+  void store(std::string token, std::string reg);
+  inline void reset_reg() {
+    temp_idx_ = 4;
+    fp_idx_ = 12;
+    a_idx_ = 0;
+  }
+
+  size_t temp_idx_ = 4;
+  size_t fp_idx_ = 12;
+  size_t a_idx_ = 0;
+  std::stack<std::string> func_stack_;
 };
 
 class GenCFG final : public Generator {

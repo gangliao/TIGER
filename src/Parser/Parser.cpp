@@ -1578,7 +1578,7 @@ bool Parser::detectAction(int symbol, bool& enable_block,
 
 void Parser::parse() {
   TokenPair* word = scanner.getToken();
-  std::cout << "\n\n[ RUN ] parsing code... \n\n";
+  std::cout << "\n\n# [ RUN ] parsing code... \n\n";
   if (printDebug == true) {
     std::cout << terminalMapped_[word->getTokenType().getValue()] << " ";
   }
@@ -1626,7 +1626,7 @@ void Parser::parse() {
         if (isMainRet_ == false) {
           IR.push_back("    return, , ,");
         }
-        std::cout << "\n\n[ OK ] successful parse..." << std::endl;
+        std::cout << "\n\n# [ OK ] successful parse..." << std::endl;
         break;
       } else {
         word = scanner.getToken();
@@ -1783,7 +1783,7 @@ int main(int argc, char** argv) {
   parser.parse();
 
   // output IR
-  parser.ir_code();
+  // parser.ir_code();
 
   GenNaive gen(parser.get_ir(), parser.get_func_info());
   gen.generate();

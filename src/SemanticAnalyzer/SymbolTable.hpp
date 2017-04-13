@@ -179,42 +179,45 @@ class SymbolTable {
 
   void dump() {
     for (auto& item : table_) {
-      std::cout << "\n\n----------------------------------------" << std::endl;
-      std::cout << "Table: ";
+      std::cout << "\n\n# ----------------------------------------"
+                << std::endl;
+      std::cout << "# Table: ";
       if (item.first.getEntry() == Entry::Types) {
-        std::cout << "Types" << std::endl;
-        std::cout << "Name: " << item.first.getName() << std::endl;
-        std::cout << "----------------------------------------" << std::endl;
-        std::cout << "Scope: " << scopeLevel << std::endl;
-        std::cout << "Type: " << item.second->getType() << std::endl;
-        std::cout << "Dimension: " << item.second->getDimension() << std::endl;
-        std::cout << "Parameters: -" << std::endl;
-        std::cout << "Parameter types: -" << std::endl;
-        std::cout << "Parameter dimensions: -" << std::endl;
-        std::cout << "Return type: -" << std::endl;
+        std::cout << "# Types" << std::endl;
+        std::cout << "# Name: " << item.first.getName() << std::endl;
+        std::cout << "# ----------------------------------------" << std::endl;
+        std::cout << "# Scope: " << scopeLevel << std::endl;
+        std::cout << "# Type: " << item.second->getType() << std::endl;
+        std::cout << "# Dimension: " << item.second->getDimension()
+                  << std::endl;
+        std::cout << "# Parameters: -" << std::endl;
+        std::cout << "# Parameter types: -" << std::endl;
+        std::cout << "# Parameter dimensions: -" << std::endl;
+        std::cout << "# Return type: -" << std::endl;
       } else if (item.first.getEntry() == Entry::Variables) {
-        std::cout << "Variables" << std::endl;
-        std::cout << "Name: " << item.first.getName() << std::endl;
-        std::cout << "----------------------------------------" << std::endl;
-        std::cout << "Scope: " << scopeLevel << std::endl;
-        std::cout << "Type: " << item.second->getType() << std::endl;
-        std::cout << "Dimension: " << item.second->getDimension() << std::endl;
-        std::cout << "Parameters: -" << std::endl;
-        std::cout << "Parameter types: -" << std::endl;
-        std::cout << "Parameter dimensions: -" << std::endl;
-        std::cout << "Return type: -" << std::endl;
+        std::cout << "# Variables" << std::endl;
+        std::cout << "# Name: " << item.first.getName() << std::endl;
+        std::cout << "# ----------------------------------------" << std::endl;
+        std::cout << "# Scope: " << scopeLevel << std::endl;
+        std::cout << "# Type: " << item.second->getType() << std::endl;
+        std::cout << "# Dimension: " << item.second->getDimension()
+                  << std::endl;
+        std::cout << "# Parameters: -" << std::endl;
+        std::cout << "# Parameter types: -" << std::endl;
+        std::cout << "# Parameter dimensions: -" << std::endl;
+        std::cout << "# Return type: -" << std::endl;
       } else if (item.first.getEntry() == Entry::Functions) {
-        std::cout << "Functions" << std::endl;
-        std::cout << "Name: " << item.first.getName() << std::endl;
-        std::cout << "----------------------------------------" << std::endl;
-        std::cout << "Scope: " << scopeLevel << std::endl;
-        std::cout << "Type: -" << std::endl;
-        std::cout << "Dimension: -" << std::endl;
+        std::cout << "# Functions" << std::endl;
+        std::cout << "# Name: " << item.first.getName() << std::endl;
+        std::cout << "# ----------------------------------------" << std::endl;
+        std::cout << "# Scope: " << scopeLevel << std::endl;
+        std::cout << "# Type: -" << std::endl;
+        std::cout << "# Dimension: -" << std::endl;
         auto& paramType = item.second->getParameterTypes();
         auto& paramDims = item.second->getParameterDimensions();
         auto& params = item.second->getParameters();
         size_t size = params.size();
-        std::cout << "Parameters: [";
+        std::cout << "# Parameters: [";
         for (int i = 0; i < size; ++i) {
           std::cout << params[i];
           if (i != size - 1) {
@@ -223,7 +226,7 @@ class SymbolTable {
         }
         std::cout << "]" << std::endl;
 
-        std::cout << "Parameter types: [";
+        std::cout << "# Parameter types: [";
         for (int i = 0; i < size; ++i) {
           std::cout << paramType[i];
           if (i != size - 1) {
@@ -232,7 +235,7 @@ class SymbolTable {
         }
         std::cout << "]" << std::endl;
 
-        std::cout << "Parameter dimensions: [";
+        std::cout << "# Parameter dimensions: [";
         for (int i = 0; i < size; ++i) {
           std::cout << paramDims[i];
           if (i != size - 1) {
@@ -240,10 +243,10 @@ class SymbolTable {
           }
         }
         std::cout << "]" << std::endl;
-        std::cout << "Return type: " << item.second->getReturnType()
+        std::cout << "# Return type: " << item.second->getReturnType()
                   << std::endl;
       }
     }
-    std::cout << "----------------------------------------\n" << std::endl;
+    std::cout << "# ----------------------------------------\n" << std::endl;
   }
 };
