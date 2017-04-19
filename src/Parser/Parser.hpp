@@ -167,8 +167,6 @@ class Parser final {
   Scanner scanner;        /// code scanner
   int numErrors = 0;      /// how many errors detected
   int currentLevel = -1;  /// current paser code's scope level
-  std::pair<std::string, std::string>
-      currLoopLabel_;  /// current loop label name
   int numIfs = 0;      /// generate if labels for IR
   int numTemps = 0;    /// generate temp variable for IR
   int numFPTemps = 0;
