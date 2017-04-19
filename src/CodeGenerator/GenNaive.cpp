@@ -1,31 +1,6 @@
 #include <cmath>
 #include <set>
-#include <sstream>
 #include "Generator.hpp"
-
-bool is_num(std::string s) {
-  std::stringstream sin(s);
-  double t;
-  char p;
-  if (!(sin >> t)) return false;
-  if (sin >> p)
-    return false;
-  else
-    return true;
-}
-
-std::string remove_white_space(std::string token) {
-  int length = token.size();
-  int i = 0, j = length - 1;
-  while (i < length && isspace(token[i] & 0xFF)) {
-    i++;
-  }
-  while (j >= 0 && isspace(token[j] & 0xFF)) {
-    j--;
-  }
-  if (j < i) return std::string();
-  return token.substr(i, j - i + 1);
-}
 
 void GenNaive::data_seg() {
   asm_.push_back("# Beginning of the data section\n");

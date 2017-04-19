@@ -1,5 +1,6 @@
 ADD_LIBRARY(generator
             CodeGenerator/Generator.cpp
+            CodeGenerator/GenCFG.cpp
             CodeGenerator/GenNaive.cpp)
 
 ADD_EXECUTABLE(parser Parser/Parser.cpp)

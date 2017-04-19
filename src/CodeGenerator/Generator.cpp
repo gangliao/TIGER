@@ -1,12 +1,5 @@
 #include "Generator.hpp"
 
-std::string Generator::new_general_reg() {
-  return "$t" + std::to_string(genetal_num_++);
-}
-std::string Generator::new_float_reg() {
-  return "$f" + std::to_string(float_num_++);
-}
-
 Generator::Generator(std::string filename) {
   std::ifstream file;
   file.open(filename);
@@ -154,4 +147,42 @@ void Generator::built_in_not() {
   asm_.push_back("    lw $s6, -28($sp)");
   asm_.push_back("    lw $s7, -32($sp)");
   asm_.push_back("    jr $ra\n");
+}
+
+bool Generator::is_num(std::string s) {
+  std::stringstream sin(s);
+  double t;
+  char p;
+  if (!(sin >> t)) return false;
+  if (sin >> p)
+    return false;
+  else
+    return true;
+}
+
+std::string Generator::remove_white_space(std::string token) {
+  int length = token.size();
+  int i = 0, j = length - 1;
+  while (i < length && isspace(token[i] & 0xFF)) {
+    i++;
+  }
+  while (j >= 0 && isspace(token[j] & 0xFF)) {
+    j--;
+  }
+  if (j < i) return std::string();
+  return token.substr(i, j - i + 1);
+}
+
+std::vector<std::string> Generator::cvt2tokens(size_t id) {
+  auto& line = ir_[id];
+  std::istringstream ss(line);
+  std::vector<std::string> tokens;
+  std::string token;
+  while (std::getline(ss, token, ',')) {
+    token = remove_white_space(token);
+    if (!token.empty()) {
+      tokens.push_back(token);
+    }
+  }
+  return tokens;
 }
