@@ -167,8 +167,8 @@ class Parser final {
   Scanner scanner;        /// code scanner
   int numErrors = 0;      /// how many errors detected
   int currentLevel = -1;  /// current paser code's scope level
-  int numIfs = 0;      /// generate if labels for IR
-  int numTemps = 0;    /// generate temp variable for IR
+  int numIfs = 0;         /// generate if labels for IR
+  int numTemps = 0;       /// generate temp variable for IR
   int numFPTemps = 0;
   int numLoops = 0;            /// generate loop label name for IR
   std::string globalFileName;  /// global file name

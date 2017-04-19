@@ -890,9 +890,15 @@ TokenPair Parser::evaPostfix(std::vector<TokenPair>& expr) {
         stack.pop();
 
         auto ifLabel = labelStack_.top();
-        std::string code = "    " + OperatorMapped[expr[i].getTokenType().getValue()] +
-               ", " + A.getTokenString() + ", " + B.getTokenString() + ", " +
-               ifLabel.second;
+        std::string jump_label;
+        if (isInside_while_) {
+          jump_label = ifLabel.second;
+        } else {
+          jump_label = ifLabel.first;
+        }
+        std::string code =
+            "    " + OperatorMapped[expr[i].getTokenType().getValue()] + ", " +
+            A.getTokenString() + ", " + B.getTokenString() + ", " + jump_label;
         IR.push_back(code);
         return TokenPair(Symbol::Terminal::VAR, "unkown");
       }
@@ -1208,7 +1214,8 @@ void Parser::parseIfAction(std::vector<TokenPair>& tempBuffer) {
   auto res = evaPostfix(postExpr);
   if (res.getTokenString() != "unkown") {
     auto ifLabel = labelStack_.top();
-    IR.push_back("    brneq, " + res.getTokenString() + ", 0, " + ifLabel.first);
+    IR.push_back("    brneq, " + res.getTokenString() + ", 0, " +
+                 ifLabel.first);
   }
 }
 
@@ -1246,7 +1253,8 @@ void Parser::parseWhileAction(std::vector<TokenPair>& tempBuffer) {
   auto res = evaPostfix(postExpr);
   if (res.getTokenString() != "unkown") {
     auto ifLabel = labelStack_.top();
-    IR.push_back("    brneq, " + res.getTokenString() + ", 0, " + ifLabel.second);
+    IR.push_back("    brneq, " + res.getTokenString() + ", 0, " +
+                 ifLabel.second);
   }
 }
 
