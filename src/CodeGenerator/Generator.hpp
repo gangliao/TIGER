@@ -85,6 +85,7 @@ class GenCFG final : public Generator {
   GenCFG(std::vector<std::string>& ir, func_info_t& func_info)
       : Generator(ir, func_info) {
     find_blocks(ir);
+    analyse_live();
   }
 
   void generate() override;
@@ -95,6 +96,7 @@ class GenCFG final : public Generator {
   void find_blocks(std::vector<std::string>& ir);
   void analyse_live();
   graph_ptr build_graph(size_t id);
+  void graph_coloring(size_t id, graph_ptr graph);
 
   std::vector<block_t> blocks_;
   std::map<variable_t, live_range_t> live_ranges_;

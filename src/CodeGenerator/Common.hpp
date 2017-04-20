@@ -17,7 +17,7 @@ typedef struct block {
   size_t end_pos_;
 } block_t;
 
-typedef std::string reg_t;
+typedef size_t reg_t;
 
 /**
  * @brief find variable in block
