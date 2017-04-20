@@ -260,7 +260,6 @@ class Scanner {
         case '/':
           nextChar = read();
           if ((char)nextChar == '*') {
-            int currLineNumber = currLine;
             std::string comment = "Unclosed comment: /*";
             currChar = read();
             if (currChar == -1) {

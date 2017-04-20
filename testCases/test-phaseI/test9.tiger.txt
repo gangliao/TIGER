@@ -1,6 +1,5 @@
 
 
-[ RUN ] parsing code... 
+[ RUN ] parsing code...
 
 let var id : int := intlit ; var id : float := intlit ; in if ( id = id ) then id := id + intlit ; Error: left and right type between assignment is mismatched!
-

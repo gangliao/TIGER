@@ -1,8 +1,8 @@
 
 
-[ RUN ] parsing code... 
+[ RUN ] parsing code...
 
-let var id : int ; function id ( id : int ) : int begin id ( id ) ; return intlit ; end ; in id := id ( intlit ) ; return id ; end  
+let var id : int ; function id ( id : int ) : int begin id ( id ) ; return intlit ; end ; in id := id ( intlit ) ; return id ; end
 
 ----------------------------------------
 Table: Variables
@@ -124,4 +124,3 @@ main:
     callr, x, print, 5
     return, x, ,
 ----------------------------------------
-

@@ -5,6 +5,7 @@
  */
 
 #include "Parser.hpp"
+#include "../CodeGenerator/Generator.hpp"
 
 Parser::Parser(std::string fileName) : scanner(fileName) {
   // push tiger program into parse stack
@@ -744,9 +745,8 @@ std::vector<TokenPair> Parser::cvt2PostExpr(std::vector<TokenPair>& tempBuffer,
       stack.push(tempBuffer[i]);
     } else if (tempBuffer[i].getTokenType().getValue() ==
                Symbol::Terminal::RPAREN) {
-      while (!stack.empty() &&
-             stack.top().getTokenType().getValue() !=
-                 Symbol::Terminal::LPAREN) {
+      while (!stack.empty() && stack.top().getTokenType().getValue() !=
+                                   Symbol::Terminal::LPAREN) {
         TokenPair temp = stack.top();
         expr.push_back(temp);
         stack.pop();
@@ -835,18 +835,20 @@ TokenPair Parser::evaPostfix(std::vector<TokenPair>& expr) {
       std::string typeB;
       stack.pop();
 
-      // produce a type for temp var
-      std::string temp = new_temp();
+      RecordPtr record = std::make_shared<Record>(currentLevel);
       typeA = getSymbolType(A);
       typeB = getSymbolType(B);
-
-      RecordPtr record = std::make_shared<Record>(currentLevel);
-      SymbolTablePair idx(Entry::Variables, temp);
       if (typeA == typeB) {
         record->type = typeA;
       } else {
         record->type = "float";
       }
+
+      // produce a type for temp var
+      std::string temp = (record->type == "int" ? new_temp() : new_fp_temp());
+
+      SymbolTablePair idx(Entry::Variables, temp);
+
       record->dimension = 0;
       g_SymbolTable[currentLevel]->insert(idx, record);
 
@@ -886,36 +888,17 @@ TokenPair Parser::evaPostfix(std::vector<TokenPair>& expr) {
         TokenPair A = stack.top();
         std::string typeB;
         stack.pop();
-        //     assign, $t0, 0,
-        //     brneq, 0a, 0b, if_label0
-        //     assign, $t0, 1,
-        // if_label0:
-        //     breq, $t0, 0, if_label1
-        // generate cmp IR code
-        std::string temp = new_temp();
-        RecordPtr record = std::make_shared<Record>(currentLevel);
-        SymbolTablePair idx(Entry::Variables, temp);
-        record->type = "int";
-        record->dimension = 0;
-        g_SymbolTable[currentLevel]->insert(idx, record);
-
-        std::string code = "    assign, " + temp + ", 0,";
-        IR.push_back(code);
 
         auto ifLabel = labelStack_.top();
-
-        code = "    " + OperatorMapped[expr[i].getTokenType().getValue()] +
-               ", " + A.getTokenString() + ", " + B.getTokenString() + ", " +
-               ifLabel.first;
-        IR.push_back(code);
-
-        code = "    assign, " + temp + ", 1,";
-        IR.push_back(code);
-
-        code = ifLabel.first + ":";
-        IR.push_back(code);
-
-        code = "    breq, " + temp + ", 0, " + ifLabel.second;
+        std::string jump_label;
+        if (isInside_while_) {
+          jump_label = ifLabel.second;
+        } else {
+          jump_label = ifLabel.first;
+        }
+        std::string code =
+            "    " + OperatorMapped[expr[i].getTokenType().getValue()] + ", " +
+            A.getTokenString() + ", " + B.getTokenString() + ", " + jump_label;
         IR.push_back(code);
         return TokenPair(Symbol::Terminal::VAR, "unkown");
       }
@@ -1016,7 +999,6 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
     if (tempBuffer[1].getTokenString() == "(") { /* function */
       RecordPtr record = g_SymbolTable[currentLevel]->lookup(
           Entry::Functions, tempBuffer[0].getTokenString());
-      auto& dims = record->getParameterDimensions();
       auto& paramTypes = record->getParameterTypes();
 
       // semantic checking: param size
@@ -1056,7 +1038,6 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
         // assignment function
         RecordPtr record = g_SymbolTable[currentLevel]->lookup(
             Entry::Functions, tempBuffer[2].getTokenString());
-        auto& dims = record->getParameterDimensions();
         auto& paramTypes = record->getParameterTypes();
 
         // semantic checking: param size
@@ -1121,7 +1102,7 @@ void Parser::parseAction(int expr, std::vector<TokenPair>& tempBuffer) {
             exit(EXIT_FAILURE);
           }
 
-          std::string code = "    assgin, " + tempBuffer[0].getTokenString() +
+          std::string code = "    assign, " + tempBuffer[0].getTokenString() +
                              ", " + res.getTokenString() + ",";
           IR.push_back(code);
         }
@@ -1192,10 +1173,14 @@ void Parser::parseFuncAction(std::vector<TokenPair>& tempBuffer) {
   }
   funcRetType_ = retType;
 
+  std::vector<std::pair<std::string, std::string>> func_param;
   for (size_t i = paramBeginIdx + 1; i < paramEndIdx; i += 4) {
     params.push_back(tempBuffer[i].getTokenString());
     paramTypes.push_back(tempBuffer[i + 2].getTokenString());
+    func_param.push_back(std::make_pair(tempBuffer[i].getTokenString(),
+                                        tempBuffer[i + 2].getTokenString()));
   }
+  func_map_[tempBuffer[1].getTokenString()] = std::move(func_param);
   g_SymbolTable[currentLevel]->insertFunctions(idx, retType, paramTypes,
                                                params);
 
@@ -1228,28 +1213,9 @@ void Parser::parseIfAction(std::vector<TokenPair>& tempBuffer) {
   std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 0);
   auto res = evaPostfix(postExpr);
   if (res.getTokenString() != "unkown") {
-    std::string temp = new_temp();
-    RecordPtr record = std::make_shared<Record>(currentLevel);
-    SymbolTablePair idx(Entry::Variables, temp);
-    record->type = "int";
-    record->dimension = 0;
-    g_SymbolTable[currentLevel]->insert(idx, record);
-
-    std::string code = "    assign, " + temp + ", 0,";
-    IR.push_back(code);
-
     auto ifLabel = labelStack_.top();
-    code = "    brneq, " + res.getTokenString() + ", 0, " + ifLabel.first;
-    IR.push_back(code);
-
-    code = "    assign, " + temp + ", 1,";
-    IR.push_back(code);
-
-    code = ifLabel.first + ":";
-    IR.push_back(code);
-
-    code = "    breq, " + temp + ", 0, " + ifLabel.second;
-    IR.push_back(code);
+    IR.push_back("    brneq, " + res.getTokenString() + ", 0, " +
+                 ifLabel.first);
   }
 }
 
@@ -1286,28 +1252,9 @@ void Parser::parseWhileAction(std::vector<TokenPair>& tempBuffer) {
   std::vector<TokenPair> postExpr = cvt2PostExpr(tempBuffer, 0);
   auto res = evaPostfix(postExpr);
   if (res.getTokenString() != "unkown") {
-    std::string temp = new_temp();
-    RecordPtr record = std::make_shared<Record>(currentLevel);
-    SymbolTablePair idx(Entry::Variables, temp);
-    record->type = "int";
-    record->dimension = 0;
-    g_SymbolTable[currentLevel]->insert(idx, record);
-
-    std::string code = "    assign, " + temp + ", 0,";
-    IR.push_back(code);
-
     auto ifLabel = labelStack_.top();
-    code = "    brneq, " + res.getTokenString() + ", 0, " + ifLabel.first;
-    IR.push_back(code);
-
-    code = "    assign, " + temp + ", 1,";
-    IR.push_back(code);
-
-    code = ifLabel.first + ":";
-    IR.push_back(code);
-
-    code = "    breq, " + temp + ", 0, " + ifLabel.second;
-    IR.push_back(code);
+    IR.push_back("    brneq, " + res.getTokenString() + ", 0, " +
+                 ifLabel.second);
   }
 }
 
@@ -1358,11 +1305,8 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     auto lbl2 = new_loop_label();
     std::pair<std::string, std::string> labels = {lbl1, lbl2};
 
-    currLoopLabel_ = labels;
     IR.push_back(labels.first + ":");
 
-    labels.first = labels.second;
-    labels.second = new_loop_label();
     labelStack_.push(labels);
     blockStack_.push(labels);
     return true;
@@ -1376,7 +1320,7 @@ bool Parser::detectAction(int symbol, bool& enable_block,
   if (symbol == Symbol::Action::MakeWhileEnd) {
     isInside_while_ = false;
     auto labels = labelStack_.top();
-    IR.push_back("    goto, " + currLoopLabel_.first + ", ,");
+    IR.push_back("    goto, " + labels.first + ", ,");
     IR.push_back(labels.second + ":");
     labelStack_.pop();
     blockStack_.pop();
@@ -1407,19 +1351,11 @@ bool Parser::detectAction(int symbol, bool& enable_block,
     return true;
   }
   if (symbol == Symbol::Action::MakeElseLabel) {
-    // goto, if_label2, ,
-    // if_label1:
-    std::string new_label = new_if_label();
-    std::string code = "    goto, " + new_label + ", ,";
-    IR.push_back(code);
-
+    // goto, if_label1, ,
+    // if_label0:
     auto lblStack = labelStack_.top();
-    labelStack_.pop();
-    code = lblStack.second + ":";
-    IR.push_back(code);
-
-    lblStack.second = new_label;
-    labelStack_.push(lblStack);
+    IR.push_back("    goto, " + lblStack.second + ", ,");
+    IR.push_back(lblStack.first + ":");
     return true;
   }
   if (symbol == Symbol::Action::MakeIfEnd) {
@@ -1516,14 +1452,16 @@ bool Parser::detectAction(int symbol, bool& enable_block,
                      tempBuffer[actBegin_ - 2].getTokenString() + ", " +
                      res.getTokenString() + ", ";
     } else {
-      // generate temp var
-      std::string temp = new_temp();
-      // define record
-      SymbolTablePair idx(Entry::Variables, temp);
       RecordPtr record = std::make_shared<Record>(currentLevel);
       // set record attributes
       record->type = getSymbolType(tempBuffer[actBegin_ - 2]);
       record->dimension = 0;
+
+      // generate temp var
+      std::string temp = (record->type == "int" ? new_temp() : new_fp_temp());
+      // define record
+      SymbolTablePair idx(Entry::Variables, temp);
+
       // insert into symbol table
       g_SymbolTable[currentLevel]->insert(idx, record);
 
@@ -1572,7 +1510,7 @@ bool Parser::detectAction(int symbol, bool& enable_block,
 
 void Parser::parse() {
   TokenPair* word = scanner.getToken();
-  std::cout << "\n\n[ RUN ] parsing code... \n\n";
+  std::cout << "\n\n# [ RUN ] parsing code... \n\n";
   if (printDebug == true) {
     std::cout << terminalMapped_[word->getTokenType().getValue()] << " ";
   }
@@ -1620,7 +1558,7 @@ void Parser::parse() {
         if (isMainRet_ == false) {
           IR.push_back("    return, , ,");
         }
-        std::cout << "\n\n[ OK ] successful parse..." << std::endl;
+        std::cout << "\n\n# [ OK ] successful parse..." << std::endl;
         break;
       } else {
         word = scanner.getToken();
@@ -1647,13 +1585,13 @@ void Parser::parse() {
 }
 
 void Parser::ir_code() {
-  std::cout << "\n\n----------------------------------------" << std::endl;
-  std::cout << "Generate IR CODE ..." << std::endl;
-  std::cout << "----------------------------------------" << std::endl;
+  std::cout << "\n\n# ----------------------------------------" << std::endl;
+  std::cout << "# Generate IR CODE ..." << std::endl;
+  std::cout << "# ----------------------------------------" << std::endl;
   for (size_t i = 0; i < IR.size(); ++i) {
-    std::cout << IR[i] << std::endl;
+    std::cout << "# " << IR[i] << std::endl;
   }
-  std::cout << "----------------------------------------\n" << std::endl;
+  std::cout << "# ----------------------------------------\n" << std::endl;
 }
 
 void Parser::initializeIRMapped() {
@@ -1778,6 +1716,10 @@ int main(int argc, char** argv) {
 
   // output IR
   parser.ir_code();
+
+  GenNaive gen(parser.get_ir(), parser.get_func_info());
+  gen.generate();
+  gen.dump();
 
   // Close all open files like
   parser.outFile.close();

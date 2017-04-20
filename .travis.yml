@@ -16,11 +16,12 @@ addons:
       - automake
       - libtool
       - ccache
+      - cmake
 
 script:
-    - mkdir -p bin
-    - make scanner
-    - make parser
+    - mkdir build && cd build
+    - cmake ..
+    - make
 
 notifications:
   email:

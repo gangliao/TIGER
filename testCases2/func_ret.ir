@@ -1,0 +1,8 @@
+    assign, m, 5,
+fact:
+    mult, n, 2, t0
+    return, t0, ,
+main:
+    callr, m, fact, m
+    call, printi, m
+    return, , ,

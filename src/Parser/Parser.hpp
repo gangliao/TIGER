@@ -57,12 +57,23 @@ class Parser final {
   /// generate IR code
   void ir_code();
 
+  /// get IR code
+  std::vector<std::string> &get_ir() { return IR; }
+
   /// parse error info
   void error(int expr, TokenPair *word);
 
   /// insert items into parse table
   void addToParseTable(const int nonterm, const std::vector<int> &terminals,
                        const std::vector<int> &expand_rule);
+
+  /// get function info
+  std::unordered_map<std::string,
+                     std::vector<std::pair<std::string, std::string>>>
+      &get_func_info() {
+    return func_map_;
+  }
+
   /// output file
   std::ofstream outFile;
 
@@ -127,7 +138,10 @@ class Parser final {
   }
 
   /// generate new temp name
-  inline std::string new_temp() { return "$t" + std::to_string(numTemps++); }
+  inline std::string new_temp() { return "t" + std::to_string(numTemps++); }
+  inline std::string new_fp_temp() {
+    return "f" + std::to_string(numFPTemps++);
+  }
 
   /// generate new loop label name
   inline std::string new_loop_label() {
@@ -153,10 +167,9 @@ class Parser final {
   Scanner scanner;        /// code scanner
   int numErrors = 0;      /// how many errors detected
   int currentLevel = -1;  /// current paser code's scope level
-  std::pair<std::string, std::string>
-      currLoopLabel_;          /// current loop label name
-  int numIfs = 0;              /// generate if labels for IR
-  int numTemps = 0;            /// generate temp variable for IR
+  int numIfs = 0;         /// generate if labels for IR
+  int numTemps = 0;       /// generate temp variable for IR
+  int numFPTemps = 0;
   int numLoops = 0;            /// generate loop label name for IR
   std::string globalFileName;  /// global file name
   std::stack<int> parseStack;  /// parse stack
@@ -168,13 +181,13 @@ class Parser final {
   std::unordered_map<int, std::string> terminalMapped_;
 
   /// parse table for parsing
-  std::map<SymbolTerminalPair, std::vector<int> > parseTable_;
+  std::map<SymbolTerminalPair, std::vector<int>> parseTable_;
 
   /// for begin and end expr stack
   std::stack<TokenPair> tempStack_;
 
   /// loop label stack
-  std::stack<std::pair<std::string, std::string> > labelStack_;
+  std::stack<std::pair<std::string, std::string>> labelStack_;
 
   /// current action begin and end postion in temp buffer
   size_t actBegin_;
@@ -188,9 +201,13 @@ class Parser final {
   bool isInside_func_ = false;
   bool isInside_while_ = false;
   bool isInside_for_ = false;
-  std::stack<std::pair<std::string, std::string> > blockStack_;
+  std::stack<std::pair<std::string, std::string>> blockStack_;
   /// tracking funcRetType if inside a function
   std::string funcRetType_;
   bool isFuncRet_ = false;
   bool isMainRet_ = false;
+
+  std::unordered_map<std::string,
+                     std::vector<std::pair<std::string, std::string>>>
+      func_map_;
 };
