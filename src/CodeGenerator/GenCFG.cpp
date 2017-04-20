@@ -1,10 +1,5 @@
 #include "Generator.hpp"
 
-//   std::vector<block_t> blocks_;
-//   std::vector<std::vector<std::string>> vars_;
-//   std::map<variable_t, live_range_t> live_ranges_;
-//   std::map<variable_t, reg_t> regs_;
-
 void GenCFG::find_blocks(std::vector<std::string>& ir) {
   std::vector<size_t> line_num;
   for (size_t i = 0; i < ir_.size(); ++i) {
@@ -35,11 +30,11 @@ void GenCFG::graph_coloring(size_t id, graph_ptr graph) {
     }
     for (size_t i = 0; i < 32; ++i) {
       if (table[i] == 0) {
-        regs[var] = i; // store into register
+        regs[var] = i;  // store into register
       }
     }
     if (regs.find(var) != regs.end()) {
-      regs[var] = -1; // store into memory
+      regs[var] = -1;  // store into memory
     }
     regs_[{id, var}] = regs[var];
   }
