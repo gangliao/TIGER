@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 /**
  * @brief basic block in IR code.
