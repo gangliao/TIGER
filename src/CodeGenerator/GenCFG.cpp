@@ -21,6 +21,28 @@ void GenCFG::find_blocks(std::vector<std::string>& ir) {
   }
 }
 
+graph_ptr GenCFG::build_graph(size_t id) {
+  // graph data structure
+  graph_ptr graph = std::make_shared<graph_t>();
+
+  size_t size = vars_[id].size();
+  for (size_t i = 0; i < size; ++i) {
+    std::string var = vars_[id][i];
+    size_t beg_pos = live_ranges_[{id, var}].start_pos_;
+    size_t end_pos = live_ranges_[{id, var}].end_pos_;
+    for (size_t j = 0; j < size; ++j) {
+      if (i == j) continue;
+      std::string temp_var = vars_[id][j];
+      size_t temp_beg = live_ranges_[{id, temp_var}].start_pos_;
+      size_t temp_end = live_ranges_[{id, temp_var}].end_pos_;
+      if (end_pos >= temp_beg && beg_pos <= temp_end) {
+        (*graph)[var].push_back(temp_var);
+      }
+    }
+  }
+  return graph;
+}
+
 void GenCFG::analyse_live() {
   vars_.reserve(blocks_.size());
 
@@ -71,5 +93,9 @@ void GenCFG::analyse_live() {
     }
   }
 
-	// interference graph and graph coloring
+  // build graph for each block
+  for (size_t i = 0; i < vars_.size(); ++i) {
+    graph_ptr graph = build_graph(i);
+    // graph coloring
+  }
 }

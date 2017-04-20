@@ -94,6 +94,7 @@ class GenCFG final : public Generator {
   void text_seg() override;
   void find_blocks(std::vector<std::string>& ir);
   void analyse_live();
+  graph_ptr build_graph(size_t id);
 
   std::vector<block_t> blocks_;
   std::map<variable_t, live_range_t> live_ranges_;
