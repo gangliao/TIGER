@@ -254,11 +254,11 @@ std::string GenCFG::load(std::string token, std::string res) {
 void GenCFG::store(std::string token, std::string reg) {
   std::string new_reg = alloc_reg(token);
   if (new_reg.empty()) {
-    asm_.push_back("    la $t4, " + data_map_[token].first);
+    asm_.push_back("    la $t31, " + data_map_[token].first);
     if (data_map_[token].second == FLOAT) {
-      asm_.push_back("    swc1 " + reg + ", 0($t4)");
+      asm_.push_back("    swc1 " + reg + ", 0($t31)");
     } else {
-      asm_.push_back("    sw " + reg + ", 0($t4)");
+      asm_.push_back("    sw " + reg + ", 0($t31)");
     }
   } else {
     if (data_map_[token].second == FLOAT) {
@@ -540,7 +540,8 @@ void GenCFG::text_seg() {
     auto& line = ir_[i];
     std::vector<std::string> tokens;
     tokens = cvt2tokens(line);
-
+    // init block variables or release block registers 
+    block_init_release(i);
     if (tokens[0] == "assign") {
       asm_.push_back("\n    # IR:" + line);
       assign_asm(tokens);
@@ -602,6 +603,46 @@ void GenCFG::text_seg() {
     }
   }
 }
+
+void GenCFG::block_init_release(size_t line_id) {
+  static size_t block_id = 0;
+  if (blocks_[block_id].start_pos_ == line_id) {
+    // enter into block
+    is_inside_block_ = true;
+    // load a set of variable you expected to use
+    auto& vars = vars_[block_id];
+    for (size_t i = 0; i < vars.size(); ++i) {
+      if (regs_[{block_id, vars[i]}] != -1) {
+        if (data_map_[vars[i]].second == INT) {
+          load(vars[i], "$t" + std::to_string(regs_[{block_id, vars[i]}]));
+        } else {
+          load(vars[i], "$f" + std::to_string(regs_[{block_id, vars[i]}]));
+        }
+      }
+    }
+  } else if (blocks_[block_id].end_pos_ == line_id) {
+    // save a set of variable in registers
+    auto& vars = vars_[block_id];
+    for (size_t i = 0; i < vars.size(); ++i) {
+      if (regs_[{block_id, vars[i]}] != -1) {
+        if (data_map_[vars[i]].second == INT) {
+          store(vars[i], "$t" + std::to_string(regs_[{block_id, vars[i]}]));
+        } else {
+          store(vars[i], "$f" + std::to_string(regs_[{block_id, vars[i]}]));
+        }
+      }
+    }
+    // leave this block
+    is_inside_block_ = false;
+    // detect the next block
+    block_id++;
+  }
+}
+
+  // std::vector<block_t> blocks_;
+  // std::map<variable_t, live_range_t> live_ranges_;
+  // std::map<variable_t, reg_t> regs_;
+  // std::vector<std::vector<std::string>> vars_;
 
 void GenCFG::generate() {
   find_blocks();    // detect blocks
