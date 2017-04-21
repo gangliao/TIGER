@@ -218,19 +218,30 @@ std::string GenCFG::alloc_reg(std::string token) {
       }
     }
   }
+
+  if (is_inside_block_ == true) {
+    if (regs_[{block_id_, token}] != -1) {
+      if (data_map_[token].second == FLOAT) {
+        return "$f" + std::to_string(regs_[{block_id_, token}]);
+      } else {
+        return "$t" + std::to_string(regs_[{block_id_, token}]);
+      }
+    }
+  }
+
   return "";
 }
 
 std::string GenCFG::load(std::string token) {
   std::string reg = alloc_reg(token);
   if (reg.empty()) {
-    asm_.push_back("    la $t4, " + data_map_[token].first);
+    asm_.push_back("    la $t9, " + data_map_[token].first);
     if (data_map_[token].second == FLOAT) {
-      reg = "$f1";
-      asm_.push_back("    lwc1 $f1, 0($t4)");
+      reg = "$f31";
+      asm_.push_back("    lwc1 $f31, 0($t9)");
     } else {
-      reg = "$t5";
-      asm_.push_back("    lw $t5, 0($t4)");
+      reg = "$t8";
+      asm_.push_back("    lw $t8, 0($t9)");
     }
   }
   return reg;
@@ -239,13 +250,12 @@ std::string GenCFG::load(std::string token) {
 std::string GenCFG::load(std::string token, std::string res) {
   std::string reg = alloc_reg(token);
   if (reg.empty()) {
-    asm_.push_back("    la $t4, " + data_map_[token].first);
+    asm_.push_back("    la $t9, " + data_map_[token].first);
+    reg = res;
     if (data_map_[token].second == FLOAT) {
-      reg = res;
-      asm_.push_back("    lwc1 " + reg + ", 0($t4)");
+      asm_.push_back("    lwc1 " + reg + ", 0($t9)");
     } else {
-      reg = res;
-      asm_.push_back("    lw " + reg + ", 0($t4)");
+      asm_.push_back("    lw " + reg + ", 0($t9)");
     }
   }
   return reg;
@@ -254,11 +264,11 @@ std::string GenCFG::load(std::string token, std::string res) {
 void GenCFG::store(std::string token, std::string reg) {
   std::string new_reg = alloc_reg(token);
   if (new_reg.empty()) {
-    asm_.push_back("    la $t4, " + data_map_[token].first);
+    asm_.push_back("    la $t9, " + data_map_[token].first);
     if (data_map_[token].second == FLOAT) {
-      asm_.push_back("    swc1 " + reg + ", 0($t4)");
+      asm_.push_back("    swc1 " + reg + ", 0($t9)");
     } else {
-      asm_.push_back("    sw " + reg + ", 0($t4)");
+      asm_.push_back("    sw " + reg + ", 0($t9)");
     }
   } else {
     if (data_map_[token].second == FLOAT) {
@@ -324,9 +334,7 @@ void GenCFG::operator_asm(std::vector<std::string>& tokens) {
 
 void GenCFG::return_asm(std::vector<std::string>& tokens) {
   if (tokens.size() == 2) {
-    asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
-    asm_.push_back("    lw $t1, 0($t0)");
-    asm_.push_back("    move $v0, $t1");
+    asm_.push_back("    move $v0, " + load(tokens[1]));
   }
   asm_.push_back("    addi $sp, $sp, 4");
   asm_.push_back("    lw $ra, -4($sp)");
@@ -370,9 +378,9 @@ void GenCFG::call_asm(std::vector<std::string>& tokens) {
   }
   for (size_t i = 0; i < param_size; ++i) {
     if (data_map_[tokens[param_idx]].second == INT) {
-      load(tokens[param_idx + i], "$a" + std::to_string(i));
+      asm_.push_back("move $a" + std::to_string(i) + ", " + load(tokens[param_idx + i]));
     } else {
-      load(tokens[param_idx + i], "$f" + std::to_string(i + 12));
+      asm_.push_back("mov.s $f" + std::to_string(i + 12) + ", " + load(tokens[param_idx + i]));
     }
   }
 
@@ -397,11 +405,10 @@ void GenCFG::call_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    lw $t8, -20($sp)");
   asm_.push_back("    lw $t9, -24($sp)");
   if (tokens[0] == "callr") {
-    asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
     if (data_map_[tokens[1]].second == INT) {
-      asm_.push_back("    sw $v0, 0($t0)");
+      asm_.push_back("    move $v0, " + load(tokens[1]));
     } else {
-      asm_.push_back("    swc1 $v0, 0($t0)");
+      asm_.push_back("    mov.s $v0, " + load(tokens[1]));
     }
   }
 }
@@ -540,7 +547,8 @@ void GenCFG::text_seg() {
     auto& line = ir_[i];
     std::vector<std::string> tokens;
     tokens = cvt2tokens(line);
-
+    // init block variables or release block registers 
+    block_init_release(i);
     if (tokens[0] == "assign") {
       asm_.push_back("\n    # IR:" + line);
       assign_asm(tokens);
@@ -602,6 +610,45 @@ void GenCFG::text_seg() {
     }
   }
 }
+
+void GenCFG::block_init_release(size_t line_id) {
+  if (blocks_[block_id_].start_pos_ == line_id) {
+    // load a set of variable you expected to use
+    auto& vars = vars_[block_id_];
+    for (size_t i = 0; i < vars.size(); ++i) {
+      if (regs_[{block_id_, vars[i]}] != -1) {
+        if (data_map_[vars[i]].second == INT) {
+          load(vars[i], "$t" + std::to_string(regs_[{block_id_, vars[i]}]));
+        } else {
+          load(vars[i], "$f" + std::to_string(regs_[{block_id_, vars[i]}]));
+        }
+      }
+    }
+    // enter into block
+    is_inside_block_ = true;
+  } else if (blocks_[block_id_].end_pos_ == line_id) {
+    // save a set of variable in registers
+    auto& vars = vars_[block_id_];
+    for (size_t i = 0; i < vars.size(); ++i) {
+      if (regs_[{block_id_, vars[i]}] != -1) {
+        if (data_map_[vars[i]].second == INT) {
+          store(vars[i], "$t" + std::to_string(regs_[{block_id_, vars[i]}]));
+        } else {
+          store(vars[i], "$f" + std::to_string(regs_[{block_id_, vars[i]}]));
+        }
+      }
+    }
+    // leave this block
+    is_inside_block_ = false;
+    // detect the next block
+    block_id_++;
+  }
+}
+
+  // std::vector<block_t> blocks_;
+  // std::map<variable_t, live_range_t> live_ranges_;
+  // std::map<variable_t, reg_t> regs_;
+  // std::vector<std::vector<std::string>> vars_;
 
 void GenCFG::generate() {
   find_blocks();    // detect blocks
