@@ -186,3 +186,27 @@ std::vector<std::string> Generator::cvt2tokens(size_t id) {
   }
   return tokens;
 }
+
+std::vector<std::string> Generator::cvt2tokens(std::string line) {
+  std::istringstream ss(line);
+  std::vector<std::string> tokens;
+  std::string token;
+  while (std::getline(ss, token, ',')) {
+    token = remove_white_space(token);
+    if (!token.empty()) {
+      tokens.push_back(token);
+    }
+  }
+  return tokens;
+}
+
+std::string Generator::ret_func_name(std::string name) {
+  if (name == "printi") {
+    return "lib_printi";
+  } else if (name == "not") {
+    return "lib_not";
+  } else if (name == "exit") {
+    return "lib_exit";
+  }
+  return name;
+}

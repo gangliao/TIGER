@@ -228,17 +228,6 @@ void GenNaive::return_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    jr $ra");
 }
 
-inline std::string ret_func_name(std::string name) {
-  if (name == "printi") {
-    return "lib_printi";
-  } else if (name == "not") {
-    return "lib_not";
-  } else if (name == "exit") {
-    return "lib_exit";
-  }
-  return name;
-}
-
 void GenNaive::call_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    sw $t4, -4($sp)");
   asm_.push_back("    sw $t5, -8($sp)");
