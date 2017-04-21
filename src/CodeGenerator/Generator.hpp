@@ -6,9 +6,10 @@
 #include <iostream>
 #include <map>
 #include <stack>
-#include <string>
+#include <string.h>
 #include <unordered_map>
 #include <vector>
+#include <stdlib.h>
 
 /**
  * Convert IR to MIPS code.
@@ -84,7 +85,9 @@ class GenCFG final : public Generator {
  public:
   GenCFG(std::vector<std::string>& ir, func_info_t& func_info)
       : Generator(ir, func_info) {
-    find_blocks(ir);
+    find_blocks(ir);  // detect blocks
+    analyse_live();   // live range analysis
+    gen_opt_ir();     // generate new ir code
   }
 
   void generate() override;
@@ -94,6 +97,9 @@ class GenCFG final : public Generator {
   void text_seg() override;
   void find_blocks(std::vector<std::string>& ir);
   void analyse_live();
+  void gen_opt_ir();
+  graph_ptr build_graph(size_t id);
+  void graph_coloring(size_t id, graph_ptr graph);
 
   std::vector<block_t> blocks_;
   std::map<variable_t, live_range_t> live_ranges_;
