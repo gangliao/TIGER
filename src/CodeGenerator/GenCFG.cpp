@@ -114,3 +114,7 @@ void GenCFG::analyse_live() {
     graph_coloring(i, build_graph(i));
   }
 }
+
+void GenCFG::gen_opt_ir() {
+
+}
