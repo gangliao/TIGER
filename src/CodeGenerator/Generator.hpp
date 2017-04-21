@@ -6,7 +6,7 @@
 #include <iostream>
 #include <map>
 #include <stack>
-#include <string>
+#include <string.h>
 #include <unordered_map>
 #include <vector>
 #include <stdlib.h>
