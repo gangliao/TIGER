@@ -2,14 +2,14 @@
 
 #include "Common.hpp"
 
+#include <stdlib.h>
+#include <string.h>
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <stack>
-#include <string.h>
 #include <unordered_map>
 #include <vector>
-#include <stdlib.h>
 
 /**
  * Convert IR to MIPS code.
@@ -33,7 +33,9 @@ class Generator {
   void built_in_not();
   bool is_num(std::string s);
   std::string remove_white_space(std::string token);
+  std::string ret_func_name(std::string name);
   std::vector<std::string> cvt2tokens(size_t id);
+  std::vector<std::string> cvt2tokens(std::string line);
 
   enum Type { INT = 0, FLOAT = 1 };
   /// intermediate code
@@ -84,22 +86,39 @@ class GenNaive final : public Generator {
 class GenCFG final : public Generator {
  public:
   GenCFG(std::vector<std::string>& ir, func_info_t& func_info)
-      : Generator(ir, func_info) {
-    find_blocks(ir);  // detect blocks
-    analyse_live();   // live range analysis
-    gen_opt_ir();     // generate new ir code
-  }
+      : Generator(ir, func_info) {}
 
   void generate() override;
 
  private:
   void data_seg() override;
   void text_seg() override;
-  void find_blocks(std::vector<std::string>& ir);
+
+  // CGF and intra-block allocation
+  void find_blocks();
   void analyse_live();
   void gen_opt_ir();
   graph_ptr build_graph(size_t id);
   void graph_coloring(size_t id, graph_ptr graph);
+
+  // generate asm code based on code sgement
+  void assign_asm(std::vector<std::string>& tokens);
+  void operator_asm(std::vector<std::string>& tokens);
+  void return_asm(std::vector<std::string>& tokens);
+  void call_asm(std::vector<std::string>& tokens);
+  void array_load_asm(std::vector<std::string>& tokens);
+  void array_store_asm(std::vector<std::string>& tokens);
+  void condition_asm(std::vector<std::string>& tokens);
+  void func_asm(std::vector<std::string>& tokens);
+  std::string alloc_reg(std::string token);
+  std::string load(std::string token);
+  std::string load(std::string token, std::string res);
+  void store(std::string token, std::string reg);
+  inline void reset_reg() {
+    temp_idx_ = 4;
+    fp_idx_ = 12;
+    a_idx_ = 0;
+  }
 
   std::vector<block_t> blocks_;
   std::map<variable_t, live_range_t> live_ranges_;
