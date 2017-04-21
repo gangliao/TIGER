@@ -122,6 +122,7 @@ class GenCFG final : public Generator {
   }
 
   bool is_inside_block_ = false;
+  size_t block_id_ = 0;
   std::vector<block_t> blocks_;
   std::map<variable_t, live_range_t> live_ranges_;
   std::map<variable_t, reg_t> regs_;
