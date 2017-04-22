@@ -130,7 +130,7 @@
 # Default select cfg technique to optimize IR code ...
 
 # Detect block 0 IR line : 5 ~ 8
-#### m#### m#### m
+
 
 #----------------------------------------
 # Generate ASM CODE ...

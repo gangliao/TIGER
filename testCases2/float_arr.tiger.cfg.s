@@ -196,7 +196,7 @@
 # Detect block 1 IR line : 11 ~ 16
 
 # Detect block 2 IR line : 17 ~ 18
-#### i#### i#### f1#### i#### i
+
 
 #----------------------------------------
 # Generate ASM CODE ...
@@ -382,7 +382,7 @@ printf:
     # IR:    add, n, 5.0, f0
     la $t9, num_5_0
     lwc1 $f17, 0($t9)
-    add.s $f12, $f12, $f17
+    add.s  $f12, $f12, $f17
     la $t9, f0
     swc1 $f12, 0($t9)
 
@@ -427,14 +427,14 @@ main0:
 
     # IR:    array_store, A, 4, 1.5
     la $t9, num_4
-    lw $t8, 0($t9)
-    sll $t8, $t8, 2
-    la $t9, A
-    add $t9, $t9, $t8
-    srl $t8, $t8, 2
+    lw $t9, 0($t9)
+    sll $t9, $t9, 2
+    la $t8, A
+    add $t8, $t8, $t9
+    srl $t9, $t9, 2
     la $t9, num_1_5
-    lwc1 $16, 0($t9)
-    swc1 $16, 0($t9)
+    lwc1 $f16, 0($t9)
+    swc1 $f16, 0($t8)
 
     # IR:    assign, i, 0,
     la $t9, num_0
@@ -456,19 +456,16 @@ loop_label0:
 
     # IR:    brgt, i, 5, loop_label1
     la $t9, num_5
-    lw t9, 0($t9)
-    bgt, $t0, t9, loop_label1
+    lw $t9, 0($t9)
+    bgt, $t0, $t9, loop_label1
 
     # IR:    array_load, f1, A, i
-    la $t0, i
-    lw $t1, 0($t0)
-    sll $t1, $t1, 2
-    la $t0, A
-    add $t0, $t0, $t1
-    srl $t1, $t1, 2
-    lwc1 $f1, 0($t0)
-    la $t0, f1
-    swc1 $f1, 0($t0)
+    sll $t0, $t0, 2
+    la $t8, A
+    add $t8, $t8, $t0
+    srl $t0, $t0, 2
+    lwc1 $f16, 0($t8)
+    mov.s $f0, $f16
 
     # IR:    call, printf, f1
     sw $t4, -4($sp)
@@ -509,9 +506,8 @@ loop_label0:
     # IR:    add, i, 1, i
     la $t9, num_1
     lw $t9, 0($t9)
-    add$t0, $t0, $t9
+    add $t0, $t0, $t9
     move $t0, $t0
-    j loop_label0
 
     # Leave block and save registers into vars ... 
 
@@ -519,6 +515,7 @@ loop_label0:
     swc1 $f0, 0($t9)
     la $t9, i
     sw $t0, 0($t9)
+    j loop_label0
 loop_label1:
 
     # Enter block and load vars into registers ... 

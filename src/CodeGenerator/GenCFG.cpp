@@ -242,7 +242,6 @@ std::string GenCFG::alloc_reg(std::string token) {
   if (is_inside_block_ == true) {
     if (regs_.find({block_id_, token}) != regs_.end() &&
       regs_[{block_id_, token}] != -1) {
-      std::cout << "#### " << token;
       if (data_map_[token].second == FLOAT) {
         return "$f" + std::to_string(regs_[{block_id_, token}]);
       } else {
@@ -334,7 +333,7 @@ void GenCFG::operator_asm(std::vector<std::string>& tokens) {
     reg1 = load(tokens[1], "$t8");
     reg2 = load(tokens[2], "$t9");
     if (tokens[0] != "mult" && tokens[0] != "div") {
-      asm_.push_back("    " + tokens[0] + reg1 + ", " + reg1 + ", " + reg2);
+      asm_.push_back("    " + tokens[0] + " " + reg1 + ", " + reg1 + ", " + reg2);
     } else {
       asm_.push_back("    " + tokens[0] + " " + reg1 + ", " + reg2);
       asm_.push_back("    mflo " + reg1);
@@ -343,7 +342,7 @@ void GenCFG::operator_asm(std::vector<std::string>& tokens) {
     reg1 = load(tokens[1], "$f16");
     reg2 = load(tokens[2], "$f17");
     if (tokens[0] != "mult" && tokens[0] != "div") {
-      asm_.push_back("    " + tokens[0] + ".s " + reg1 + ", " + reg1 + ", " +
+      asm_.push_back("    " + tokens[0] + ".s " + " " + reg1 + ", " + reg1 + ", " +
                      reg2);
     } else {
       asm_.push_back("    " + tokens[0] + " " + reg1 + ", " + reg2);
@@ -438,33 +437,30 @@ void GenCFG::call_asm(std::vector<std::string>& tokens) {
 }
 
 void GenCFG::array_load_asm(std::vector<std::string>& tokens) {
-  asm_.push_back("    la $t0, " + data_map_[tokens[3]].first);
-  asm_.push_back("    lw $t1, 0($t0)");
-  asm_.push_back("    sll $t1, $t1, 2");
-  asm_.push_back("    la $t0, " + data_map_[tokens[2]].first);
-  asm_.push_back("    add $t0, $t0, $t1");
-  asm_.push_back("    srl $t1, $t1, 2");
+  std::string reg = load(tokens[3], "$t9");
+  asm_.push_back("    sll " + reg + ", " + reg + ", 2");
+  asm_.push_back("    la $t8, " + data_map_[tokens[2]].first);
+  asm_.push_back("    add $t8, $t8, " + reg);
+  asm_.push_back("    srl " + reg + ", " + reg + ", 2");
   if (data_map_[tokens[2]].second == FLOAT) {
-    asm_.push_back("    lwc1 $f1, 0($t0)");
-    asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
-    asm_.push_back("    swc1 $f1, 0($t0)");
+    asm_.push_back("    lwc1 $f16, 0($t8)");
+    store(tokens[1], "$f16");
   } else {
-    asm_.push_back("    lw  $t1, 0($t0)");
-    asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
-    asm_.push_back("    sw $t1, 0($t0)");
+    asm_.push_back("    lw  $t8, 0($t8)");
+    store(tokens[1], "$t8");
   }
 }
 
 void GenCFG::array_store_asm(std::vector<std::string>& tokens) {
-  std::string reg = load(tokens[2], "$t8");
+  std::string reg = load(tokens[2], "$t9");
   asm_.push_back("    sll " + reg + ", " + reg + ", 2");
-  asm_.push_back("    la $t9, " + data_map_[tokens[1]].first);
-  asm_.push_back("    add $t9, $t9, " + reg);
+  asm_.push_back("    la $t8, " + data_map_[tokens[1]].first);
+  asm_.push_back("    add $t8, $t8, " + reg);
   asm_.push_back("    srl " + reg + ", " + reg + ", 2");
   if (data_map_[tokens[1]].second == FLOAT) {
-    asm_.push_back("    swc1 " + load(tokens[3], "$16") + ", 0($t9)");
+    asm_.push_back("    swc1 " + load(tokens[3], "$f16") + ", 0($t8)");
   } else {
-    asm_.push_back("    sw " + load(tokens[3], "$t8") + ", 0($t9)");
+    asm_.push_back("    sw " + load(tokens[3], "$t9") + ", 0($t8)");
   }
 }
 
@@ -484,8 +480,8 @@ void GenCFG::condition_asm(std::vector<std::string>& tokens) {
     cond_asm = "bne";
   }
 
-  std::string reg1 = load(tokens[1], "t8");
-  std::string reg2 = load(tokens[2], "t9");
+  std::string reg1 = load(tokens[1], "$t8");
+  std::string reg2 = load(tokens[2], "$t9");
 
   asm_.push_back("    " + cond_asm + ", " + reg1 + ", " + reg2 + ", " +
                  tokens[3]);
@@ -567,7 +563,9 @@ void GenCFG::text_seg() {
       asm_.push_back("\n    # IR:" + line);
       operator_asm(tokens);
     } else if (tokens[0] == "goto") {
+      block_release(i);
       asm_.push_back("    j " + tokens[1]);
+      continue;
     } else if (tokens[0] == "breq" || tokens[0] == "brneq" ||
                tokens[0] == "brlt" || tokens[0] == "brgt" ||
                tokens[0] == "brgeq" || tokens[0] == "brleq") {

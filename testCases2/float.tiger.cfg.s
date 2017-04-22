@@ -172,7 +172,7 @@
 # Default select cfg technique to optimize IR code ...
 
 # Detect block 0 IR line : 8 ~ 11
-#### A#### A
+
 
 #----------------------------------------
 # Generate ASM CODE ...
@@ -354,7 +354,7 @@ printf:
     # IR:    add, n, 5.0, f0
     la $t9, num_5_0
     lwc1 $f17, 0($t9)
-    add.s $f12, $f12, $f17
+    add.s  $f12, $f12, $f17
     la $t9, f0
     swc1 $f12, 0($t9)
 
