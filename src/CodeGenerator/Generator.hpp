@@ -127,6 +127,7 @@ class GenCFG final : public Generator {
   std::map<variable_t, live_range_t> live_ranges_;
   std::map<variable_t, reg_t> regs_;
   std::vector<std::vector<std::string>> vars_;
+  std::set<std::string> arrays_;
 };
 
 class GenEBB final : public Generator {
