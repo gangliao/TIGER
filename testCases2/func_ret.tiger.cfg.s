@@ -2,7 +2,7 @@
 
 # [ RUN ] parsing code... 
 
-
+# let var id : int := intlit ; function id ( id : int ) : int begin return id * intlit ; end ; in id := id ( id ) ; id ( id ) ; end  
 
 # ----------------------------------------
 # Table: # Variables
@@ -58,6 +58,19 @@
 
 # ----------------------------------------
 # Table: # Functions
+# Name: fact
+# ----------------------------------------
+# Scope: 0
+# Type: -
+# Dimension: -
+# Parameters: [n]
+# Parameter types: [int]
+# Parameter dimensions: [0]
+# Return type: int
+
+
+# ----------------------------------------
+# Table: # Functions
 # Name: flush
 # ----------------------------------------
 # Scope: 0
@@ -84,19 +97,6 @@
 
 # ----------------------------------------
 # Table: # Functions
-# Name: print
-# ----------------------------------------
-# Scope: 0
-# Type: -
-# Dimension: -
-# Parameters: [n]
-# Parameter types: [int]
-# Parameter dimensions: [0]
-# Return type: -
-
-
-# ----------------------------------------
-# Table: # Functions
 # Name: printi
 # ----------------------------------------
 # Scope: 0
@@ -113,6 +113,25 @@
 # [ OK ] successful parse...
 
 
+# ----------------------------------------
+# Generate IR CODE ...
+# ----------------------------------------
+#     assign, m, 5,
+# fact:
+#     mult, n, 2, t0
+#     return, t0, ,
+# main:
+#     callr, m, fact, m
+#     call, printi, m
+#     return, , ,
+# ----------------------------------------
+
+
+# Default select cfg technique to optimize IR code ...
+
+# Detect block 0 IR line : 5 ~ 8
+
+
 #----------------------------------------
 # Generate ASM CODE ...
 #----------------------------------------
@@ -122,6 +141,8 @@
 m: 		.word 	5
 num_5: 		.word 	5
 n: 		.word 	0
+num_2: 		.word 	2
+t0: 		.word 	0
 
 # Beginning of the code section
 
@@ -245,15 +266,15 @@ lib_not_end:
 main:
 
     # IR:    assign, m, 5,
-    la $t4, num_5
-    lw $t5, 0($t4)
-    la $t4, m
-    sw $t5, 0($t4)
+    la $t9, num_5
+    lw $t8, 0($t9)
+    la $t9, m
+    sw $t8, 0($t9)
 
     # IR: goto, main0
     j main0
 
-print:
+fact:
 
     sw $s0, -4($sp)
     sw $s1, -8($sp)
@@ -267,42 +288,18 @@ print:
     sw $ra, -4($sp)
     addi $sp, $sp, -4
 
-    # IR:    call, printi, n
-    sw $t4, -4($sp)
-    sw $t5, -8($sp)
-    sw $t6, -12($sp)
-    sw $t7, -16($sp)
-    sw $t8, -20($sp)
-    sw $t9, -24($sp)
-    addi $sp, $sp, -24
-    swc1 $f12, -4($sp)
-    swc1 $f13, -8($sp)
-    swc1 $f14, -12($sp)
-    addi $sp, $sp, -12
-    sw $a0, -4($sp)
-    sw $a1, -8($sp)
-    sw $a2, -12($sp)
-    sw $a3, -16($sp)
-    addi $sp, $sp, -16
-    jal lib_printi
-    addi $sp, $sp, 16
-    lw $a0, -4($sp)
-    lw $a1, -8($sp)
-    lw $a2, -12($sp)
-    lw $a3, -16($sp)
-    addi $sp, $sp, 12
-    lwc1 $f12, -4($sp)
-    lwc1 $f13, -8($sp)
-    lwc1 $f14, -12($sp)
-    addi $sp, $sp, 24
-    lw $t4, -4($sp)
-    lw $t5, -8($sp)
-    lw $t6, -12($sp)
-    lw $t7, -16($sp)
-    lw $t8, -20($sp)
-    lw $t9, -24($sp)
+    # IR:    mult, n, 2, t0
+    la $t9, num_2
+    lw $t9, 0($t9)
+    mult $a0, $t9
+    mflo $a0
+    la $t9, t0
+    sw $a0, 0($t9)
 
-    # IR:    return, , ,
+    # IR:    return, t0, ,
+    la $t9, t0
+    lw $t8, 0($t9)
+    move $v0, $t8
     addi $sp, $sp, 4
     lw $ra, -4($sp)
     addi $sp, $sp, 32
@@ -330,7 +327,12 @@ main0:
     sw $ra, -4($sp)
     addi $sp, $sp, -4
 
-    # IR:    call, print, m
+    # Enter block and load vars into registers ... 
+
+    la $t9, m
+    lw $t0, 0($t9)
+
+    # IR:    callr, m, fact, m
     sw $t4, -4($sp)
     sw $t5, -8($sp)
     sw $t6, -12($sp)
@@ -347,9 +349,8 @@ main0:
     sw $a2, -12($sp)
     sw $a3, -16($sp)
     addi $sp, $sp, -16
-    la $t4, m
-    lw $a0, 0($t4)
-    jal print
+    move $a0, $t0
+    jal fact
     addi $sp, $sp, 16
     lw $a0, -4($sp)
     lw $a1, -8($sp)
@@ -366,6 +367,48 @@ main0:
     lw $t7, -16($sp)
     lw $t8, -20($sp)
     lw $t9, -24($sp)
+    move $t0, $v0
+
+    # IR:    call, printi, m
+    sw $t4, -4($sp)
+    sw $t5, -8($sp)
+    sw $t6, -12($sp)
+    sw $t7, -16($sp)
+    sw $t8, -20($sp)
+    sw $t9, -24($sp)
+    addi $sp, $sp, -24
+    swc1 $f12, -4($sp)
+    swc1 $f13, -8($sp)
+    swc1 $f14, -12($sp)
+    addi $sp, $sp, -12
+    sw $a0, -4($sp)
+    sw $a1, -8($sp)
+    sw $a2, -12($sp)
+    sw $a3, -16($sp)
+    addi $sp, $sp, -16
+    move $a0, $t0
+    jal lib_printi
+    addi $sp, $sp, 16
+    lw $a0, -4($sp)
+    lw $a1, -8($sp)
+    lw $a2, -12($sp)
+    lw $a3, -16($sp)
+    addi $sp, $sp, 12
+    lwc1 $f12, -4($sp)
+    lwc1 $f13, -8($sp)
+    lwc1 $f14, -12($sp)
+    addi $sp, $sp, 24
+    lw $t4, -4($sp)
+    lw $t5, -8($sp)
+    lw $t6, -12($sp)
+    lw $t7, -16($sp)
+    lw $t8, -20($sp)
+    lw $t9, -24($sp)
+
+    # Leave block and save registers into vars ... 
+
+    la $t9, m
+    sw $t0, 0($t9)
 
     # IR:    return, , ,
     addi $sp, $sp, 4
