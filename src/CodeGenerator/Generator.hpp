@@ -100,7 +100,8 @@ class GenCFG final : public Generator {
   void gen_opt_ir();
   graph_ptr build_graph(size_t id);
   void graph_coloring(size_t id, graph_ptr graph);
-  void block_init_release(size_t line_id);
+  void block_init(size_t line_id);
+  void block_release(size_t line_id);
 
   // generate asm code based on code sgement
   void assign_asm(std::vector<std::string>& tokens);

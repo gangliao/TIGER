@@ -2,15 +2,54 @@
 
 # [ RUN ] parsing code... 
 
+# let type id = array [ intlit ] of float ; var id , id : float ; var id : id := floatlit ; function id ( id : float ) begin id := id + floatlit ; end ; in id := floatlit ; id ( id ) ; end  
+
+# ----------------------------------------
+# Table: # Variables
+# Name: A
+# ----------------------------------------
+# Scope: 0
+# Type: float
+# Dimension: 0
+# Parameters: -
+# Parameter types: -
+# Parameter dimensions: -
+# Return type: -
 
 
 # ----------------------------------------
 # Table: # Variables
-# Name: m
+# Name: B
 # ----------------------------------------
 # Scope: 0
-# Type: int
+# Type: float
 # Dimension: 0
+# Parameters: -
+# Parameter types: -
+# Parameter dimensions: -
+# Return type: -
+
+
+# ----------------------------------------
+# Table: # Variables
+# Name: C
+# ----------------------------------------
+# Scope: 0
+# Type: float
+# Dimension: 5
+# Parameters: -
+# Parameter types: -
+# Parameter dimensions: -
+# Return type: -
+
+
+# ----------------------------------------
+# Table: # Types
+# Name: ArrayFloat
+# ----------------------------------------
+# Scope: 0
+# Type: float
+# Dimension: 5
 # Parameters: -
 # Parameter types: -
 # Parameter dimensions: -
@@ -84,13 +123,13 @@
 
 # ----------------------------------------
 # Table: # Functions
-# Name: print
+# Name: printf
 # ----------------------------------------
 # Scope: 0
 # Type: -
 # Dimension: -
 # Parameters: [n]
-# Parameter types: [int]
+# Parameter types: [float]
 # Parameter dimensions: [0]
 # Return type: -
 
@@ -113,13 +152,38 @@
 # [ OK ] successful parse...
 
 
+# ----------------------------------------
+# Generate IR CODE ...
+# ----------------------------------------
+#     assign, A, 0.0,
+#     assign, B, 0.0,
+#     assign, C, 5, 2.5
+# printf:
+#     add, n, 5.0, f0
+#     assign, B, f0,
+#     return, , ,
+# main:
+#     assign, A, 1.5,
+#     call, printf, A
+#     return, , ,
+# ----------------------------------------
+
+
+
 #----------------------------------------
 # Generate ASM CODE ...
 #----------------------------------------
 # Beginning of the data section
 
 .data
-m: 		.word 	5
+A: 		.float 	0.0
+num_0_0: 	.float 	0.0
+B: 		.float 	0.0
+C: 		.space 	20
+num_2_5: 	.float 	2.5
+num_5_0: 	.float 	5.0
+f0: 		.float 	0.0
+num_1_5: 	.float 	1.5
 num_5: 		.word 	5
 n: 		.word 	0
 
@@ -244,16 +308,32 @@ lib_not_end:
 
 main:
 
-    # IR:    assign, m, 5,
-    la $t4, num_5
-    lw $t5, 0($t4)
-    la $t4, m
-    sw $t5, 0($t4)
+    # IR:    assign, A, 0.0,
+    la $t4, num_0_0
+    lwc1 $f1, 0($t4)
+    la $t4, A
+    swc1 $f1, 0($t4)
+
+    # IR:    assign, B, 0.0,
+    la $t4, num_0_0
+    lwc1 $f1, 0($t4)
+    la $t4, B
+    swc1 $f1, 0($t4)
+
+    # IR:    assign, C, 5, 2.5
+    la $t0, num_2_5
+    lwc1 $f1, 0($t0)
+    la $t0, C
+    swc1 $f1, 4($t0)
+    swc1 $f1, 8($t0)
+    swc1 $f1, 12($t0)
+    swc1 $f1, 16($t0)
+    swc1 $f1, 20($t0)
 
     # IR: goto, main0
     j main0
 
-print:
+printf:
 
     sw $s0, -4($sp)
     sw $s1, -8($sp)
@@ -267,40 +347,18 @@ print:
     sw $ra, -4($sp)
     addi $sp, $sp, -4
 
-    # IR:    call, printi, n
-    sw $t4, -4($sp)
-    sw $t5, -8($sp)
-    sw $t6, -12($sp)
-    sw $t7, -16($sp)
-    sw $t8, -20($sp)
-    sw $t9, -24($sp)
-    addi $sp, $sp, -24
-    swc1 $f12, -4($sp)
-    swc1 $f13, -8($sp)
-    swc1 $f14, -12($sp)
-    addi $sp, $sp, -12
-    sw $a0, -4($sp)
-    sw $a1, -8($sp)
-    sw $a2, -12($sp)
-    sw $a3, -16($sp)
-    addi $sp, $sp, -16
-    jal lib_printi
-    addi $sp, $sp, 16
-    lw $a0, -4($sp)
-    lw $a1, -8($sp)
-    lw $a2, -12($sp)
-    lw $a3, -16($sp)
-    addi $sp, $sp, 12
-    lwc1 $f12, -4($sp)
-    lwc1 $f13, -8($sp)
-    lwc1 $f14, -12($sp)
-    addi $sp, $sp, 24
-    lw $t4, -4($sp)
-    lw $t5, -8($sp)
-    lw $t6, -12($sp)
-    lw $t7, -16($sp)
-    lw $t8, -20($sp)
-    lw $t9, -24($sp)
+    # IR:    add, n, 5.0, f0
+    la $t4, num_5_0
+    lwc1 $f2, 0($t4)
+    add.s $f12, $f12, $f2
+    la $t4, f0
+    swc1 $f12, 0($t4)
+
+    # IR:    assign, B, f0,
+    la $t4, f0
+    lwc1 $f1, 0($t4)
+    la $t4, B
+    swc1 $f1, 0($t4)
 
     # IR:    return, , ,
     addi $sp, $sp, 4
@@ -330,7 +388,13 @@ main0:
     sw $ra, -4($sp)
     addi $sp, $sp, -4
 
-    # IR:    call, print, m
+    # IR:    assign, A, 1.5,
+    la $t4, num_1_5
+    lwc1 $f1, 0($t4)
+    la $t4, A
+    swc1 $f1, 0($t4)
+
+    # IR:    call, printf, A
     sw $t4, -4($sp)
     sw $t5, -8($sp)
     sw $t6, -12($sp)
@@ -347,9 +411,9 @@ main0:
     sw $a2, -12($sp)
     sw $a3, -16($sp)
     addi $sp, $sp, -16
-    la $t4, m
-    lw $a0, 0($t4)
-    jal print
+    la $t4, A
+    lwc1 $f12, 0($t4)
+    jal printf
     addi $sp, $sp, 16
     lw $a0, -4($sp)
     lw $a1, -8($sp)

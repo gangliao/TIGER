@@ -2,67 +2,15 @@
 
 # [ RUN ] parsing code... 
 
-
-
-# ----------------------------------------
-# Table: # Variables
-# Name: A
-# ----------------------------------------
-# Scope: 0
-# Type: float
-# Dimension: 5
-# Parameters: -
-# Parameter types: -
-# Parameter dimensions: -
-# Return type: -
-
+# let var id : int := intlit ; function id ( id : int ) : int begin return id * intlit ; end ; in id := id ( id ) ; id ( id ) ; end  
 
 # ----------------------------------------
 # Table: # Variables
-# Name: B
-# ----------------------------------------
-# Scope: 0
-# Type: float
-# Dimension: 0
-# Parameters: -
-# Parameter types: -
-# Parameter dimensions: -
-# Return type: -
-
-
-# ----------------------------------------
-# Table: # Variables
-# Name: f1
-# ----------------------------------------
-# Scope: 0
-# Type: float
-# Dimension: 0
-# Parameters: -
-# Parameter types: -
-# Parameter dimensions: -
-# Return type: -
-
-
-# ----------------------------------------
-# Table: # Variables
-# Name: i
+# Name: m
 # ----------------------------------------
 # Scope: 0
 # Type: int
 # Dimension: 0
-# Parameters: -
-# Parameter types: -
-# Parameter dimensions: -
-# Return type: -
-
-
-# ----------------------------------------
-# Table: # Types
-# Name: ArrayFloat
-# ----------------------------------------
-# Scope: 0
-# Type: float
-# Dimension: 5
 # Parameters: -
 # Parameter types: -
 # Parameter dimensions: -
@@ -110,6 +58,19 @@
 
 # ----------------------------------------
 # Table: # Functions
+# Name: fact
+# ----------------------------------------
+# Scope: 0
+# Type: -
+# Dimension: -
+# Parameters: [n]
+# Parameter types: [int]
+# Parameter dimensions: [0]
+# Return type: int
+
+
+# ----------------------------------------
+# Table: # Functions
 # Name: flush
 # ----------------------------------------
 # Scope: 0
@@ -136,19 +97,6 @@
 
 # ----------------------------------------
 # Table: # Functions
-# Name: printf
-# ----------------------------------------
-# Scope: 0
-# Type: -
-# Dimension: -
-# Parameters: [n]
-# Parameter types: [float]
-# Parameter dimensions: [0]
-# Return type: -
-
-
-# ----------------------------------------
-# Table: # Functions
 # Name: printi
 # ----------------------------------------
 # Scope: 0
@@ -165,26 +113,36 @@
 # [ OK ] successful parse...
 
 
+# ----------------------------------------
+# Generate IR CODE ...
+# ----------------------------------------
+#     assign, m, 5,
+# fact:
+#     mult, n, 2, t0
+#     return, t0, ,
+# main:
+#     callr, m, fact, m
+#     call, printi, m
+#     return, , ,
+# ----------------------------------------
+
+
+# Default select cfg technique to optimize IR code ...
+
+# Detect block 0 IR line : 5 ~ 8
+#### m#### m#### m
+
 #----------------------------------------
 # Generate ASM CODE ...
 #----------------------------------------
 # Beginning of the data section
 
 .data
-A: 		.space 	20
-num_2_5: 	.float 	2.5
-B: 		.float 	0.0
-num_0_0: 	.float 	0.0
-num_5_0: 	.float 	5.0
-f0: 		.float 	0.0
-num_1_5: 	.float 	1.5
-f1: 		.float 	0.0
+m: 		.word 	5
 num_5: 		.word 	5
-i: 		.word 	0
-num_0: 		.word 	0
 n: 		.word 	0
-num_4: 		.word 	4
-num_1: 		.word 	1
+num_2: 		.word 	2
+t0: 		.word 	0
 
 # Beginning of the code section
 
@@ -307,32 +265,16 @@ lib_not_end:
 
 main:
 
-    # IR:    assign, A, 5, 2.5
-    la $t0, num_2_5
-    lwc1 $f1, 0($t0)
-    la $t0, A
-    swc1 $f1, 4($t0)
-    swc1 $f1, 8($t0)
-    swc1 $f1, 12($t0)
-    swc1 $f1, 16($t0)
-    swc1 $f1, 20($t0)
-
-    # IR:    assign, B, 0.0,
-    la $t4, num_0_0
-    lwc1 $f1, 0($t4)
-    la $t4, B
-    swc1 $f1, 0($t4)
-
-    # IR:    assign, i, 0,
-    la $t4, num_0
-    lw $t5, 0($t4)
-    la $t4, i
-    sw $t5, 0($t4)
+    # IR:    assign, m, 5,
+    la $t9, num_5
+    lw $t8, 0($t9)
+    la $t9, m
+    sw $t8, 0($t9)
 
     # IR: goto, main0
     j main0
 
-printf:
+fact:
 
     sw $s0, -4($sp)
     sw $s1, -8($sp)
@@ -346,20 +288,18 @@ printf:
     sw $ra, -4($sp)
     addi $sp, $sp, -4
 
-    # IR:    add, n, 5.0, f0
-    la $t4, num_5_0
-    lwc1 $f2, 0($t4)
-    add.s $f12, $f12, $f2
-    la $t4, f0
-    swc1 $f12, 0($t4)
+    # IR:    mult, n, 2, t0
+    la $t9, num_2
+    lw $t9, 0($t9)
+    mult $a0, $t9
+    mflo $a0
+    la $t9, t0
+    sw $a0, 0($t9)
 
-    # IR:    assign, B, f0,
-    la $t4, f0
-    lwc1 $f1, 0($t4)
-    la $t4, B
-    swc1 $f1, 0($t4)
-
-    # IR:    return, , ,
+    # IR:    return, t0, ,
+    la $t9, t0
+    lw $t8, 0($t9)
+    move $v0, $t8
     addi $sp, $sp, 4
     lw $ra, -4($sp)
     addi $sp, $sp, 32
@@ -387,43 +327,12 @@ main0:
     sw $ra, -4($sp)
     addi $sp, $sp, -4
 
-    # IR:    array_store, A, 4, 1.5
-    la $t0, num_1_5
-    lwc1 $f1, 0($t0)
-    la $t0, num_4
-    lw $t2, 0($t0)
-    sll $t2, $t2, 2
-    la $t0, A
-    add $t0, $t0, $t2
-    srl $t2, $t2, 2
-    swc1 $f1, 0($t0)
+    # Enter block and load vars into registers ... 
 
-    # IR:    assign, i, 0,
-    la $t4, num_0
-    lw $t5, 0($t4)
-    la $t4, i
-    sw $t5, 0($t4)
-loop_label0:
+    la $t9, m
+    lw $t0, 0($t9)
 
-    # IR:    brgt, i, 5, loop_label1
-    la $t0, i
-    lw $t1, 0($t0)
-    la $t0, num_5
-    lw $t2, 0($t0)
-    bgt, $t1, $t2, loop_label1
-
-    # IR:    array_load, f1, A, i
-    la $t0, i
-    lw $t1, 0($t0)
-    sll $t1, $t1, 2
-    la $t0, A
-    add $t0, $t0, $t1
-    srl $t1, $t1, 2
-    lwc1 $f1, 0($t0)
-    la $t0, f1
-    swc1 $f1, 0($t0)
-
-    # IR:    call, printf, f1
+    # IR:    callr, m, fact, m
     sw $t4, -4($sp)
     sw $t5, -8($sp)
     sw $t6, -12($sp)
@@ -440,9 +349,45 @@ loop_label0:
     sw $a2, -12($sp)
     sw $a3, -16($sp)
     addi $sp, $sp, -16
-    la $t4, f1
-    lwc1 $f12, 0($t4)
-    jal printf
+    move $a0, $t0
+    jal fact
+    addi $sp, $sp, 16
+    lw $a0, -4($sp)
+    lw $a1, -8($sp)
+    lw $a2, -12($sp)
+    lw $a3, -16($sp)
+    addi $sp, $sp, 12
+    lwc1 $f12, -4($sp)
+    lwc1 $f13, -8($sp)
+    lwc1 $f14, -12($sp)
+    addi $sp, $sp, 24
+    lw $t4, -4($sp)
+    lw $t5, -8($sp)
+    lw $t6, -12($sp)
+    lw $t7, -16($sp)
+    lw $t8, -20($sp)
+    lw $t9, -24($sp)
+    move $t0, $v0
+
+    # IR:    call, printi, m
+    sw $t4, -4($sp)
+    sw $t5, -8($sp)
+    sw $t6, -12($sp)
+    sw $t7, -16($sp)
+    sw $t8, -20($sp)
+    sw $t9, -24($sp)
+    addi $sp, $sp, -24
+    swc1 $f12, -4($sp)
+    swc1 $f13, -8($sp)
+    swc1 $f14, -12($sp)
+    addi $sp, $sp, -12
+    sw $a0, -4($sp)
+    sw $a1, -8($sp)
+    sw $a2, -12($sp)
+    sw $a3, -16($sp)
+    addi $sp, $sp, -16
+    move $a0, $t0
+    jal lib_printi
     addi $sp, $sp, 16
     lw $a0, -4($sp)
     lw $a1, -8($sp)
@@ -460,16 +405,10 @@ loop_label0:
     lw $t8, -20($sp)
     lw $t9, -24($sp)
 
-    # IR:    add, i, 1, i
-    la $t4, i
-    lw $t4, 0($t4)
-    la $t4, num_1
-    lw $t5, 0($t4)
-    add$t4, $t4, $t5
-    la $t4, i
-    sw $t4, 0($t4)
-    j loop_label0
-loop_label1:
+    # Leave block and save registers into vars ... 
+
+    la $t9, m
+    sw $t0, 0($t9)
 
     # IR:    return, , ,
     addi $sp, $sp, 4

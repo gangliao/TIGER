@@ -1512,7 +1512,7 @@ void Parser::parse() {
   TokenPair* word = scanner.getToken();
   std::cout << "\n\n# [ RUN ] parsing code... \n\n";
   if (printDebug == true) {
-    std::cout << terminalMapped_[word->getTokenType().getValue()] << " ";
+    std::cout << "# " << terminalMapped_[word->getTokenType().getValue()] << " ";
   }
 
   int focus;
@@ -1697,7 +1697,7 @@ void printHelp() {
  */
 int main(int argc, char** argv) {
   // The user has given us a bad number of args
-  if (argc > 3 || argc < 1) {
+  if (argc > 4 || argc < 1) {
     printHelp();
     return 0;
   }
@@ -1717,9 +1717,21 @@ int main(int argc, char** argv) {
   // output IR
   parser.ir_code();
 
-  GenNaive gen(parser.get_ir(), parser.get_func_info());
-  gen.generate();
-  gen.dump();
+  Generator* gen;
+  if (argc > 3 && strcmp(argv[3], "-naive") == 0) {
+    gen = new GenNaive(parser.get_ir(), parser.get_func_info());
+  } else if (argc > 3 && strcmp(argv[3], "-cfg") == 0) {
+    gen = new GenCFG(parser.get_ir(), parser.get_func_info());
+  } else if (argc > 3 && strcmp(argv[3], "-ebb") == 0) {
+    std::cerr << "\nCompiler Back End Optimization Technique EBB is Not "
+                 "Implemented!\n";
+    std::exit(EXIT_FAILURE);
+  } else {
+    std::cout << "\n# Default select cfg technique to optimize IR code ...\n";
+    gen = new GenCFG(parser.get_ir(), parser.get_func_info());
+  }
+  gen->generate();
+  gen->dump();
 
   // Close all open files like
   parser.outFile.close();

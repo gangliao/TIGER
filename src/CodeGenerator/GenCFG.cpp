@@ -83,13 +83,19 @@ void GenCFG::find_blocks() {
   for (size_t i = 0; i < ir_.size(); ++i) {
     std::vector<std::string> tokens;
     tokens = cvt2tokens(i);
-    if (tokens[0].find(":") != std::string::npos ||
-        tokens[0].find("label") != std::string::npos) {
+    if (tokens[0].find("main:") != std::string::npos ||
+        (tokens[0].find(":") != std::string::npos &&
+         tokens[0].find("label") != std::string::npos)) {
       line_num.push_back(i);
     }
   }
   for (size_t i = 0; i < line_num.size(); ++i) {
-    block_t block = {line_num[i] + 1, line_num[i + 1] - 1};
+    size_t range_beg = line_num[i] + 1;
+    size_t range_end =
+        line_num.size() == (i + 1) ? ir_.size(): line_num[i + 1];
+    block_t block = {range_beg, range_end};
+    std::cout << "\n# Detect block " << i << " IR line : " << range_beg << " ~ "
+              << range_end << std::endl;
     blocks_.push_back(block);
   }
 }
@@ -117,9 +123,10 @@ void GenCFG::graph_coloring(size_t id, graph_ptr graph) {
     for (size_t i = 0; i < size; ++i) {
       if (table[i] == 0) {
         regs[var] = i;  // store into register
+        break;
       }
     }
-    if (regs.find(var) != regs.end()) {
+    if (regs.find(var) == regs.end()) {
       regs[var] = -1;  // store into memory
     }
     regs_[{id, var}] = regs[var];
@@ -135,15 +142,17 @@ graph_ptr GenCFG::build_graph(size_t id) {
     std::string var = vars_[id][i];
     size_t beg_pos = live_ranges_[{id, var}].start_pos_;
     size_t end_pos = live_ranges_[{id, var}].end_pos_;
+    std::vector<std::string> temp_vec;
     for (size_t j = 0; j < size; ++j) {
       if (i == j) continue;
       std::string temp_var = vars_[id][j];
       size_t temp_beg = live_ranges_[{id, temp_var}].start_pos_;
       size_t temp_end = live_ranges_[{id, temp_var}].end_pos_;
       if (end_pos >= temp_beg && beg_pos <= temp_end) {
-        (*graph)[var].push_back(temp_var);
+        temp_vec.push_back(temp_var);
       }
     }
+    (*graph)[var] = temp_vec;
   }
   return graph;
 }
@@ -155,6 +164,7 @@ void GenCFG::analyse_live() {
     size_t beg_pos = blocks_[i].start_pos_;
     size_t end_pos = blocks_[i].end_pos_;
     std::vector<std::string> tokens;
+    std::set<std::string> vars;
     for (size_t j = beg_pos; j < end_pos; ++j) {
       tokens = cvt2tokens(j);
       size_t i = 0;
@@ -166,10 +176,17 @@ void GenCFG::analyse_live() {
         if (token.find("label") != std::string::npos) continue;
         // if it's a variable
         if (!is_num(token) && arrays_.find(token) == arrays_.end()) {
-          vars_[i].push_back(token);
+          vars.insert(token);
         }
       }
     }
+    
+    std::vector<std::string> temp_vars;
+    temp_vars.reserve(vars.size());
+    for (auto& var : vars) {
+      temp_vars.push_back(var);
+    }
+    vars_.push_back(std::move(temp_vars));
   }
   // lamda function: analyse live range
   size_t live_beg, live_end;
@@ -182,6 +199,7 @@ void GenCFG::analyse_live() {
       if (line.find(var_name) != std::string::npos) {
         if (times++ == 0) {
           live_beg = j;
+          live_end = j;
         } else {
           live_end = j;
         }
@@ -222,7 +240,9 @@ std::string GenCFG::alloc_reg(std::string token) {
   }
 
   if (is_inside_block_ == true) {
-    if (regs_[{block_id_, token}] != -1) {
+    if (regs_.find({block_id_, token}) != regs_.end() &&
+      regs_[{block_id_, token}] != -1) {
+      std::cout << "#### " << token;
       if (data_map_[token].second == FLOAT) {
         return "$f" + std::to_string(regs_[{block_id_, token}]);
       } else {
@@ -380,10 +400,10 @@ void GenCFG::call_asm(std::vector<std::string>& tokens) {
   }
   for (size_t i = 0; i < param_size; ++i) {
     if (data_map_[tokens[param_idx]].second == INT) {
-      asm_.push_back("move $a" + std::to_string(i) + ", " +
+      asm_.push_back("    move $a" + std::to_string(i) + ", " +
                      load(tokens[param_idx + i]));
     } else {
-      asm_.push_back("mov.s $f" + std::to_string(i + 12) + ", " +
+      asm_.push_back("    mov.s $f" + std::to_string(i + 12) + ", " +
                      load(tokens[param_idx + i]));
     }
   }
@@ -410,9 +430,9 @@ void GenCFG::call_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    lw $t9, -24($sp)");
   if (tokens[0] == "callr") {
     if (data_map_[tokens[1]].second == INT) {
-      asm_.push_back("    move $v0, " + load(tokens[1]));
+      asm_.push_back("    move " + load(tokens[1]) + ", $v0");
     } else {
-      asm_.push_back("    mov.s $v0, " + load(tokens[1]));
+      asm_.push_back("    mov.s " + load(tokens[1]) + ", $v0");
     }
   }
 }
@@ -538,7 +558,7 @@ void GenCFG::text_seg() {
     std::vector<std::string> tokens;
     tokens = cvt2tokens(line);
     // init block variables or release block registers
-    block_init_release(i);
+    block_init(i);
     if (tokens[0] == "assign") {
       asm_.push_back("\n    # IR:" + line);
       assign_asm(tokens);
@@ -554,8 +574,10 @@ void GenCFG::text_seg() {
       asm_.push_back("\n    # IR:" + line);
       condition_asm(tokens);
     } else if (tokens[0] == "return") {
+      block_release(i);
       asm_.push_back("\n    # IR:" + line);
       return_asm(tokens);
+      continue;
     } else if (tokens[0] == "call" || tokens[0] == "callr") {
       asm_.push_back("\n    # IR:" + line);
       call_asm(tokens);
@@ -598,11 +620,13 @@ void GenCFG::text_seg() {
         asm_.push_back(tokens[0]);
       }
     }
+    block_release(i);
   }
 }
 
-void GenCFG::block_init_release(size_t line_id) {
+void GenCFG::block_init(size_t line_id) {
   if (blocks_[block_id_].start_pos_ == line_id) {
+    asm_.push_back("\n    # Enter block and load vars into registers ... \n");
     // load a set of variable you expected to use
     auto& vars = vars_[block_id_];
     for (size_t i = 0; i < vars.size(); ++i) {
@@ -616,7 +640,14 @@ void GenCFG::block_init_release(size_t line_id) {
     }
     // enter into block
     is_inside_block_ = true;
-  } else if (blocks_[block_id_].end_pos_ == line_id) {
+  }
+}
+
+void GenCFG::block_release(size_t line_id) {
+  if (blocks_[block_id_].end_pos_ - 1 == line_id) {
+    // leave this block
+    is_inside_block_ = false;
+    asm_.push_back("\n    # Leave block and save registers into vars ... \n");
     // save a set of variable in registers
     auto& vars = vars_[block_id_];
     for (size_t i = 0; i < vars.size(); ++i) {
@@ -628,21 +659,15 @@ void GenCFG::block_init_release(size_t line_id) {
         }
       }
     }
-    // leave this block
-    is_inside_block_ = false;
+
     // detect the next block
     block_id_++;
   }
 }
 
-// std::vector<block_t> blocks_;
-// std::map<variable_t, live_range_t> live_ranges_;
-// std::map<variable_t, reg_t> regs_;
-// std::vector<std::vector<std::string>> vars_;
-
 void GenCFG::generate() {
-  find_blocks();   // detect blocks
-  analyse_live();  // live range analysis
   data_seg();
+  find_blocks();  // detect blocks
+  analyse_live(); // live range analysis
   text_seg();
 }
