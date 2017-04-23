@@ -5,6 +5,8 @@
 This compiler includes both front end and back end.
 
 > Front end: Grammar Rules, LL(1) Parse Table, Syntax and Semantic Check and Intermediate Code.
+
+
 > Back end: IR Optimization (Intra-block CFG optimization), MIPS Register Allocation, Instruction Selection and Code Generation.
 
 
@@ -45,10 +47,10 @@ This compiler includes both front end and back end.
 
 3. test:
 
-	In `/testCases2` directory, it includes a test script `test.sh` to execute all test cases and
+	In [testCases2](testCases2) directory, it includes a test script `test.sh` to execute all test cases and
 	generate the corresponding asm files `*.naive.s` and `*.cfg.s`.
 
-	You can simply issue the commands:
+	After souce code is compiled, you can simply issue the commands:
 
 	```bash
 	cd testCases2
