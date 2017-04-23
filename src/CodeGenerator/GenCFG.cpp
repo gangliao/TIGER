@@ -70,10 +70,10 @@ void GenCFG::data_seg() {
     }
   }
   asm_.reserve(data_word.size() + data_float.size());
-  for (auto& data : data_float) {
-    asm_.push_back(data);
-  }
   for (auto& data : data_word) {
+    asm_.push_back(data);
+  }  
+  for (auto& data : data_float) {
     asm_.push_back(data);
   }
 }
@@ -334,7 +334,7 @@ void GenCFG::assign_asm(std::vector<std::string>& tokens) {
       asm_.push_back("    lw $t1, 0($t0)");
       asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
       for (size_t i = 0; i < size; ++i) {
-        asm_.push_back("    lw $t1, " + std::to_string(4 * (i + 1)) + "($t0)");
+        asm_.push_back("    sw $t1, " + std::to_string(4 * (i + 1)) + "($t0)");
       }
     }
   } else if (tokens.size() == 3) {

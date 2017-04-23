@@ -180,6 +180,8 @@
 # Beginning of the data section
 
 .data
+num_5: 		.word 	5
+n: 		.word 	0
 A: 		.float 	0.0
 num_0_0: 	.float 	0.0
 B: 		.float 	0.0
@@ -188,8 +190,6 @@ num_2_5: 	.float 	2.5
 num_5_0: 	.float 	5.0
 f0: 		.float 	0.0
 num_1_5: 	.float 	1.5
-num_5: 		.word 	5
-n: 		.word 	0
 
 # Beginning of the code section
 
