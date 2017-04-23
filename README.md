@@ -9,12 +9,13 @@ This tiny compiler includes both front end and back end.
 
 > Back end: IR Optimization (Intra-block CFG optimization), MIPS Register Allocation, Instruction Selection and Code Generation.
 
+You can access https://github.com/gangliao/TIGER to view the documentation! 
 
 ### How to Build
 
 0. development environment
 
-	Currently, this project repository is maintained on github privately and also been deployed on Travis CI.
+	Currently, this project repository is maintained on github publicly and also been deployed on Travis CI.
 	It supports both Ubuntu and Mac OS X.
 
 1. build:
