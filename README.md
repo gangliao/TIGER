@@ -30,7 +30,7 @@
 	```
 
 	If you want to use the **naive** mode to generate asm code, simply issue:
-	
+
 	```bash
 		./src/parser <filename> -d -naive
 	```
