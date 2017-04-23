@@ -185,10 +185,10 @@ void GenNaive::operator_asm(std::vector<std::string>& tokens) {
   reset_reg();
   std::string reg1, reg2;
   if (data_map_[tokens[3]].second == INT) {
-    reg1 = load(tokens[1], "$t4");
-    reg2 = load(tokens[2], "$t5");
+    reg1 = load(tokens[1], "$t5");
+    reg2 = load(tokens[2], "$t4");
     if (tokens[0] != "mult" && tokens[0] != "div") {
-      asm_.push_back("    " + tokens[0] + reg1 + ", " + reg1 + ", " + reg2);
+      asm_.push_back("    " + tokens[0] + " " + reg1 + ", " + reg1 + ", " + reg2);
     } else {
       asm_.push_back("    " + tokens[0] + " " + reg1 + ", " + reg2);
       asm_.push_back("    mflo " + reg1);
@@ -197,7 +197,7 @@ void GenNaive::operator_asm(std::vector<std::string>& tokens) {
     reg1 = load(tokens[1], "$f1");
     reg2 = load(tokens[2], "$f2");
     if (tokens[0] != "mult" && tokens[0] != "div") {
-      asm_.push_back("    " + tokens[0] + ".s " + reg1 + ", " + reg1 + ", " +
+      asm_.push_back("    " + tokens[0] + ".s " + " " + reg1 + ", " + reg1 + ", " +
                      reg2);
     } else {
       asm_.push_back("    " + tokens[0] + " " + reg1 + ", " + reg2);

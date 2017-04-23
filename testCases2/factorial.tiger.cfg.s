@@ -2,11 +2,50 @@
 
 # [ RUN ] parsing code... 
 
-# let var id : int := intlit ; function id ( id : int ) : int begin return id * intlit ; end ; in id := id ( id ) ; id ( id ) ; end  
+# let var id : int := intlit ; var id : int ; var id : int := intlit ; in for id := intlit to id do id := id * id ; enddo ; id ( id ) ; end  
 
 # ----------------------------------------
 # Table: # Variables
-# Name: m
+# Name: loopCounter
+# ----------------------------------------
+# Scope: 0
+# Type: int
+# Dimension: 0
+# Parameters: -
+# Parameter types: -
+# Parameter dimensions: -
+# Return type: -
+
+
+# ----------------------------------------
+# Table: # Variables
+# Name: number
+# ----------------------------------------
+# Scope: 0
+# Type: int
+# Dimension: 0
+# Parameters: -
+# Parameter types: -
+# Parameter dimensions: -
+# Return type: -
+
+
+# ----------------------------------------
+# Table: # Variables
+# Name: result
+# ----------------------------------------
+# Scope: 0
+# Type: int
+# Dimension: 0
+# Parameters: -
+# Parameter types: -
+# Parameter dimensions: -
+# Return type: -
+
+
+# ----------------------------------------
+# Table: # Variables
+# Name: t0
 # ----------------------------------------
 # Scope: 0
 # Type: int
@@ -58,19 +97,6 @@
 
 # ----------------------------------------
 # Table: # Functions
-# Name: fact
-# ----------------------------------------
-# Scope: 0
-# Type: -
-# Dimension: -
-# Parameters: [n]
-# Parameter types: [int]
-# Parameter dimensions: [0]
-# Return type: int
-
-
-# ----------------------------------------
-# Table: # Functions
 # Name: flush
 # ----------------------------------------
 # Scope: 0
@@ -116,16 +142,30 @@
 # ----------------------------------------
 # Generate IR CODE ...
 # ----------------------------------------
-#     assign, m, 5,
-# fact:
-#     mult, n, 2, t0
-#     return, t0, ,
+#     assign, number, 8,
+#     assign, loopCounter, 0,
+#     assign, result, 1,
 # main:
-#     callr, m, fact, m
-#     call, printi, m
+#     assign, loopCounter, 1,
+# loop_label0:
+#     brgt, loopCounter, number, loop_label1
+#     mult, result, loopCounter, t0
+#     assign, result, t0,
+#     add, loopCounter, 1, loopCounter
+#     goto, loop_label0, ,
+# loop_label1:
+#     call, printi, result
 #     return, , ,
 # ----------------------------------------
 
+
+# Default select cfg technique to optimize IR code ...
+
+# Detect block 0 IR line : 4 ~ 5
+
+# Detect block 1 IR line : 6 ~ 11
+
+# Detect block 2 IR line : 12 ~ 14
 
 
 #----------------------------------------
@@ -134,10 +174,12 @@
 # Beginning of the data section
 
 .data
-m: 		.word 	5
-num_5: 		.word 	5
-n: 		.word 	0
-num_2: 		.word 	2
+number: 		.word 	8
+num_8: 		.word 	8
+loopCounter: 		.word 	0
+num_0: 		.word 	0
+result: 		.word 	1
+num_1: 		.word 	1
 t0: 		.word 	0
 
 # Beginning of the code section
@@ -261,53 +303,23 @@ lib_not_end:
 
 main:
 
-    # IR:    assign, m, 5,
-    la $t4, num_5
-    lw $t5, 0($t4)
-    la $t4, m
-    sw $t5, 0($t4)
+    # IR:    assign, number, 8,
+    la $t9, num_8
+    lw $t8, 0($t9)
+    la $t9, number
+    sw $t8, 0($t9)
 
-    # IR: goto, main0
-    j main0
+    # IR:    assign, loopCounter, 0,
+    la $t9, num_0
+    lw $t8, 0($t9)
+    la $t9, loopCounter
+    sw $t8, 0($t9)
 
-fact:
-
-    sw $s0, -4($sp)
-    sw $s1, -8($sp)
-    sw $s2, -12($sp)
-    sw $s3, -16($sp)
-    sw $s4, -20($sp)
-    sw $s5, -24($sp)
-    sw $s6, -28($sp)
-    sw $s7, -32($sp)
-    addi $sp, $sp, -32
-    sw $ra, -4($sp)
-    addi $sp, $sp, -4
-
-    # IR:    mult, n, 2, t0
-    la $t4, num_2
-    lw $t4, 0($t4)
-    mult $a0, $t4
-    mflo $a0
-    la $t4, t0
-    sw $a0, 0($t4)
-
-    # IR:    return, t0, ,
-    la $t0, t0
-    lw $t1, 0($t0)
-    move $v0, $t1
-    addi $sp, $sp, 4
-    lw $ra, -4($sp)
-    addi $sp, $sp, 32
-    lw $s0, -4($sp)
-    lw $s1, -8($sp)
-    lw $s2, -12($sp)
-    lw $s3, -16($sp)
-    lw $s4, -20($sp)
-    lw $s5, -24($sp)
-    lw $s6, -28($sp)
-    lw $s7, -32($sp)
-    jr $ra
+    # IR:    assign, result, 1,
+    la $t9, num_1
+    lw $t8, 0($t9)
+    la $t9, result
+    sw $t8, 0($t9)
 
 main0:
 
@@ -323,46 +335,69 @@ main0:
     sw $ra, -4($sp)
     addi $sp, $sp, -4
 
-    # IR:    callr, m, fact, m
-    sw $t4, -4($sp)
-    sw $t5, -8($sp)
-    sw $t6, -12($sp)
-    sw $t7, -16($sp)
-    sw $t8, -20($sp)
-    sw $t9, -24($sp)
-    addi $sp, $sp, -24
-    swc1 $f12, -4($sp)
-    swc1 $f13, -8($sp)
-    swc1 $f14, -12($sp)
-    addi $sp, $sp, -12
-    sw $a0, -4($sp)
-    sw $a1, -8($sp)
-    sw $a2, -12($sp)
-    sw $a3, -16($sp)
-    addi $sp, $sp, -16
-    la $t4, m
-    lw $a0, 0($t4)
-    jal fact
-    addi $sp, $sp, 16
-    lw $a0, -4($sp)
-    lw $a1, -8($sp)
-    lw $a2, -12($sp)
-    lw $a3, -16($sp)
-    addi $sp, $sp, 12
-    lwc1 $f12, -4($sp)
-    lwc1 $f13, -8($sp)
-    lwc1 $f14, -12($sp)
-    addi $sp, $sp, 24
-    lw $t4, -4($sp)
-    lw $t5, -8($sp)
-    lw $t6, -12($sp)
-    lw $t7, -16($sp)
-    lw $t8, -20($sp)
-    lw $t9, -24($sp)
-    la $t0, m
-    sw $v0, 0($t0)
+    # Enter block and load vars into registers ... 
 
-    # IR:    call, printi, m
+    la $t9, loopCounter
+    lw $t0, 0($t9)
+
+    # IR:    assign, loopCounter, 1,
+    la $t9, num_1
+    lw $t8, 0($t9)
+    move $t0, $t8
+
+    # Leave block and save registers into vars ... 
+
+    la $t9, loopCounter
+    sw $t0, 0($t9)
+loop_label0:
+
+    # Enter block and load vars into registers ... 
+
+    la $t9, loopCounter
+    lw $t3, 0($t9)
+    la $t9, number
+    lw $t2, 0($t9)
+    la $t9, result
+    lw $t1, 0($t9)
+    la $t9, t0
+    lw $t0, 0($t9)
+
+    # IR:    brgt, loopCounter, number, loop_label1
+    bgt, $t3, $t2, loop_label1
+
+    # IR:    mult, result, loopCounter, t0
+    mult $t1, $t3
+    mflo $t1
+    move $t0, $t1
+
+    # IR:    assign, result, t0,
+    move $t1, $t0
+
+    # IR:    add, loopCounter, 1, loopCounter
+    la $t9, num_1
+    lw $t9, 0($t9)
+    add $t3, $t3, $t9
+    move $t3, $t3
+
+    # Leave block and save registers into vars ... 
+
+    la $t9, loopCounter
+    sw $t3, 0($t9)
+    la $t9, number
+    sw $t2, 0($t9)
+    la $t9, result
+    sw $t1, 0($t9)
+    la $t9, t0
+    sw $t0, 0($t9)
+    j loop_label0
+loop_label1:
+
+    # Enter block and load vars into registers ... 
+
+    la $t9, result
+    lw $t0, 0($t9)
+
+    # IR:    call, printi, result
     sw $t4, -4($sp)
     sw $t5, -8($sp)
     sw $t6, -12($sp)
@@ -379,8 +414,7 @@ main0:
     sw $a2, -12($sp)
     sw $a3, -16($sp)
     addi $sp, $sp, -16
-    la $t4, m
-    lw $a0, 0($t4)
+    move $a0, $t0
     jal lib_printi
     addi $sp, $sp, 16
     lw $a0, -4($sp)
@@ -398,6 +432,11 @@ main0:
     lw $t7, -16($sp)
     lw $t8, -20($sp)
     lw $t9, -24($sp)
+
+    # Leave block and save registers into vars ... 
+
+    la $t9, result
+    sw $t0, 0($t9)
 
     # IR:    return, , ,
     addi $sp, $sp, 4

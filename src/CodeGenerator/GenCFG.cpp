@@ -103,26 +103,40 @@ void GenCFG::find_blocks() {
 void GenCFG::graph_coloring(size_t id, graph_ptr graph) {
   size_t int_regs[8];
   size_t float_regs[16];
+  memset(int_regs, 0, sizeof(size_t) * 8);
+  memset(float_regs, 0, sizeof(size_t) * 16);
   std::unordered_map<std::string, reg_t> regs;
-  for (auto& node : *graph) {
-    auto& var = node.first;
-    auto& vec = node.second;
-    memset(int_regs, 0, sizeof(size_t) * 8);
-    memset(float_regs, 0, sizeof(size_t) * 16);
-    for (auto& nd : vec) {
-      if (regs.find(nd) != regs.end() && regs[nd] != -1) {
-        if (data_map_[nd].second == INT) {
-          int_regs[regs[nd]] = 1;
-        } else {
-          float_regs[regs[nd]] = 1;
-        }
+
+  auto max_priority = [&]() {
+    static size_t i = 0;
+    std::string var_name;
+    for (auto& node : *graph) {
+      if (i == 0) {
+        var_name = node.first;
+        break;
       }
     }
+    size_t size = -1;
+    for (auto &node : *graph) {
+      auto& var = node.first;
+      auto& vec = node.second;
+      if (size < vec.size()) {
+        // max spill cost
+        var_name = var;
+        size = vec.size();
+      }
+    }
+    return var_name;
+  };
+
+  while(!graph->empty()) {
+    auto var = max_priority();
     auto table = data_map_[var].second == INT ? int_regs : float_regs;
     auto size = data_map_[var].second == INT ? 8 : 16;
     for (size_t i = 0; i < size; ++i) {
       if (table[i] == 0) {
         regs[var] = i;  // store into register
+        table[i] = 1;
         break;
       }
     }
@@ -130,6 +144,9 @@ void GenCFG::graph_coloring(size_t id, graph_ptr graph) {
       regs[var] = -1;  // store into memory
     }
     regs_[{id, var}] = regs[var];
+    if (!var.empty()) {
+      graph->erase(var);
+    }
   }
 }
 
