@@ -60,7 +60,7 @@ This Demo shows that
 
 	(3) [Compiler Back End] How to generate optimized MIPS asm code via IR code ?
 
-<a href="img/demo.gif" target="_blank"><img src="img/demo.gif" width="800" /></a>
+<a href="img/demo.gif" target="_blank"><img src="img/demo.gif" width="1000" /></a>
 
 ### Desgin Internals
 
