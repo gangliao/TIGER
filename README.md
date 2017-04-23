@@ -1,4 +1,7 @@
-## Tiger Compiler - Front End
+## TIGER - A Tiny Full Compiler
+
+This compiler includes both front end and back end. Front end: Grammar Rules, LL(1) Parse Table, Syntax and Semantic Check and Intermediate Code. Back end: IR Optimization (Intra-block CFG optimization), MIPS Register Allocation, Instruction Selection and Code Generation.
+
 
 ### How to Build
 
@@ -64,3 +67,7 @@ This Demo shows that
 [Tiger Compiler Front End - Design Internals](design_doc/front_end.md)
 
 [Tiger Compiler Back End - Design Internals](design_doc/back_end.md)
+
+### Reference
+
+1. [MIPS syscall](design_doc/syscall_mips.md)
