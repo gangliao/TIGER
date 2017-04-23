@@ -78,16 +78,17 @@ This Demo shows that
 
 ### Test Cases
 
-We passed all tests cases which provided by TA. Please check out the details in report [Testing and Output.pdf](Phase2-Testing and Output.pdf), which includes test cases and their code qulity comparisions via naive and
-CFG intra-block register allocation.
+We passed all tests cases which provided by TA.
+
+Please check out the details in report [Phase2_Testing_and_Output.pdf](Phase2_Testing_and_Output.pdf) from current directory, which includes test cases and their quality comparisons for naive and CFG intra-block register allocation.
 
 ### Accomplishment
 
--[x] Register allocation code
-	-[x] Naive
-	-[x] CFG and intra block allocation
-	-[ ] EBB and intra-EBB allocation
-	-[x] Whole function register allocation
--[x] Instruction selection and generation code
--[x] Passes tests using generated code executing on simulator.
--[x] Report (desgin Internals, how to build, run, code quality comparisions, etc.)
+- [x] Register allocation code
+	- [x] Naive
+	- [x] CFG and intra block allocation
+	- [ ] EBB and intra-EBB allocation
+	- [x] Whole function register allocation
+- [x] Instruction selection and generation code
+- [x] Passes tests using generated code executing on simulator.
+- [x] Report (desgin Internals, how to build, run, code quality comparisions, etc.)
