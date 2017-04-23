@@ -89,6 +89,7 @@ Please check out the details in report [Phase2_Testing_and_Output.pdf](Phase2_Te
 	- [x] CFG and intra block allocation
 	- [ ] EBB and intra-EBB allocation
 	- [x] Whole function register allocation
+	- [x] Live Range Analysis and Graph Coloring
 - [x] Instruction selection and generation code
 - [x] Passes tests using generated code executing on simulator.
 - [x] Report (desgin Internals, how to build, run, code quality comparisions, etc.)
