@@ -1,0 +1,11 @@
+let
+		var x : int;
+        function print ( n : int, m: int ) : int   /* integer return type; with multiple function arguments */
+		begin
+                printi(n);
+				printi(m);
+				return 10;
+        end;
+in
+        x := print(5,6);					/* return value is captured in integer variable */
+end

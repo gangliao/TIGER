@@ -1,0 +1,7 @@
+
+
+[ RUN ] parsing code...
+
+let var id , id : int := intlit ; var id : int := intlit ; in
+
+Error: Redeclaration of the same name in the same scope is illegal.

@@ -1,8 +1,0 @@
-let
-        type ArrayInt = array [100] of int; 
-        function print ( n : int) begin
-                printi(n);
-        end;
-in
-        print(5);
-end

@@ -1,0 +1,12 @@
+/* testing complex expression of mixed types, int and float */
+let
+        var a, b : int := 0;
+		var c, d  : float := 0;
+in
+        if(a = b) then
+                a := b + ( 5 * a) - ( 3 + c);
+				else
+				a := (b / 2) + (d * 3);
+        endif;
+        printi(a);
+end

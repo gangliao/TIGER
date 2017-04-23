@@ -1,0 +1,189 @@
+
+
+[ RUN ] parsing code...
+
+let var id , id : int := intlit ; var id : int := intlit ; in if ( id & id ) then id := id | intlit ; else id := intlit ; endif ; id ( id ) ; end
+
+----------------------------------------
+Table: Variables
+Name: $t0
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t1
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t2
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: a
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: b
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: c
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Types
+Name: float
+----------------------------------------
+Scope: 0
+Type: float
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Types
+Name: int
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: exit
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: flush
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: []
+Parameter types: []
+Parameter dimensions: []
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: not
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: int
+
+
+----------------------------------------
+Table: Functions
+Name: printi
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: -
+----------------------------------------
+
+
+
+[ OK ] successful parse...
+
+
+----------------------------------------
+Generate IR CODE ...
+----------------------------------------
+    assign, a, 0,
+    assign, b, 0,
+    assign, c, 0,
+main:
+    and, a, c, $t0
+    assign, $t1, 0,
+    brneq, $t0, 0, if_label0
+    assign, $t1, 1,
+if_label0:
+    breq, $t1, 0, if_label1
+    or, b, 2, $t2
+    assgin, a, $t2,
+    goto, if_label2, ,
+if_label1:
+    assgin, a, 2,
+if_label2:
+    call, printi, a
+    return, , ,
+----------------------------------------

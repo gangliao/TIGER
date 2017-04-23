@@ -1,0 +1,14 @@
+
+/* testing multiple if-then-else statement */
+let
+        var a, b : int := 0;
+in
+        if(a = b) then
+                a := b + 2;
+				else
+				a := 2;
+        endif;
+		
+		
+        printi(a);
+end

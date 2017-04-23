@@ -1,9 +1,0 @@
-    assign, 0Y, 0.0,
-    assign, 0X, 0.0,
-print:
-    call, printi, X
-    return, , ,
-main:
-    call, print, 5
-    assign, 0X, 1.0,
-    return, , ,

@@ -20,8 +20,6 @@ class Generator {
   Generator(std::vector<std::string>& ir, func_info_t& func_info);
   virtual void generate() = 0;
   void dump();
-  std::string new_general_reg();
-  std::string new_float_reg();
 
  private:
   virtual void data_seg() = 0;

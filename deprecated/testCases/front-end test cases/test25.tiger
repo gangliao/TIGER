@@ -1,0 +1,14 @@
+let
+	var A, B, C, D, E : float;
+in
+	A := 1.5;
+	B := 2.5;
+	C := 3.5;
+	D := 4.5;
+	E := 5.5;
+	printi(A);  /* Error only support print integer */
+	printi(B);
+	printi(C);
+	printi(D);
+	printi(E);
+end

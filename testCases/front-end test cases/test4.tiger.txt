@@ -1,5 +1,0 @@
-
-
-[ RUN ] parsing code...
-
-let type id = int ; type id = id ; var id : id := intlit ; var id : id ; var id : int := intlit ; var id : float := floatlit ; in id := id + id ; id := id + id ; Error: left and right type between assignment is mismatched!

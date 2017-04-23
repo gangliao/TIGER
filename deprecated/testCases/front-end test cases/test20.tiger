@@ -1,0 +1,12 @@
+/* test logical operators */
+let
+        var a, b : int := 0;
+		var c : int := 0;
+in
+        if(a & c) then
+                a := b | 2;
+		else
+				a := 2;
+        endif;
+        printi(a);
+end

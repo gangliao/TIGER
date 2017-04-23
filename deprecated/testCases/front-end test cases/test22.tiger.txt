@@ -1,0 +1,234 @@
+
+
+[ RUN ] parsing code...
+
+let type id = array [ intlit ] of int ; var id , id : id := intlit ; var id : id := intlit ; var id : int := intlit ; in for id := intlit to intlit do id [ id ] := id [ id ] * id [ id ] ; enddo ; for id := intlit to intlit do id ( id [ id ] ) ; enddo ; end
+
+----------------------------------------
+Table: Variables
+Name: $t0
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t1
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t2
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: $t3
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: X
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 100
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: Y
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 100
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: i
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Variables
+Name: sum
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 100
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Types
+Name: ArrayInt
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 100
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Types
+Name: float
+----------------------------------------
+Scope: 0
+Type: float
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Types
+Name: int
+----------------------------------------
+Scope: 0
+Type: int
+Dimension: 0
+Parameters: -
+Parameter types: -
+Parameter dimensions: -
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: exit
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: flush
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: []
+Parameter types: []
+Parameter dimensions: []
+Return type: -
+
+
+----------------------------------------
+Table: Functions
+Name: not
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: int
+
+
+----------------------------------------
+Table: Functions
+Name: printi
+----------------------------------------
+Scope: 0
+Type: -
+Dimension: -
+Parameters: [i]
+Parameter types: [int]
+Parameter dimensions: [0]
+Return type: -
+----------------------------------------
+
+
+
+[ OK ] successful parse...
+
+
+----------------------------------------
+Generate IR CODE ...
+----------------------------------------
+    assign, X, 100, 100
+    assign, Y, 100, 100
+    assign, sum, 100, 0
+    assign, i, 0,
+main:
+    assign, i, 0,
+loop_label0:
+    brgt, i, 100, loop_label1
+    array_load, $t0, X, i
+    array_load, $t1, Y, i
+    mult, $t0, $t1, $t2
+    array_store, sum, i, $t2
+    add, i, 1, i
+    goto, loop_label0, ,
+loop_label1:
+    assign, i, 0,
+loop_label2:
+    brgt, i, 100, loop_label3
+    array_load, $t3, sum, i
+    call, printi, $t3
+    add, i, 1, i
+    goto, loop_label2, ,
+loop_label3:
+    return, , ,
+----------------------------------------

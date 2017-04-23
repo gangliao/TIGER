@@ -1,0 +1,12 @@
+/* testing exit with correct parameters */
+let
+        var a, b : int := 1;
+		
+in
+     b := not(a);
+	   printi(b);
+	   if(b=1)then
+			exit(0);
+	   endif;
+			
+end
