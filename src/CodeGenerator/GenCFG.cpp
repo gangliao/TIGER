@@ -274,7 +274,7 @@ std::string GenCFG::load(std::string token) {
   std::string reg = alloc_reg(token);
   if (reg.empty()) {
     asm_.push_back("    la $t9, " + data_map_[token].first);
-    if (data_map_[token].second == FLOAT) {
+    if (check_type(token) == FLOAT) {
       reg = "$f16";
       asm_.push_back("    lwc1 $f16, 0($t9)");
     } else {
@@ -290,7 +290,7 @@ std::string GenCFG::load(std::string token, std::string res) {
   if (reg.empty()) {
     asm_.push_back("    la $t9, " + data_map_[token].first);
     reg = res;
-    if (data_map_[token].second == FLOAT) {
+    if (check_type(token) == FLOAT) {
       asm_.push_back("    lwc1 " + reg + ", 0($t9)");
     } else {
       asm_.push_back("    lw " + reg + ", 0($t9)");
@@ -303,13 +303,13 @@ void GenCFG::store(std::string token, std::string reg) {
   std::string new_reg = alloc_reg(token);
   if (new_reg.empty()) {
     asm_.push_back("    la $t9, " + data_map_[token].first);
-    if (data_map_[token].second == FLOAT) {
+    if (check_type(token) == FLOAT) {
       asm_.push_back("    swc1 " + reg + ", 0($t9)");
     } else {
       asm_.push_back("    sw " + reg + ", 0($t9)");
     }
   } else {
-    if (data_map_[token].second == FLOAT) {
+    if (check_type(token) == FLOAT) {
       asm_.push_back("    mov.s " + new_reg + ", " + reg);
     } else {
       asm_.push_back("    move " + new_reg + ", " + reg);
@@ -321,7 +321,7 @@ void GenCFG::assign_asm(std::vector<std::string>& tokens) {
   reset_reg();
   if (tokens.size() == 4) {  // array
     size_t size = atoi(tokens[2].c_str());
-    if (data_map_[tokens[3]].second == FLOAT) {
+    if (check_type(tokens[3]) == FLOAT) {
       asm_.push_back("    la $t0, " + data_map_[tokens[3]].first);
       asm_.push_back("    lwc1 $f1, 0($t0)");
       asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
@@ -346,7 +346,7 @@ void GenCFG::assign_asm(std::vector<std::string>& tokens) {
 void GenCFG::operator_asm(std::vector<std::string>& tokens) {
   reset_reg();
   std::string reg1, reg2;
-  if (data_map_[tokens[3]].second == INT) {
+  if (check_type(tokens[3]) == INT) {
     reg1 = load(tokens[1], "$t8");
     reg2 = load(tokens[2], "$t9");
     if (tokens[0] != "mult" && tokens[0] != "div") {
@@ -415,7 +415,7 @@ void GenCFG::call_asm(std::vector<std::string>& tokens) {
     param_idx = 2;
   }
   for (size_t i = 0; i < param_size; ++i) {
-    if (data_map_[tokens[param_idx]].second == INT) {
+    if (check_type(tokens[param_idx]) == INT) {
       asm_.push_back("    move $a" + std::to_string(i) + ", " +
                      load(tokens[param_idx + i]));
     } else {
@@ -445,7 +445,7 @@ void GenCFG::call_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    lw $t8, -20($sp)");
   asm_.push_back("    lw $t9, -24($sp)");
   if (tokens[0] == "callr") {
-    if (data_map_[tokens[1]].second == INT) {
+    if (check_type(tokens[1]) == INT) {
       asm_.push_back("    move " + load(tokens[1]) + ", $v0");
     } else {
       asm_.push_back("    mov.s " + load(tokens[1]) + ", $v0");
@@ -459,7 +459,7 @@ void GenCFG::array_load_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    la $t8, " + data_map_[tokens[2]].first);
   asm_.push_back("    add $t8, $t8, " + reg);
   asm_.push_back("    srl " + reg + ", " + reg + ", 2");
-  if (data_map_[tokens[2]].second == FLOAT) {
+  if (check_type(tokens[2]) == FLOAT) {
     asm_.push_back("    lwc1 $f16, 0($t8)");
     store(tokens[1], "$f16");
   } else {
@@ -474,7 +474,7 @@ void GenCFG::array_store_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    la $t8, " + data_map_[tokens[1]].first);
   asm_.push_back("    add $t8, $t8, " + reg);
   asm_.push_back("    srl " + reg + ", " + reg + ", 2");
-  if (data_map_[tokens[1]].second == FLOAT) {
+  if (check_type(tokens[1]) == FLOAT) {
     asm_.push_back("    swc1 " + load(tokens[3], "$f16") + ", 0($t8)");
   } else {
     asm_.push_back("    sw " + load(tokens[3], "$t9") + ", 0($t8)");
