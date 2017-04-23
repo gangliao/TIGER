@@ -204,6 +204,12 @@
 # Beginning of the data section
 
 .data
+num_5: 		.word 	5
+i: 		.word 	0
+num_0: 		.word 	0
+n: 		.word 	0
+num_4: 		.word 	4
+num_1: 		.word 	1
 A: 		.space 	20
 num_2_5: 	.float 	2.5
 B: 		.float 	0.0
@@ -212,12 +218,6 @@ num_5_0: 	.float 	5.0
 f0: 		.float 	0.0
 num_1_5: 	.float 	1.5
 f1: 		.float 	0.0
-num_5: 		.word 	5
-i: 		.word 	0
-num_0: 		.word 	0
-n: 		.word 	0
-num_4: 		.word 	4
-num_1: 		.word 	1
 
 # Beginning of the code section
 
