@@ -231,7 +231,7 @@
 .data
 a: 		.word 	0
 num_0: 		.word 	0
-b: 		.word 	0
+nb: 		.word 	0
 num_2: 		.word 	2
 t0: 		.word 	0
 num_5: 		.word 	5
@@ -368,10 +368,10 @@ main:
     la $t9, a
     sw $t8, 0($t9)
 
-    # IR:    assign, b, 0,
+    # IR:    assign, nb, 0, 
     la $t9, num_0
     lw $t8, 0($t9)
-    la $t9, b
+    la $t9, nb
     sw $t8, 0($t9)
 
 main0:
@@ -391,78 +391,78 @@ main0:
     # Enter block and load vars into registers ... 
 
     la $t9, a
-    lw $t1, 0($t9)
-    la $t9, b
+    lw $t5, 0($t9)
+    la $t9, nb
     lw $t7, 0($t9)
     la $t9, t0
-    lw $t5, 0($t9)
-    la $t9, t1
-    lw $t2, 0($t9)
-    la $t9, t2
-    lw $t3, 0($t9)
-    la $t9, t3
-    lw $t0, 0($t9)
-    la $t9, t4
-    lw $t6, 0($t9)
-    la $t9, t5
     lw $t4, 0($t9)
+    la $t9, t1
+    lw $t6, 0($t9)
+    la $t9, t2
+    lw $t2, 0($t9)
+    la $t9, t3
+    lw $t1, 0($t9)
+    la $t9, t4
+    lw $t0, 0($t9)
+    la $t9, t5
+    lw $t3, 0($t9)
 
-    # IR:    brneq, a, b, if_label0
-    bne, $t1, $t7, if_label0
+    # IR:    brneq, a, nb, if_label0, 
+    bne, $t5, $t7, if_label0
 
-    # IR:    add, b, 2, t0
+    # IR:    add, nb, 2, t0, 
     la $t9, num_2
     lw $t9, 0($t9)
     add $t7, $t7, $t9
-    move $t5, $t7
+    move $t4, $t7
 
     # IR:    div, t0, 5, t1
     la $t9, num_5
     lw $t9, 0($t9)
-    div $t5, $t9
+    div $t4, $t9
+    mflo $t4
+    move $t6, $t4
+
+    # IR:    mult, a, nb, t2, 
+    mult $t5, $t7
     mflo $t5
     move $t2, $t5
 
-    # IR:    mult, a, b, t2
-    mult $t1, $t7
-    mflo $t1
-    move $t3, $t1
-
     # IR:    sub, t1, t2, t3
-    sub $t2, $t2, $t3
-    move $t0, $t2
+    sub $t6, $t6, $t2
+    move $t1, $t6
 
     # IR:    sub, t3, 5, t4
     la $t9, num_5
     lw $t9, 0($t9)
-    sub $t0, $t0, $t9
-    move $t6, $t0
+    sub $t1, $t1, $t9
+    move $t0, $t1
 
-    # IR:    add, t4, b, t5
-    add $t6, $t6, $t7
-    move $t4, $t6
+    # IR:    add, t4, nb, t5, 
+    add $t0, $t0, $t7
+    move $t3, $t0
 
     # IR:    assign, a, t5,
-    move $t1, $t4
+    move $t5, $t3
 
     # Leave block and save registers into vars ... 
 
     la $t9, a
-    sw $t1, 0($t9)
-    la $t9, b
+    sw $t5, 0($t9)
+    la $t9, nb
     sw $t7, 0($t9)
     la $t9, t0
-    sw $t5, 0($t9)
-    la $t9, t1
-    sw $t2, 0($t9)
-    la $t9, t2
-    sw $t3, 0($t9)
-    la $t9, t3
-    sw $t0, 0($t9)
-    la $t9, t4
-    sw $t6, 0($t9)
-    la $t9, t5
     sw $t4, 0($t9)
+    la $t9, t1
+    sw $t6, 0($t9)
+    la $t9, t2
+    sw $t2, 0($t9)
+    la $t9, t3
+    sw $t1, 0($t9)
+    la $t9, t4
+    sw $t0, 0($t9)
+    la $t9, t5
+    sw $t3, 0($t9)
     j if_label1
 if_label0:
 

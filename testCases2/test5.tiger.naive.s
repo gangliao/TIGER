@@ -223,7 +223,7 @@
 .data
 a: 		.word 	0
 num_0: 		.word 	0
-b: 		.word 	0
+nb: 		.word 	0
 num_2: 		.word 	2
 t0: 		.word 	0
 num_5: 		.word 	5
@@ -360,10 +360,10 @@ main:
     la $t4, a
     sw $t5, 0($t4)
 
-    # IR:    assign, b, 0,
+    # IR:    assign, nb, 0, 
     la $t4, num_0
     lw $t5, 0($t4)
-    la $t4, b
+    la $t4, nb
     sw $t5, 0($t4)
 
 main0:
@@ -380,15 +380,15 @@ main0:
     sw $ra, -4($sp)
     addi $sp, $sp, -4
 
-    # IR:    brneq, a, b, if_label0
+    # IR:    brneq, a, nb, if_label0, 
     la $t0, a
     lw $t1, 0($t0)
-    la $t0, b
+    la $t0, nb
     lw $t2, 0($t0)
     bne, $t1, $t2, if_label0
 
-    # IR:    add, b, 2, t0
-    la $t4, b
+    # IR:    add, nb, 2, t0, 
+    la $t4, nb
     lw $t5, 0($t4)
     la $t4, num_2
     lw $t4, 0($t4)
@@ -406,10 +406,10 @@ main0:
     la $t4, t1
     sw $t5, 0($t4)
 
-    # IR:    mult, a, b, t2
+    # IR:    mult, a, nb, t2, 
     la $t4, a
     lw $t5, 0($t4)
-    la $t4, b
+    la $t4, nb
     lw $t4, 0($t4)
     mult $t5, $t4
     mflo $t5
@@ -434,10 +434,10 @@ main0:
     la $t4, t4
     sw $t5, 0($t4)
 
-    # IR:    add, t4, b, t5
+    # IR:    add, t4, nb, t5, 
     la $t4, t4
     lw $t5, 0($t4)
-    la $t4, b
+    la $t4, nb
     lw $t4, 0($t4)
     add $t5, $t5, $t4
     la $t4, t5

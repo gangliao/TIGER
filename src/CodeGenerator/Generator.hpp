@@ -29,6 +29,7 @@ class Generator {
 
  protected:
   enum Type { INT = 0, FLOAT = 1 };
+  void preprocess(std::vector<std::string>& ir);
   void built_in_printi();
   void built_in_exit();
   void built_in_not();
