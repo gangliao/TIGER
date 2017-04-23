@@ -376,8 +376,8 @@ loop_label0:
     # IR:    add, loopCounter, 1, loopCounter
     la $t9, num_1
     lw $t9, 0($t9)
-    add $t3, $t3, $t9
-    move $t3, $t3
+    add $t8, $t3, $t9
+    move $t3, $t8
 
     # Leave block and save registers into vars ... 
 

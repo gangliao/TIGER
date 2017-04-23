@@ -1512,7 +1512,8 @@ void Parser::parse() {
   TokenPair* word = scanner.getToken();
   std::cout << "\n\n# [ RUN ] parsing code... \n\n";
   if (printDebug == true) {
-    std::cout << "# " << terminalMapped_[word->getTokenType().getValue()] << " ";
+    std::cout << "# " << terminalMapped_[word->getTokenType().getValue()]
+              << " ";
   }
 
   int focus;

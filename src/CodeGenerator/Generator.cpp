@@ -20,7 +20,7 @@ Generator::Generator(
     std::unordered_map<std::string,
                        std::vector<std::pair<std::string, std::string>>>&
         func_info) {
-  ir_ = std::move(ir);
+  preprocess(ir);
   func_map_ = std::move(func_info);
 }
 
@@ -230,4 +230,35 @@ Generator::Type Generator::check_type(std::string name) {
   } else {
     return FLOAT;
   }
+}
+
+void Generator::preprocess(std::vector<std::string>& ir) {
+  for (auto& line : ir) {
+    std::vector<std::string> tokens = cvt2tokens(line);
+    std::string new_line;
+    size_t i = 0;
+    bool include_b = false;
+    for (auto& token : tokens) {
+      if (i++ == 0) {
+        new_line = "    ";
+      }
+      if (token == "b") {
+        // var b conflicts with MIPS branch ISA
+        token = "nb";
+        include_b = true;
+      }
+      // new_line += token + ", ";
+      // // if (i < 3) {
+      // //   new_line += ", ";
+      // // }
+    }
+    if (include_b) {
+      for (auto& token : tokens) {
+        new_line += token + ", ";
+      }
+      line = new_line;
+    }
+    include_b = false;
+  }
+  ir_ = ir;
 }

@@ -8,6 +8,3 @@ TARGET_LINK_LIBRARIES(parser generator)
 
 ADD_EXECUTABLE(scanner Scanner/Scanner.cpp)
 TARGET_LINK_LIBRARIES(scanner generator)
-
-ADD_EXECUTABLE(testGen CodeGenerator/test.cpp)
-TARGET_LINK_LIBRARIES(testGen generator)
