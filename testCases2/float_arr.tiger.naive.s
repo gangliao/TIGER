@@ -374,7 +374,7 @@ printf:
     # IR:    add, n, 5.0, f0
     la $t4, num_5_0
     lwc1 $f2, 0($t4)
-    add.s $f12, $f12, $f2
+    add.s  $f12, $f12, $f2
     la $t4, f0
     swc1 $f12, 0($t4)
 
@@ -487,12 +487,12 @@ loop_label0:
 
     # IR:    add, i, 1, i
     la $t4, i
-    lw $t4, 0($t4)
-    la $t4, num_1
     lw $t5, 0($t4)
-    add$t4, $t4, $t5
+    la $t4, num_1
+    lw $t4, 0($t4)
+    add $t5, $t5, $t4
     la $t4, i
-    sw $t4, 0($t4)
+    sw $t5, 0($t4)
     j loop_label0
 loop_label1:
 

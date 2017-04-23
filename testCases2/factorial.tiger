@@ -1,0 +1,16 @@
+/**
+ * This program calculates and prints the factorial of the 'number' variable.
+ */
+
+let
+	var number : int := 8;
+	var loopCounter : int;
+	var result : int := 1;
+in
+	for loopCounter := 1 to number
+	do
+		result := result * loopCounter;
+	enddo;
+
+	printi(result);
+end

@@ -350,7 +350,7 @@ printf:
     # IR:    add, n, 5.0, f0
     la $t4, num_5_0
     lwc1 $f2, 0($t4)
-    add.s $f12, $f12, $f2
+    add.s  $f12, $f12, $f2
     la $t4, f0
     swc1 $f12, 0($t4)
 
