@@ -1,6 +1,11 @@
 ## TIGER - A Tiny Full Compiler
 
-This compiler includes both front end and back end. Front end: Grammar Rules, LL(1) Parse Table, Syntax and Semantic Check and Intermediate Code. Back end: IR Optimization (Intra-block CFG optimization), MIPS Register Allocation, Instruction Selection and Code Generation.
+[![Build Status](https://travis-ci.com/gangliao/Tiger-Compiler.svg?token=bQUUVqcsZpghUieTvsMM&branch=master)](https://travis-ci.com/gangliao/Tiger-Compiler/builds)
+
+This compiler includes both front end and back end.
+
+> Front end: Grammar Rules, LL(1) Parse Table, Syntax and Semantic Check and Intermediate Code.
+> Back end: IR Optimization (Intra-block CFG optimization), MIPS Register Allocation, Instruction Selection and Code Generation.
 
 
 ### How to Build
