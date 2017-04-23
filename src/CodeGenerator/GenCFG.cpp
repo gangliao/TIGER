@@ -350,8 +350,9 @@ void GenCFG::operator_asm(std::vector<std::string>& tokens) {
     reg1 = load(tokens[1], "$t8");
     reg2 = load(tokens[2], "$t9");
     if (tokens[0] != "mult" && tokens[0] != "div") {
-      asm_.push_back("    " + tokens[0] + " " + reg1 + ", " + reg1 + ", " +
+      asm_.push_back("    " + tokens[0] + " $t8" + ", " + reg1 + ", " +
                      reg2);
+      reg1 = "$t8";
     } else {
       asm_.push_back("    " + tokens[0] + " " + reg1 + ", " + reg2);
       asm_.push_back("    mflo " + reg1);
@@ -360,8 +361,9 @@ void GenCFG::operator_asm(std::vector<std::string>& tokens) {
     reg1 = load(tokens[1], "$f16");
     reg2 = load(tokens[2], "$f17");
     if (tokens[0] != "mult" && tokens[0] != "div") {
-      asm_.push_back("    " + tokens[0] + ".s " + " " + reg1 + ", " + reg1 +
+      asm_.push_back("    " + tokens[0] + ".s " + " $f16" + ", " + reg1 +
                      ", " + reg2);
+      reg1 = "$f16";               
     } else {
       asm_.push_back("    " + tokens[0] + " " + reg1 + ", " + reg2);
       asm_.push_back("    mflo " + reg1);

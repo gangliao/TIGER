@@ -382,9 +382,9 @@ printf:
     # IR:    add, n, 5.0, f0
     la $t9, num_5_0
     lwc1 $f17, 0($t9)
-    add.s  $f12, $f12, $f17
+    add.s  $f16, $f12, $f17
     la $t9, f0
-    swc1 $f12, 0($t9)
+    swc1 $f16, 0($t9)
 
     # IR:    assign, B, f0,
     la $t9, f0
@@ -506,8 +506,8 @@ loop_label0:
     # IR:    add, i, 1, i
     la $t9, num_1
     lw $t9, 0($t9)
-    add $t0, $t0, $t9
-    move $t0, $t0
+    add $t8, $t0, $t9
+    move $t0, $t8
 
     # Leave block and save registers into vars ... 
 

@@ -671,8 +671,8 @@ loop_label0:
     move $t1, $t2
 
     # IR:    add, sum, t2, t3
-    add $t5, $t5, $t1
-    move $t0, $t5
+    add $t8, $t5, $t1
+    move $t0, $t8
 
     # IR:    assign, sum, t3,
     move $t5, $t0
@@ -680,8 +680,8 @@ loop_label0:
     # IR:    add, i, 1, i
     la $t9, num_1
     lw $t9, 0($t9)
-    add $t3, $t3, $t9
-    move $t3, $t3
+    add $t8, $t3, $t9
+    move $t3, $t8
 
     # Leave block and save registers into vars ... 
 

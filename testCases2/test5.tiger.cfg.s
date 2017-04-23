@@ -413,8 +413,8 @@ main0:
     # IR:    add, nb, 2, t0, 
     la $t9, num_2
     lw $t9, 0($t9)
-    add $t7, $t7, $t9
-    move $t4, $t7
+    add $t8, $t7, $t9
+    move $t4, $t8
 
     # IR:    div, t0, 5, t1
     la $t9, num_5
@@ -429,18 +429,18 @@ main0:
     move $t2, $t5
 
     # IR:    sub, t1, t2, t3
-    sub $t6, $t6, $t2
-    move $t1, $t6
+    sub $t8, $t6, $t2
+    move $t1, $t8
 
     # IR:    sub, t3, 5, t4
     la $t9, num_5
     lw $t9, 0($t9)
-    sub $t1, $t1, $t9
-    move $t0, $t1
+    sub $t8, $t1, $t9
+    move $t0, $t8
 
     # IR:    add, t4, nb, t5, 
-    add $t0, $t0, $t7
-    move $t3, $t0
+    add $t8, $t0, $t7
+    move $t3, $t8
 
     # IR:    assign, a, t5,
     move $t5, $t3

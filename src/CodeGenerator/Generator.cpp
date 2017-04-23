@@ -22,7 +22,6 @@ Generator::Generator(
         func_info) {
   preprocess(ir);
   func_map_ = std::move(func_info);
-
 }
 
 void Generator::dump() {
@@ -244,7 +243,7 @@ void Generator::preprocess(std::vector<std::string>& ir) {
         new_line = "    ";
       }
       if (token == "b") {
-        // var b conflicts with MIPS branch ISA 
+        // var b conflicts with MIPS branch ISA
         token = "nb";
         include_b = true;
       }
@@ -255,7 +254,7 @@ void Generator::preprocess(std::vector<std::string>& ir) {
     }
     if (include_b) {
       for (auto& token : tokens) {
-          new_line += token + ", ";
+        new_line += token + ", ";
       }
       line = new_line;
     }
