@@ -4,11 +4,11 @@
 
 1. Hand-modified Tiger grammars
 
-	First, we need to rewrite the grammar given in the Tiger language specification to remove the ambiguity by enforcing operator precedences and left associativity. This part is done by hand. You can check out our [parser_table.md](https://github.com/gangliao/Tiger-Compiler/blob/master/phase1/part1/gang/grammar.md) in current directory.
+	First, we need to rewrite the grammar given in the Tiger language specification to remove the ambiguity by enforcing operator precedences and left associativity. This part is done by hand. You can check out our [grammar.md](grammar.md) in current directory.
 
 2. Hand-written parse table
 
-	Modifying the grammar obtained in step 1 to support LL(1) parsing. This could include removing left recursion and performing left factoring on the grammar obtained in step 1 above. Creating the LL(1) parser table for Tiger. This will drive the decision-making process for the parser. This part is also done by hand by using the theory of LL parsing and finding the first(), follow() sets that help you develop the parser table (please check out [grammar.md](https://github.com/gangliao/Tiger-Compiler/blob/master/phase1/part1/gang/parser_table.md) in current directory.)
+	Modifying the grammar obtained in step 1 to support LL(1) parsing. This could include removing left recursion and performing left factoring on the grammar obtained in step 1 above. Creating the LL(1) parser table for Tiger. This will drive the decision-making process for the parser. This part is also done by hand by using the theory of LL parsing and finding the first(), follow() sets that help you develop the parser table (please check out [parser_table.md](parser_table.md) in current directory.)
 
 3. Parser code
 
@@ -84,9 +84,9 @@ Each `let` statement opens a new scope which ends at the corresponding end of th
 scope is opened, new symbol table based on incremental level will be initlized. Since current Tiger grammar
 rules only support `int` and `float`, we only embed `int`, `float` and the related standard functions like `printi`, `flush`, `exit`, `not` into symbol table.
 
-When you execute `bin/parser <filename> -d`, the symbol table will be generated on your screen.
+When you execute `./src/parser <filename> -d`, the symbol table will be generated on your screen.
 
-For example, issue the command `./bin/parser testCases/test-phaseI/test1.tiger -d`:
+For example, issue the command `./src/parser testCases/test-phaseI/test1.tiger -d`:
 
 The symbol table is shown as follows:
 
@@ -154,7 +154,7 @@ There are several cases in Tiger where type checking must occur:
 	8. Multiple let-in-end test.
 	10. For loop expression with float parameter.
 
-We already added these negative test cases in directory `/testCases/test-phaseI`, please refer to our [Phase1-Testing and Output](https://github.com/gangliao/Tiger-Compiler/blob/master/Phase1-Testing%20and%20Output.pdf) to find more details.
+We already added these negative test cases in directory `/testCases/test-phaseI`, please refer to our [Phase1_Testing_and_Output.pdf](Phase1_Testing_and_Output.pdf) to find more details.
 
 As a simple example, consider `test32.tiger` in directory `/testCases/test-phaseI`, Its tiger code is as follows:
 
@@ -173,7 +173,7 @@ in
 end
 ```
 
-After issuing the command `./bin/parser testCases/test-phaseI/test32.tiger -d`:
+After issuing the command `./src/parser testCases/test-phaseI/test32.tiger -d`:
 
 ```bash
 [ RUN ] parsing code...
