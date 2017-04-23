@@ -210,3 +210,24 @@ std::string Generator::ret_func_name(std::string name) {
   }
   return name;
 }
+
+Generator::Type Generator::check_type(std::string name) {
+  if (!func_stack_.empty()) {
+    std::string funcname = func_stack_.top();
+    auto& params = func_map_[funcname];
+    for (auto& param : params) {
+      if (param.first == name) {
+        if (param.second == "int") {
+          return INT;
+        } else {
+          return FLOAT;
+        }
+      }
+    }
+  }
+  if (data_map_[name].second == INT) {
+    return INT;
+  } else {
+    return FLOAT;
+  }
+}

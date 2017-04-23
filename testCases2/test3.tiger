@@ -1,0 +1,9 @@
+let
+	var X, Y : float := 0.0;
+	function print (X : int) begin
+		printi(X);
+	end;
+in
+	print(5);
+	X := 1.0;
+end

@@ -28,6 +28,7 @@ class Generator {
   virtual void text_seg() = 0;
 
  protected:
+  enum Type { INT = 0, FLOAT = 1 };
   void built_in_printi();
   void built_in_exit();
   void built_in_not();
@@ -36,8 +37,8 @@ class Generator {
   std::string ret_func_name(std::string name);
   std::vector<std::string> cvt2tokens(size_t id);
   std::vector<std::string> cvt2tokens(std::string line);
+  Type check_type(std::string name);
 
-  enum Type { INT = 0, FLOAT = 1 };
   /// intermediate code
   std::vector<std::string> ir_;
   /// MIPS ASM code

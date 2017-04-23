@@ -111,7 +111,7 @@ std::string GenNaive::load(std::string token) {
   std::string reg = alloc_reg(token);
   if (reg.empty()) {
     asm_.push_back("    la $t4, " + data_map_[token].first);
-    if (data_map_[token].second == FLOAT) {
+    if (check_type(token) == FLOAT) {
       reg = "$f1";
       asm_.push_back("    lwc1 $f1, 0($t4)");
     } else {
@@ -126,7 +126,7 @@ std::string GenNaive::load(std::string token, std::string res) {
   std::string reg = alloc_reg(token);
   if (reg.empty()) {
     asm_.push_back("    la $t4, " + data_map_[token].first);
-    if (data_map_[token].second == FLOAT) {
+    if (check_type(token) == FLOAT) {
       reg = res;
       asm_.push_back("    lwc1 " + reg + ", 0($t4)");
     } else {
@@ -141,13 +141,13 @@ void GenNaive::store(std::string token, std::string reg) {
   std::string new_reg = alloc_reg(token);
   if (new_reg.empty()) {
     asm_.push_back("    la $t4, " + data_map_[token].first);
-    if (data_map_[token].second == FLOAT) {
+    if (check_type(token) == FLOAT) {
       asm_.push_back("    swc1 " + reg + ", 0($t4)");
     } else {
       asm_.push_back("    sw " + reg + ", 0($t4)");
     }
   } else {
-    if (data_map_[token].second == FLOAT) {
+    if (check_type(token) == FLOAT) {
       asm_.push_back("    mov.s " + new_reg + ", " + reg);
     } else {
       asm_.push_back("    move " + new_reg + ", " + reg);
@@ -159,7 +159,7 @@ void GenNaive::assign_asm(std::vector<std::string>& tokens) {
   reset_reg();
   if (tokens.size() == 4) {  // array
     size_t size = atoi(tokens[2].c_str());
-    if (data_map_[tokens[3]].second == FLOAT) {
+    if (check_type(tokens[3]) == FLOAT) {
       asm_.push_back("    la $t0, " + data_map_[tokens[3]].first);
       asm_.push_back("    lwc1 $f1, 0($t0)");
       asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
@@ -184,7 +184,7 @@ void GenNaive::assign_asm(std::vector<std::string>& tokens) {
 void GenNaive::operator_asm(std::vector<std::string>& tokens) {
   reset_reg();
   std::string reg1, reg2;
-  if (data_map_[tokens[3]].second == INT) {
+  if (check_type(tokens[3]) == INT) {
     reg1 = load(tokens[1], "$t5");
     reg2 = load(tokens[2], "$t4");
     if (tokens[0] != "mult" && tokens[0] != "div") {
@@ -255,7 +255,7 @@ void GenNaive::call_asm(std::vector<std::string>& tokens) {
     param_idx = 2;
   }
   for (size_t i = 0; i < param_size; ++i) {
-    if (data_map_[tokens[param_idx]].second == INT) {
+    if (check_type(tokens[param_idx]) == INT) {
       load(tokens[param_idx + i], "$a" + std::to_string(i));
     } else {
       load(tokens[param_idx + i], "$f" + std::to_string(i + 12));
@@ -284,7 +284,7 @@ void GenNaive::call_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    lw $t9, -24($sp)");
   if (tokens[0] == "callr") {
     asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
-    if (data_map_[tokens[1]].second == INT) {
+    if (check_type(tokens[1]) == INT) {
       asm_.push_back("    sw $v0, 0($t0)");
     } else {
       asm_.push_back("    swc1 $v0, 0($t0)");
@@ -299,7 +299,7 @@ void GenNaive::array_load_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    la $t0, " + data_map_[tokens[2]].first);
   asm_.push_back("    add $t0, $t0, $t1");
   asm_.push_back("    srl $t1, $t1, 2");
-  if (data_map_[tokens[2]].second == FLOAT) {
+  if (check_type(tokens[2]) == FLOAT) {
     asm_.push_back("    lwc1 $f1, 0($t0)");
     asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
     asm_.push_back("    swc1 $f1, 0($t0)");
@@ -312,7 +312,7 @@ void GenNaive::array_load_asm(std::vector<std::string>& tokens) {
 
 void GenNaive::array_store_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    la $t0, " + data_map_[tokens[3]].first);
-  if (data_map_[tokens[1]].second == FLOAT) {
+  if (check_type(tokens[1]) == FLOAT) {
     asm_.push_back("    lwc1 $f1, 0($t0)");
   } else {
     asm_.push_back("    lw $t1, 0($t0)");
@@ -323,7 +323,7 @@ void GenNaive::array_store_asm(std::vector<std::string>& tokens) {
   asm_.push_back("    la $t0, " + data_map_[tokens[1]].first);
   asm_.push_back("    add $t0, $t0, $t2");
   asm_.push_back("    srl $t2, $t2, 2");
-  if (data_map_[tokens[1]].second == FLOAT) {
+  if (check_type(tokens[1]) == FLOAT) {
     asm_.push_back("    swc1 $f1, 0($t0)");
   } else {
     asm_.push_back("    sw $t1, 0($t0)");
