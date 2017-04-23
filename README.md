@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/gangliao/TIGER.svg?token=bQUUVqcsZpghUieTvsMM&branch=master)](https://travis-ci.com/gangliao/TIGER/builds)
 
-This compiler includes both front end and back end.
+This tiny compiler includes both front end and back end.
 
 > Front end: Grammar Rules, LL(1) Parse Table, Syntax and Semantic Check and Intermediate Code.
 
