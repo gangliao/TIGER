@@ -54,13 +54,13 @@ This compiler includes both front end and back end. Front end: Grammar Rules, LL
 
 This Demo shows that
 
-(1) [Compile Source Code] How to compile and generate parser binary ?
+	(1) [Compile Source Code] How to compile and generate parser binary ?
 
-(2) [Compiler Front End] How to transfrom raw tiger program into IR code ?
+	(2) [Compiler Front End] How to transfrom raw tiger program into IR code ?
 
-(3) [Compiler Back End] How to generate optimized MIPS asm code via IR code ?
+	(3) [Compiler Back End] How to generate optimized MIPS asm code via IR code ?
 
-<a href="https://asciinema.org/a/89pja97rl0kb6s49iejc47lmn" target="_blank"><img src="https://asciinema.org/a/89pja97rl0kb6s49iejc47lmn.png" width="600" /></a>
+<a href="img/demo.gif" target="_blank"><img src="img/demo.gif" width="600" /></a>
 
 ### Desgin Internals
 
