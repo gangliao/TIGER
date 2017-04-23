@@ -1,6 +1,6 @@
 ## TIGER - A Tiny Full Compiler
 
-[![Build Status](https://travis-ci.com/gangliao/Tiger-Compiler.svg?token=bQUUVqcsZpghUieTvsMM&branch=master)](https://travis-ci.com/gangliao/Tiger-Compiler/builds)
+[![Build Status](https://travis-ci.com/gangliao/TIGER.svg?token=bQUUVqcsZpghUieTvsMM&branch=master)](https://travis-ci.com/gangliao/TIGER/builds)
 
 This compiler includes both front end and back end.
 
