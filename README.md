@@ -59,6 +59,9 @@ This compiler includes both front end and back end.
 
 ### Demo
 
+**NOTE:** This demo is `gif` graph format. If you have problem to view it in the markdown file,
+you can directly open it which located at `img/demo.gif`.
+
 This Demo shows that
 
 	(1) [Compile Source Code] How to compile and generate parser binary ?
